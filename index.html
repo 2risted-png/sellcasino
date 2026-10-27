@@ -64,19 +64,21 @@
             <span id="balance-display">1250.50</span>
             <span class="currency">TON</span>
           </div>
-          <button class="topup-btn" onclick="showToast('🪙 Переход к пополнению...')">Пополнить</button>
-        </section>
-
-        <section class="jackpot-card glass" onclick="showToast('🏆 Борьба за джекпот!')">
-          <div class="jackpot-label">Общий джекпот</div>
-          <div class="jackpot-amount">
-            <span class="jackpot-num" id="jackpot-display">15,430.00</span>
-            <span class="jackpot-currency">TON</span>
+          <div class="balance-actions">
+            <button class="topup-btn" onclick="showToast('🪙 Переход к пополнению...')">Пополнить</button>
+            <!-- КНОПКА ВЫВОДА ВМЕСТО ДЖЕКПОТА -->
+            <button class="withdraw-btn glass" onclick="showToast('💸 Запрос на вывод создан')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 12V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-5z"/>
+                <path d="M16 12h5"/>
+                <path d="M16 12a2 2 0 1 1-4 0 2 2 0 0 1 4 0z"/>
+              </svg>
+              Вывести
+            </button>
           </div>
-          <div class="jackpot-glow"></div>
         </section>
 
-        <div class="section-header" style="margin-top: 4px;">
+        <div class="section-header" style="margin-top: 10px;">
           <h2 class="section-title">Отзывы</h2>
         </div>
         <div class="reviews-wrapper">
@@ -104,7 +106,6 @@
           </div>
         </div>
 
-        <!-- ЭКРАН ЗАГРУЗКИ -->
         <div id="games-loading-view" style="display: none; height: 80%; flex-direction: column; justify-content: center; align-items: center;">
           <div class="custom-loader">
             <div class="radar-container">
@@ -119,7 +120,6 @@
           </div>
         </div>
 
-        <!-- ЭКРАН ИГРЫ -->
         <div id="games-play-view" style="display: none; flex: 1; flex-direction: column;">
           
           <div class="game-header">
@@ -137,7 +137,6 @@
             <div class="jet-visual-area">
               <div class="jet-glow" id="jet-glow"></div>
               
-              <!-- НОВЫЙ ГРАФИК -->
               <svg class="jet-graph" id="jet-graph" viewBox="0 0 300 150" preserveAspectRatio="none">
                 <defs>
                   <linearGradient id="graph-gradient" x1="0%" y1="100%" x2="100%" y2="0%">
@@ -153,7 +152,6 @@
                 <path id="graph-line" d="" fill="none" stroke="url(#line-gradient)" stroke-width="3" stroke-linecap="round" />
                 <circle id="graph-dot" cx="0" cy="150" r="4" fill="#fff" filter="drop-shadow(0 0 6px #2DD4BF)" />
               </svg>
-              <!-- КОНЕЦ ГРАФИКА -->
 
               <div class="multiplier-container">
                 <div class="jet-multiplier" id="game-multiplier">1.00x</div>
@@ -257,7 +255,7 @@
 
     <div class="toast" id="toast"></div>
 
-    <!-- АДМИН ПАНЕЛЬ -->
+    <!-- АДМИН ПАНЕЛЬ (Убрали настройку джекпота) -->
     <div class="admin-panel" id="adminPanel">
       <div class="admin-content glass">
         <div class="admin-login-view" id="adminLoginView">
@@ -279,8 +277,8 @@
           </div>
           <div class="admin-scroll-area">
             <div id="admin-settings" class="admin-section active">
-              <label>Название проекта</label><input type="text" id="admin-app-name">
-              <label>Общий джекпот</label><input type="text" id="admin-jackpot">
+              <label>Название проекта</label>
+              <input type="text" id="admin-app-name">
               <button class="admin-save-btn" onclick="saveAdminSettings()">Сохранить настройки</button>
             </div>
             <div id="admin-stats" class="admin-section">
