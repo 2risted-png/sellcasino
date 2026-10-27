@@ -354,7 +354,7 @@ svg { max-width: 100%; max-height: 100%; }
 .admin-header h2 { font-size: 20px; color: #fff; }
 .close-btn { background: rgba(255,255,255,0.1); border: none; color: #fff; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; display: flex; justify-content: center; align-items: center; font-size: 14px; }
 
-/* ВКЛАДКИ АДМИНКИ (ИСПРАВЛЕННЫЙ СКРОЛЛБАР) */
+/* ВКЛАДКИ АДМИНКИ */
 .admin-tabs { 
   display: flex; 
   gap: 8px; 
@@ -364,11 +364,11 @@ svg { max-width: 100%; max-height: 100%; }
   padding: 6px; 
   border-radius: 16px; 
   overflow-x: auto; 
-  scrollbar-width: none; /* Скрываем скроллбар в Firefox */
-  -ms-overflow-style: none; /* Скрываем скроллбар в IE/Edge */
+  scrollbar-width: none; 
+  -ms-overflow-style: none; 
 }
 .admin-tabs::-webkit-scrollbar { 
-  display: none; /* Скрываем скроллбар в Chrome/Safari */
+  display: none; 
 }
 .admin-tab { 
   flex: 0 0 auto; 
