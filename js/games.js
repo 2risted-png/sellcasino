@@ -1,6 +1,16 @@
-// --- ГЛОБАЛЬНЫЙ БАЛАНС ---
+// --- ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ---
 let currentBalance = 1250.50;
+let isPlaying = false;
+let isCrashed = false;
+let currentMultiplier = 1.00;
+let crashPoint = 1.00;
+let betAmount = 10;
+let animationFrameId = null;
+let startTime = 0;
+let playerInterval = null;
+let fakePlayers = [];
 
+// --- ОБНОВЛЕНИЕ БАЛАНСА ---
 function updateBalanceUI() {
   const formatted = currentBalance.toLocaleString('ru-RU', {
     minimumFractionDigits: 2,
@@ -27,8 +37,6 @@ function renderHistory() {
 
 // --- СИМУЛЯЦИЯ ОНЛАЙН ИГРОКОВ ---
 const fakeNames = ["Alex", "Max", "Satoshi", "CryptoKing", "Lucky7", "Whale", "N00b", "Gambler", "MoonBoy"];
-let fakePlayers = [];
-let playerInterval;
 
 function startLiveBetsSimulation() {
   const list = document.getElementById('live-bets-list');
@@ -37,10 +45,9 @@ function startLiveBetsSimulation() {
   
   list.innerHTML = '';
   fakePlayers = [];
-  let online = Math.floor(Math.random() * 20) + 15; // 15-35 человек
+  let online = Math.floor(Math.random() * 20) + 15;
   count.innerText = online;
 
-  // Каждые 1.5 секунды добавляем игроков
   playerInterval = setInterval(() => {
     if (!isPlaying) return;
 
@@ -49,7 +56,7 @@ function startLiveBetsSimulation() {
       const bet = Math.floor(Math.random() * 500) + 10;
       const id = Date.now() + Math.random();
       
-      fakePlayers.push({ id, name, bet, cashedOut: false, cashoutAt: 0 });
+      fakePlayers.push({ id, name, bet, cashedOut: false });
 
       const item = document.createElement('div');
       item.className = 'live-bet-item';
@@ -60,7 +67,6 @@ function startLiveBetsSimulation() {
       `;
       list.prepend(item);
 
-      // Ограничиваем список 5 элементами
       if (list.children.length > 6) {
         list.lastChild.remove();
       }
@@ -70,9 +76,8 @@ function startLiveBetsSimulation() {
 
 function updateLiveBetsCashout(mult) {
   fakePlayers.forEach(p => {
-    if (!p.cashedOut && Math.random() < 0.05) { // 5% шанс, что игрок заберет прямо сейчас
+    if (!p.cashedOut && Math.random() < 0.05) {
       p.cashedOut = true;
-      p.cashoutAt = mult;
       const el = document.getElementById(`bet-${p.id}`);
       if (el) {
         const amountDiv = el.querySelector('.live-bet-amount');
@@ -84,14 +89,16 @@ function updateLiveBetsCashout(mult) {
 }
 
 function stopLiveBetsSimulation() {
-  clearInterval(playerInterval);
+  if (playerInterval) clearInterval(playerInterval);
 }
 
 // ==========================================
-// ЛОГИКА ПЕРЕХОДОВ ЭКРАНОВ ИГРЫ
+// ПЕРЕХОДЫ МЕЖДУ ЭКРАНАМИ (ВЫЗЫВАЮТСЯ ИЗ HTML)
 // ==========================================
 function startGameLoading() {
-  haptic('medium');
+  console.log("Клик по игре сработал!"); // Для отладки
+  if (window.Telegram?.WebApp) window.Telegram.WebApp.HapticFeedback.impactOccurred('medium');
+  
   document.getElementById('games-list-view').style.display = 'none';
   document.getElementById('games-loading-view').style.display = 'flex';
   
@@ -104,14 +111,14 @@ function startGameLoading() {
 }
 
 function closeGame() {
-  haptic('light');
+  if (window.Telegram?.WebApp) window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
   
   if (isPlaying) {
     currentBalance += betAmount;
     updateBalanceUI();
     isPlaying = false;
     cancelAnimationFrame(animationFrameId);
-    showToast('Ставка возвращена (выход из игры)');
+    if (typeof showToast === 'function') showToast('Ставка возвращена (выход из игры)');
   }
   
   stopLiveBetsSimulation();
@@ -121,52 +128,11 @@ function closeGame() {
 }
 
 // ==========================================
-// ИНИЦИАЛИЗАЦИЯ И КЛИКИ
-// ==========================================
-let isPlaying = false;
-let isCrashed = false;
-let currentMultiplier = 1.00;
-let crashPoint = 1.00;
-let betAmount = 10;
-let animationFrameId = null;
-let startTime = 0;
-
-let multiplierDisplay, actionBtn, jetIcon, jetGlow, crashedText, inputGroup;
-
-document.addEventListener('DOMContentLoaded', () => {
-  multiplierDisplay = document.getElementById('game-multiplier');
-  actionBtn = document.getElementById('jet-action-btn');
-  jetIcon = document.getElementById('jet-icon');
-  jetGlow = document.getElementById('jet-glow');
-  crashedText = document.getElementById('jet-crashed-text');
-  inputGroup = document.getElementById('jet-input-group');
-  
-  updateBalanceUI();
-
-  // ЖЕЛЕЗОБЕТОННЫЙ КЛИК ПО ВИДЖЕТУ
-  const widget = document.getElementById('widget-eight-jet');
-  if (widget) {
-    widget.addEventListener('click', startGameLoading);
-  }
-
-  // Клик по кнопке "Назад" в игре
-  const backBtn = document.getElementById('game-back-btn');
-  if (backBtn) {
-    backBtn.addEventListener('click', closeGame);
-  }
-
-  // Клик по главной кнопке игры
-  if (actionBtn) {
-    actionBtn.addEventListener('click', handleGameAction);
-  }
-});
-
-// ==========================================
-// ЛОГИКА EIGHT JET
+// ЛОГИКА ИГРЫ (ВЫЗЫВАЕТСЯ ИЗ HTML)
 // ==========================================
 function setBet(amount) {
   if (isPlaying) return;
-  haptic('light');
+  if (window.Telegram?.WebApp) window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
   
   if (amount === 'max') {
     betAmount = Math.floor(currentBalance);
@@ -198,15 +164,16 @@ function startGame() {
   betAmount = parseFloat(betInput.value);
 
   if (isNaN(betAmount) || betAmount < 1) {
-    showToast('⚠️ Минимальная ставка 1 TON');
+    if (typeof showToast === 'function') showToast('⚠️ Минимальная ставка 1 TON');
     return;
   }
   if (betAmount > currentBalance) {
-    showToast('❌ Недостаточно средств');
+    if (typeof showToast === 'function') showToast('❌ Недостаточно средств');
     return;
   }
 
-  haptic('medium');
+  if (window.Telegram?.WebApp) window.Telegram.WebApp.HapticFeedback.impactOccurred('medium');
+  
   currentBalance -= betAmount;
   updateBalanceUI();
 
@@ -219,6 +186,12 @@ function startGame() {
   crashPoint = 1 + (Math.pow(1 / (1 - r), 1.5) - 1);
   if (crashPoint > 50) crashPoint = 50;
 
+  const inputGroup = document.getElementById('jet-input-group');
+  const actionBtn = document.getElementById('jet-action-btn');
+  const crashedText = document.getElementById('jet-crashed-text');
+  const jetIcon = document.getElementById('jet-icon');
+  const multiplierDisplay = document.getElementById('game-multiplier');
+
   inputGroup.classList.add('disabled');
   actionBtn.className = 'jet-action-btn cashout';
   actionBtn.innerHTML = `ЗАБРАТЬ <span class="jet-action-sub" id="cashout-val">${(betAmount).toFixed(2)} TON</span>`;
@@ -227,9 +200,7 @@ function startGame() {
   jetIcon.style.transform = 'scale(1) rotate(0deg)';
   multiplierDisplay.style.color = '#fff';
   
-  // Запускаем симуляцию онлайна
   startLiveBetsSimulation();
-  
   loop();
 }
 
@@ -244,6 +215,11 @@ function loop() {
     crash();
     return;
   }
+
+  const multiplierDisplay = document.getElementById('game-multiplier');
+  const jetGlow = document.getElementById('jet-glow');
+  const jetIcon = document.getElementById('jet-icon');
+  const cashoutEl = document.getElementById('cashout-val');
 
   multiplierDisplay.innerText = currentMultiplier.toFixed(2) + 'x';
   
@@ -260,11 +236,8 @@ function loop() {
   jetGlow.style.transform = `scale(${1 + currentMultiplier * 0.1})`;
   jetIcon.style.transform = `translateY(${Math.sin(elapsed * 10) * 5}px) scale(${1 + currentMultiplier * 0.02}) rotate(${currentMultiplier * 2}deg)`;
 
-  const cashoutVal = betAmount * currentMultiplier;
-  const cashoutEl = document.getElementById('cashout-val');
-  if (cashoutEl) cashoutEl.innerText = cashoutVal.toFixed(2) + ' TON';
+  if (cashoutEl) cashoutEl.innerText = (betAmount * currentMultiplier).toFixed(2) + ' TON';
 
-  // Обновляем симуляцию онлайна
   updateLiveBetsCashout(currentMultiplier);
 
   animationFrameId = requestAnimationFrame(loop);
@@ -275,19 +248,21 @@ function cashOut() {
   isPlaying = false;
   cancelAnimationFrame(animationFrameId);
   stopLiveBetsSimulation();
-  haptic('heavy');
+  if (window.Telegram?.WebApp) window.Telegram.WebApp.HapticFeedback.impactOccurred('heavy');
 
   const winAmount = betAmount * currentMultiplier;
   currentBalance += winAmount;
   updateBalanceUI();
 
+  const actionBtn = document.getElementById('jet-action-btn');
+  const inputGroup = document.getElementById('jet-input-group');
+
   actionBtn.className = 'jet-action-btn';
   actionBtn.innerText = 'ВЫИГРЫШ ' + winAmount.toFixed(2) + ' TON';
   inputGroup.classList.remove('disabled');
   
-  showToast(`✅ Вы забрали ${winAmount.toFixed(2)} TON`);
+  if (typeof showToast === 'function') showToast(`✅ Вы забрали ${winAmount.toFixed(2)} TON`);
 
-  // Добавляем в историю
   flightHistory.unshift(currentMultiplier);
   if (flightHistory.length > 10) flightHistory.pop();
   renderHistory();
@@ -300,7 +275,14 @@ function crash() {
   isCrashed = true;
   cancelAnimationFrame(animationFrameId);
   stopLiveBetsSimulation();
-  haptic('heavy');
+  if (window.Telegram?.WebApp) window.Telegram.WebApp.HapticFeedback.impactOccurred('heavy');
+
+  const multiplierDisplay = document.getElementById('game-multiplier');
+  const crashedText = document.getElementById('jet-crashed-text');
+  const jetIcon = document.getElementById('jet-icon');
+  const jetGlow = document.getElementById('jet-glow');
+  const actionBtn = document.getElementById('jet-action-btn');
+  const inputGroup = document.getElementById('jet-input-group');
 
   multiplierDisplay.innerText = crashPoint.toFixed(2) + 'x';
   multiplierDisplay.style.color = '#F87171';
@@ -312,9 +294,8 @@ function crash() {
   actionBtn.innerText = 'УЛЕТЕЛ!';
   inputGroup.classList.remove('disabled');
   
-  showToast(`💥 Краш на ${crashPoint.toFixed(2)}x`);
+  if (typeof showToast === 'function') showToast(`💥 Краш на ${crashPoint.toFixed(2)}x`);
 
-  // Добавляем в историю
   flightHistory.unshift(crashPoint);
   if (flightHistory.length > 10) flightHistory.pop();
   renderHistory();
@@ -327,25 +308,30 @@ function resetGame() {
   isCrashed = false;
   currentMultiplier = 1.00;
   
+  const multiplierDisplay = document.getElementById('game-multiplier');
   if (!multiplierDisplay) return;
   
   multiplierDisplay.innerText = '1.00x';
   multiplierDisplay.style.color = '#fff';
-  crashedText.classList.remove('show');
-  jetIcon.style.opacity = '1';
-  jetIcon.style.transform = 'scale(1) rotate(0deg)';
-  jetGlow.style.opacity = '0.1';
-  jetGlow.style.background = 'var(--turquoise)';
+  document.getElementById('jet-crashed-text').classList.remove('show');
+  document.getElementById('jet-icon').style.opacity = '1';
+  document.getElementById('jet-icon').style.transform = 'scale(1) rotate(0deg)';
+  document.getElementById('jet-glow').style.opacity = '0.1';
+  document.getElementById('jet-glow').style.background = 'var(--turquoise)';
   
-  actionBtn.className = 'jet-action-btn';
-  actionBtn.innerText = 'СДЕЛАТЬ СТАВКУ';
+  document.getElementById('jet-action-btn').className = 'jet-action-btn';
+  document.getElementById('jet-action-btn').innerText = 'СДЕЛАТЬ СТАВКУ';
   
-  inputGroup.classList.remove('disabled');
+  document.getElementById('jet-input-group').classList.remove('disabled');
   document.getElementById('bet-amount').value = betAmount;
   
-  // Очищаем лайв-ставки
   const list = document.getElementById('live-bets-list');
   if (list) list.innerHTML = '';
   const count = document.getElementById('online-count');
   if (count) count.innerText = '0';
 }
+
+// ИНИЦИАЛИЗАЦИЯ БАЛАНСА
+document.addEventListener('DOMContentLoaded', () => {
+  updateBalanceUI();
+});
