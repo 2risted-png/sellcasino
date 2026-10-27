@@ -71,30 +71,20 @@ function updateGraph(elapsed) {
   
   graphDot.style.opacity = '1';
 
-  // Ограничиваем график, чтобы он не улетал за пределы экрана
   const maxX = 290;
   const maxY = 10;
 
-  // X растет линейно со временем (движение вправо)
   let x = Math.min(maxX, 10 + elapsed * 25);
-  
-  // Y вычисляется на основе текущего множителя. 
-  // Логарифмическая шкала делает график красивым.
   let y = 150 - (Math.log(currentMultiplier) * 45);
   
-  if (y < maxY) y = maxY; // Не даем улететь выше верхней границы
+  if (y < maxY) y = maxY;
 
-  // Строим кривую Безье для эффекта "горки"
-  // Начальная точка: 0,150. Контрольная точка: (x/2, 150). Конечная: (x, y)
   const pathD = `M 0 150 Q ${x * 0.6} 150, ${x} ${y}`;
-  
   graphLine.setAttribute('d', pathD);
   
-  // Заливка под графиком (добавляем линию вниз и замыкаем)
   const fillD = `${pathD} L ${x} 150 L 0 150 Z`;
   graphFill.setAttribute('d', fillD);
 
-  // Двигаем светящуюся точку в конец графика
   graphDot.setAttribute('cx', x);
   graphDot.setAttribute('cy', y);
 }
@@ -114,7 +104,6 @@ function colorGraphDefault() {
   graphDot.setAttribute('fill', '#fff');
   graphDot.setAttribute('filter', 'drop-shadow(0 0 6px #2DD4BF)');
 }
-
 
 // ==========================================
 // УПРАВЛЕНИЕ РАУНДАМИ
@@ -234,7 +223,6 @@ function loop() {
     jetGlow.style.transform = `scale(${1 + currentMultiplier * 0.1})`;
   }
   
-  // ОБНОВЛЯЕМ ГРАФИК
   updateGraph(elapsed);
 
   if (playerBet.active && !playerBet.cashedOut) {
@@ -267,7 +255,6 @@ function endRoundCrash() {
     crashedText.innerText = `УЛЕТЕЛ!`;
   }
   
-  // КРАСИМ ГРАФИК В КРАСНЫЙ
   colorGraphRed();
 
   const jetGlow = document.getElementById('jet-glow');
@@ -469,7 +456,7 @@ function stopLiveBetsSimulation() {
 }
 
 // ==========================================
-// ПЕРЕХОДЫ МЕЖДУ ЭКРАНАМИ
+// ПЕРЕХОДЫ МЕЖДУ ЭКРАНАМИ И ПРАВИЛА
 // ==========================================
 function startGameLoading() {
   haptic('medium');
@@ -500,6 +487,14 @@ function closeGame() {
 
   document.getElementById('games-play-view').style.display = 'none';
   document.getElementById('games-list-view').style.display = 'block';
+}
+
+function toggleRules() {
+  haptic('light');
+  const modal = document.getElementById('rulesModal');
+  if (modal) {
+    modal.classList.toggle('active');
+  }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
