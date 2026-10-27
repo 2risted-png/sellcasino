@@ -1,4 +1,3 @@
-// --- ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ---
 let currentBalance = 1250.50;
 
 function updateBalanceUI() {
@@ -12,7 +11,7 @@ function updateBalanceUI() {
   if (document.getElementById('profile-balance-display')) document.getElementById('profile-balance-display').innerText = formatted;
 }
 
-// --- ИСТОРИЯ ПОЛЕТОВ ---
+// --- EIGHT JET ---
 let flightHistory = [1.23, 4.50, 1.05, 2.80, 12.40, 1.50, 1.01, 3.20];
 function renderHistory() {
   const container = document.getElementById('flight-history');
@@ -26,9 +25,6 @@ function renderHistory() {
   });
 }
 
-// ==========================================
-// ЛОГИКА ИГРЫ EIGHT JET
-// ==========================================
 let gameState = 'offline'; 
 let crashPoint = 1.00;
 let currentMultiplier = 1.00;
@@ -36,7 +32,6 @@ let roundStartTime = 0;
 let waitStartTime = 0;
 let animationFrameId = null;
 let waitIntervalId = null;
-
 let playerBet = { active: false, amount: 0, cashedOut: false, autoCashout: 0 };
 
 function generateCrashPoint() {
@@ -69,8 +64,7 @@ function updateGraph(elapsed) {
   if (y < maxY) y = maxY;
   const pathD = `M 0 150 Q ${x * 0.6} 150, ${x} ${y}`;
   graphLine.setAttribute('d', pathD);
-  const fillD = `${pathD} L ${x} 150 L 0 150 Z`;
-  graphFill.setAttribute('d', fillD);
+  graphFill.setAttribute('d', `${pathD} L ${x} 150 L 0 150 Z`);
   graphDot.setAttribute('cx', x);
   graphDot.setAttribute('cy', y);
 }
@@ -88,7 +82,7 @@ function colorGraphDefault() {
   graphLine.setAttribute('stroke', 'url(#line-gradient)');
   graphFill.setAttribute('fill', 'url(#graph-gradient)');
   graphDot.setAttribute('fill', '#fff');
-  graphDot.setAttribute('filter', 'drop-shadow(0 0 6px #2DD4BF)');
+  graphDot.setAttribute('filter', 'drop-shadow(0 0 8px #00E5FF)');
 }
 
 function startWaitingPhase() {
@@ -122,7 +116,7 @@ function startWaitingPhase() {
   const jetGlow = document.getElementById('jet-glow');
   if (jetGlow) {
     jetGlow.style.opacity = '0.1';
-    jetGlow.style.background = 'var(--turquoise)';
+    jetGlow.style.background = 'var(--primary)';
   }
 
   resetGraph();
@@ -150,7 +144,6 @@ function startFlyingPhase() {
   
   const timerDisplay = document.getElementById('waiting-timer');
   const multiplierDisplay = document.getElementById('game-multiplier');
-  
   if (timerDisplay) timerDisplay.style.display = 'none';
   if (multiplierDisplay) multiplierDisplay.style.display = 'block';
   
@@ -173,7 +166,6 @@ function startFlyingPhase() {
 
 function loop() {
   if (gameState !== 'flying') return;
-
   const elapsed = (performance.now() - roundStartTime) / 1000;
   currentMultiplier = Math.exp(0.08 * elapsed);
 
@@ -187,7 +179,6 @@ function loop() {
 
   if (multiplierDisplay) {
     multiplierDisplay.innerText = currentMultiplier.toFixed(2) + 'x';
-    
     if (currentMultiplier > 3) {
       multiplierDisplay.style.color = '#FBBF24';
       if (jetGlow) jetGlow.style.background = '#FBBF24';
@@ -272,30 +263,20 @@ function setBet(amount) {
 }
 
 function handleGameAction() {
-  if (gameState === 'waiting') {
-    placeBet();
-  } else if (gameState === 'flying' && playerBet.active && !playerBet.cashedOut) {
-    handlePlayerCashout(false);
-  }
+  if (gameState === 'waiting') placeBet();
+  else if (gameState === 'flying' && playerBet.active && !playerBet.cashedOut) handlePlayerCashout(false);
 }
 
 function placeBet() {
   if (playerBet.active) return;
   const betInput = document.getElementById('bet-amount');
   if (!betInput) return;
-  
   const amount = parseFloat(betInput.value);
   const autoInput = document.getElementById('auto-cashout');
   const auto = autoInput ? parseFloat(autoInput.value) || 0 : 0;
 
-  if (isNaN(amount) || amount < 1) {
-    if (typeof showToast === 'function') showToast('⚠️ Мин. ставка 1 TON');
-    return;
-  }
-  if (amount > currentBalance) {
-    if (typeof showToast === 'function') showToast('❌ Недостаточно средств');
-    return;
-  }
+  if (isNaN(amount) || amount < 1) { if (typeof showToast === 'function') showToast('⚠️ Мин. ставка 1 TON'); return; }
+  if (amount > currentBalance) { if (typeof showToast === 'function') showToast('❌ Недостаточно средств'); return; }
 
   haptic('medium');
   currentBalance -= amount;
@@ -307,13 +288,9 @@ function placeBet() {
   playerBet.autoCashout = auto;
 
   const actionBtn = document.getElementById('jet-action-btn');
-  if (actionBtn) {
-    actionBtn.className = 'jet-action-btn waiting';
-    actionBtn.innerText = 'СТАВКА ПРИНЯТА!';
-  }
+  if (actionBtn) { actionBtn.className = 'jet-action-btn waiting'; actionBtn.innerText = 'СТАВКА ПРИНЯТА!'; }
   betInput.disabled = true;
   if (autoInput) autoInput.disabled = true;
-  
   addPlayerToLiveList("ВЫ", amount);
 }
 
@@ -326,14 +303,8 @@ function handlePlayerCashout(isAuto) {
   if (!isAuto) haptic('heavy');
 
   const actionBtn = document.getElementById('jet-action-btn');
-  if (actionBtn) {
-    actionBtn.className = 'jet-action-btn cashed-out';
-    actionBtn.innerText = `ЗАБРАНО ${winAmount.toFixed(2)} TON`;
-  }
-
-  if (typeof showToast === 'function') {
-    showToast(isAuto ? `🤖 Авто-вывод ${winAmount.toFixed(2)} TON` : `✅ Вы забрали ${winAmount.toFixed(2)} TON`);
-  }
+  if (actionBtn) { actionBtn.className = 'jet-action-btn cashed-out'; actionBtn.innerText = `ЗАБРАНО ${winAmount.toFixed(2)} TON`; }
+  if (typeof showToast === 'function') showToast(isAuto ? `🤖 Авто-вывод ${winAmount.toFixed(2)} TON` : `✅ Вы забрали ${winAmount.toFixed(2)} TON`);
   updatePlayerLiveStatus(winAmount, currentMultiplier);
 }
 
@@ -347,10 +318,8 @@ function addPlayerToLiveList(name, bet) {
   item.innerHTML = `
     <div class="live-bet-user">👤 ${name}</div>
     <div class="live-bet-data">
-      <span class="live-bet-bet">${bet} TON</span>
-      <span class="live-bet-sep">-</span>
-      <span class="live-bet-win">0 TON</span>
-      <span class="live-bet-sep">-</span>
+      <span class="live-bet-bet">${bet} TON</span><span class="live-bet-sep">-</span>
+      <span class="live-bet-win">0 TON</span><span class="live-bet-sep">-</span>
       <span class="live-bet-mult">0.00x</span>
     </div>
   `;
@@ -377,7 +346,7 @@ function startGameLoading() {
     document.getElementById('games-play-view').style.display = 'block';
     renderHistory();
     startWaitingPhase();
-  }, 2200);
+  }, 2000);
 }
 
 function closeGame() {
@@ -397,21 +366,16 @@ function closeGame() {
 function toggleRules() {
   haptic('light');
   const modal = document.getElementById('rulesModal');
-  if (modal) {
-    modal.style.display = modal.style.display === 'flex' ? 'none' : 'flex';
-  }
+  if (modal) modal.style.display = modal.style.display === 'flex' ? 'none' : 'flex';
 }
 
-// ==========================================
-// ЛОГИКА ИГРЫ DICE
-// ==========================================
+// --- DICE ---
 let isDiceRolling = false;
 
 function startDiceLoading() {
   haptic('medium');
   document.getElementById('games-list-view').style.display = 'none';
   document.getElementById('games-loading-view').style.display = 'flex';
-  
   setTimeout(() => {
     document.getElementById('games-loading-view').style.display = 'none';
     document.getElementById('dice-play-view').style.display = 'flex';
@@ -429,36 +393,25 @@ function closeDiceGame() {
 function setDiceBet(amount) {
   if (isDiceRolling) return;
   haptic('light');
-  
   let betAmount = 10;
   if (amount === 'max') betAmount = Math.floor(currentBalance);
   else betAmount = amount;
-  
   if (betAmount > currentBalance) betAmount = Math.floor(currentBalance);
   if (betAmount < 1) betAmount = 1;
-  
   document.getElementById('dice-bet-amount').value = betAmount;
 }
 
 function playDice(choice) {
   if (isDiceRolling) return;
-
   const betInput = document.getElementById('dice-bet-amount');
   const betAmount = parseFloat(betInput.value);
 
-  if (isNaN(betAmount) || betAmount < 1) {
-    if (typeof showToast === 'function') showToast('⚠️ Мин. ставка 1 TON');
-    return;
-  }
-  if (betAmount > currentBalance) {
-    if (typeof showToast === 'function') showToast('❌ Недостаточно средств');
-    return;
-  }
+  if (isNaN(betAmount) || betAmount < 1) { if (typeof showToast === 'function') showToast('⚠️ Мин. ставка 1 TON'); return; }
+  if (betAmount > currentBalance) { if (typeof showToast === 'function') showToast('❌ Недостаточно средств'); return; }
 
   haptic('medium');
   currentBalance -= betAmount;
   updateBalanceUI();
-
   isDiceRolling = true;
   
   const diceCube = document.getElementById('dice-cube');
@@ -471,13 +424,11 @@ function playDice(choice) {
   btnUnder.disabled = true;
   btnOver.disabled = true;
   resultText.classList.remove('show', 'win', 'loss');
-  
   diceCube.classList.add('rolling');
   diceCube.innerText = '🎲';
 
   setTimeout(() => {
     diceCube.classList.remove('rolling');
-    
     const roll = Math.floor(Math.random() * 6) + 1;
     const diceEmojis = ['', '⚀', '⚁', '⚂', '⚃', '⚄', '⚅'];
     diceCube.innerText = diceEmojis[roll];
@@ -485,17 +436,8 @@ function playDice(choice) {
     let isWin = false;
     let payoutMultiplier = 0;
 
-    if (choice === 'over') {
-      if (roll > 3) {
-        isWin = true;
-        payoutMultiplier = 2.0;
-      }
-    } else if (choice === 'under') {
-      if (roll < 3) {
-        isWin = true;
-        payoutMultiplier = 2.5;
-      }
-    }
+    if (choice === 'over' && roll > 3) { isWin = true; payoutMultiplier = 2.0; }
+    else if (choice === 'under' && roll < 3) { isWin = true; payoutMultiplier = 2.5; }
 
     if (isWin) {
       const winAmount = betAmount * payoutMultiplier;
@@ -519,7 +461,6 @@ function playDice(choice) {
       btnOver.disabled = false;
       resetDiceUI();
     }, 2000);
-
   }, 1500);
 }
 
@@ -528,9 +469,6 @@ function resetDiceUI() {
   if (resultText) resultText.classList.remove('show', 'win', 'loss');
 }
 
-// ==========================================
-// ИНИЦИАЛИЗАЦИЯ
-// ==========================================
 document.addEventListener('DOMContentLoaded', () => {
   updateBalanceUI();
 });
