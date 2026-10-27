@@ -1,6 +1,5 @@
 const defaultData = {
   appName: "Casino Sell",
-  jackpot: "15,430.00",
   stats: { players: "1,245", withdraws: "50,000", rtp: "96.5" },
   reviews: [
     { name: "Alex_99", avatar: "A", color: "#2DD4BF", stars: "★★★★★", text: "Вывел первый джекпот! Шок. Пришло за 2 минуты, всё честно." },
@@ -19,7 +18,6 @@ function saveData() {
 function applyDataToUI() {
   document.title = appData.appName;
   if (document.getElementById('greeting-text')) document.getElementById('greeting-text').innerText = `Добро пожаловать в ${appData.appName}`;
-  if (document.getElementById('jackpot-display')) document.getElementById('jackpot-display').innerText = appData.jackpot;
   if (document.getElementById('stat-players')) document.getElementById('stat-players').innerText = appData.stats.players;
   if (document.getElementById('stat-withdraws')) document.getElementById('stat-withdraws').innerText = appData.stats.withdraws;
   if (document.getElementById('stat-rtp')) document.getElementById('stat-rtp').innerText = appData.stats.rtp + '%';
@@ -114,7 +112,6 @@ function switchAdminTab(tabId, btn) {
 
 function fillAdminInputs() {
   document.getElementById('admin-app-name').value = appData.appName;
-  document.getElementById('admin-jackpot').value = appData.jackpot;
   document.getElementById('admin-players').value = appData.stats.players;
   document.getElementById('admin-withdraws').value = appData.stats.withdraws;
   document.getElementById('admin-rtp').value = appData.stats.rtp;
@@ -123,7 +120,6 @@ function fillAdminInputs() {
 
 function saveAdminSettings() {
   appData.appName = document.getElementById('admin-app-name').value;
-  appData.jackpot = document.getElementById('admin-jackpot').value;
   appData.stats.players = document.getElementById('admin-players').value;
   appData.stats.withdraws = document.getElementById('admin-withdraws').value;
   appData.stats.rtp = document.getElementById('admin-rtp').value;
