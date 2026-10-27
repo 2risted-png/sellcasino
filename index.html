@@ -4,240 +4,242 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <title>Neo Casino</title>
-  <!-- Заменили ссылку на рабочую, чтобы не висело без VPN -->
   <script src="https://cdn.jsdelivr.net/gh/amirsadeghi1/telegram-appbots-desktop@master/telegram-web-app.js"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
     :root {
       --bg-dark: #000000;
-      --bg-phone: #050506;
-      --turquoise: #2DD4BF;
-      --turquoise-glow: rgba(45, 212, 191, 0.4);
-      --turquoise-soft: rgba(45, 212, 191, 0.1);
+      --bg-app: #09090b; /* Очень темный, почти черный */
       --text-main: #FFFFFF;
-      --text-dim: #888888;
-      --glass-bg: rgba(20, 20, 22, 0.6);
+      --text-dim: #A1A1AA; /* Светло-серый для второстепенного текста */
+      --turquoise: #2DD4BF;
+      --turquoise-glow: rgba(45, 212, 191, 0.3);
+      
+      /* Настройки стекла */
+      --glass-bg: rgba(255, 255, 255, 0.04);
       --glass-border: rgba(255, 255, 255, 0.08);
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; font-family: 'Inter', -apple-system, sans-serif; }
     
-    /* ФОН ДЛЯ ПК (ЧЕРНЫЙ) */
     body {
       background-color: var(--bg-dark);
       display: flex;
       justify-content: center;
       align-items: center;
       min-height: 100vh;
-      overflow: hidden; /* Убираем скролл на ПК */
+      overflow: hidden;
     }
 
-    /* КОРПУС ТЕЛЕФОНА (На ПК выглядит как рамка) */
+    /* КОРПУС ТЕЛЕФОНА */
     .phone-mockup {
       width: 390px;
       height: 844px;
-      background-color: var(--bg-phone);
+      background-color: var(--bg-app);
       position: relative;
-      border-radius: 40px;
-      border: 10px solid #1a1a1a;
-      box-shadow: 
-        0 0 0 1px #333,
-        0 20px 50px rgba(0,0,0,0.8),
-        0 0 100px rgba(45, 212, 191, 0.1);
-      overflow: hidden; /* Скрываем всё, что вылезает за рамки телефона */
+      border-radius: 44px;
+      border: 8px solid #1a1a1a;
+      box-shadow: 0 0 0 1px #333, 0 24px 64px rgba(0,0,0,0.9), 0 0 80px rgba(45, 212, 191, 0.15);
+      overflow: hidden;
       display: flex;
       flex-direction: column;
     }
 
     /* АДАПТАЦИЯ ПОД РЕАЛЬНЫЙ ТЕЛЕФОН */
     @media (max-width: 500px) {
-      body { background-color: var(--bg-phone); display: block; }
+      body { background-color: var(--bg-app); display: block; }
       .phone-mockup {
-        width: 100vw;
-        height: 100vh;
-        border-radius: 0;
-        border: none;
-        box-shadow: none;
+        width: 100vw; height: 100vh; border-radius: 0; border: none; box-shadow: none;
       }
     }
 
-    /* ЖИДКИЙ ФОН ВНУТРИ ТЕЛЕФОНА */
+    /* ЖИДКИЙ ФОН */
     .liquid-bg { position: absolute; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
     .blob {
       position: absolute; border-radius: 50%;
-      filter: blur(70px); opacity: 0.6;
-      animation: float 15s ease-in-out infinite alternate;
+      filter: blur(80px); opacity: 0.4;
+      animation: float 20s ease-in-out infinite alternate;
     }
-    .blob-1 { width: 300px; height: 300px; background: radial-gradient(circle, var(--turquoise), transparent 60%); top: -10%; left: -20%; }
-    .blob-2 { width: 250px; height: 250px; background: radial-gradient(circle, #0d9488, transparent 60%); bottom: 10%; right: -20%; animation-delay: -5s; }
+    .blob-1 { width: 350px; height: 350px; background: var(--turquoise); top: -10%; right: -20%; }
+    .blob-2 { width: 300px; height: 300px; background: #0d9488; bottom: 0%; left: -30%; animation-delay: -5s; }
 
     @keyframes float {
       0% { transform: translate(0, 0) scale(1); }
-      100% { transform: translate(30px, 30px) scale(1.1); }
+      100% { transform: translate(-40px, 40px) scale(1.1); }
     }
 
     /* КОНТЕНТ */
     .app-content {
       position: relative; z-index: 1;
       flex: 1; overflow-y: auto; overflow-x: hidden;
-      padding: 24px 20px 100px; /* Снизу отступ под навигацию */
-      display: flex; flex-direction: column; gap: 24px;
+      padding: 24px 20px 120px; /* Большой отступ снизу под меню */
+      display: flex; flex-direction: column; gap: 20px;
     }
-    /* Скрываем скроллбар */
     .app-content::-webkit-scrollbar { display: none; }
     .app-content { -ms-overflow-style: none; scrollbar-width: none; }
-
-    /* ШАПКА */
-    .header { display: flex; justify-content: space-between; align-items: center; }
-    .greeting { font-size: 13px; color: var(--text-dim); margin-bottom: 4px; }
-    .username { font-size: 20px; font-weight: 700; letter-spacing: -0.5px; }
-    .avatar {
-      width: 44px; height: 44px; border-radius: 50%;
-      background: linear-gradient(135deg, #333, #111);
-      border: 1px solid var(--glass-border);
-      display: flex; justify-content: center; align-items: center;
-      font-size: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-    }
 
     /* СТЕКЛО */
     .glass {
       background: var(--glass-bg);
-      backdrop-filter: blur(24px) saturate(150%);
-      -webkit-backdrop-filter: blur(24px) saturate(150%);
+      backdrop-filter: blur(32px) saturate(200%);
+      -webkit-backdrop-filter: blur(32px) saturate(200%);
       border: 1px solid var(--glass-border);
       border-radius: 24px;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), 0 8px 32px rgba(0,0,0,0.4);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.06), 0 8px 32px rgba(0,0,0,0.2);
     }
+
+    /* ШАПКА */
+    .header { display: flex; justify-content: space-between; align-items: center; color: var(--text-main); }
+    .greeting { font-size: 13px; color: var(--text-dim); margin-bottom: 2px; font-weight: 500; }
+    .username { font-size: 22px; font-weight: 700; letter-spacing: -0.5px; }
+    .avatar {
+      width: 44px; height: 44px; border-radius: 50%;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      display: flex; justify-content: center; align-items: center;
+    }
+    .avatar svg { width: 20px; height: 20px; stroke: var(--text-dim); }
 
     /* КАРТА БАЛАНСА */
     .balance-card {
       padding: 24px; position: relative; overflow: hidden;
-      background: linear-gradient(145deg, rgba(30,30,32,0.8) 0%, rgba(10,10,12,0.9) 100%);
+      background: linear-gradient(145deg, rgba(30, 30, 35, 0.8) 0%, rgba(10, 10, 12, 0.9) 100%);
+      border: 1px solid rgba(255,255,255,0.1);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1);
+      border-radius: 28px;
+      color: var(--text-main);
     }
     .balance-card::before {
-      content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
-      background: radial-gradient(circle at 50% 50%, rgba(45,212,191,0.15), transparent 60%);
-      pointer-events: none;
+      content: ''; position: absolute; top: -50%; right: -20%; width: 200px; height: 200px;
+      background: radial-gradient(circle, var(--turquoise-glow), transparent 70%);
+      pointer-events: none; filter: blur(20px);
     }
-    .card-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
-    .card-label { font-size: 12px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600; }
-    .card-chip { width: 32px; height: 24px; background: linear-gradient(135deg, #a0a0a0, #e0e0e0); border-radius: 4px; opacity: 0.5; }
     
-    .balance-amount { font-size: 38px; font-weight: 800; letter-spacing: -1.5px; margin-bottom: 24px; display: flex; align-items: baseline; gap: 8px; }
-    .currency { font-size: 16px; color: var(--turquoise); font-weight: 600; letter-spacing: 0; }
+    .card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
+    .card-label { font-size: 12px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
+    /* Металлический чип */
+    .card-chip {
+      width: 36px; height: 26px; border-radius: 6px;
+      background: linear-gradient(135deg, #e0e0e0 0%, #888 50%, #ccc 100%);
+      position: relative; overflow: hidden;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+    }
+    .card-chip::after {
+      content: ''; position: absolute; top: 50%; left: 0; right: 0; height: 1px; background: rgba(0,0,0,0.3);
+    }
+    .card-chip::before {
+      content: ''; position: absolute; top: 0; bottom: 0; left: 50%; width: 1px; background: rgba(0,0,0,0.3);
+    }
+
+    .balance-amount { font-size: 40px; font-weight: 800; letter-spacing: -1.5px; margin-bottom: 24px; display: flex; align-items: baseline; gap: 8px; color: #fff; }
+    .currency { font-size: 16px; color: var(--turquoise); font-weight: 700; letter-spacing: 0; }
     
     .topup-btn {
-      width: 100%; padding: 14px; border-radius: 16px;
-      background: var(--turquoise); color: #000;
+      width: 100%; padding: 16px; border-radius: 16px;
+      background: #fff; color: #000;
       border: none; font-size: 15px; font-weight: 700;
       cursor: pointer; transition: all 0.2s ease;
-      box-shadow: 0 4px 20px var(--turquoise-glow);
     }
-    .topup-btn:active { transform: scale(0.96); box-shadow: 0 2px 10px var(--turquoise-glow); }
+    .topup-btn:active { transform: scale(0.97); background: #e0e0e0; }
 
     /* ПРОМО БАННЕР */
     .promo-banner {
       padding: 20px; display: flex; justify-content: space-between; align-items: center;
-      background: linear-gradient(90deg, rgba(45,212,191,0.15) 0%, rgba(20,20,22,0.6) 100%);
+      cursor: pointer; transition: transform 0.2s;
+      background: linear-gradient(90deg, rgba(45,212,191,0.1) 0%, rgba(255,255,255,0.02) 100%);
     }
-    .promo-text h3 { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
-    .promo-text p { font-size: 12px; color: var(--text-dim); }
-    .promo-icon { font-size: 32px; filter: drop-shadow(0 0 10px var(--turquoise-glow)); }
+    .promo-banner:active { transform: scale(0.98); }
+    .promo-text h3 { font-size: 17px; font-weight: 700; margin-bottom: 4px; color: #fff; letter-spacing: -0.3px; }
+    .promo-text p { font-size: 13px; color: var(--text-dim); }
+    .promo-icon {
+      width: 44px; height: 44px; border-radius: 12px;
+      background: rgba(45,212,191,0.15);
+      display: flex; justify-content: center; align-items: center;
+    }
+    .promo-icon svg { width: 24px; height: 24px; stroke: var(--turquoise); }
+
+    /* ЗАГОЛОВОК СЕКЦИИ */
+    .section-header { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 4px; }
+    .section-title { font-size: 20px; font-weight: 700; letter-spacing: -0.5px; color: #fff; }
+    .see-all { font-size: 14px; color: var(--turquoise); font-weight: 600; }
 
     /* ИГРЫ */
-    .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: -8px; }
-    .section-title { font-size: 18px; font-weight: 700; letter-spacing: -0.5px; }
-    .see-all { font-size: 13px; color: var(--turquoise); font-weight: 500; }
-
     .games-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
     .game-card {
-      padding: 16px; display: flex; flex-direction: column; justify-content: space-between;
-      min-height: 160px; cursor: pointer; transition: transform 0.2s ease, border-color 0.2s;
+      padding: 16px; display: flex; flex-direction: column;
+      min-height: 140px; cursor: pointer; transition: all 0.2s ease;
     }
-    .game-card:hover { border-color: rgba(255,255,255,0.2); }
-    .game-card:active { transform: scale(0.96); }
+    .game-card:active { transform: scale(0.96); background: rgba(255,255,255,0.08); }
     
     .game-icon {
-      width: 48px; height: 48px; border-radius: 14px;
-      background: rgba(255,255,255,0.05);
+      width: 44px; height: 44px; border-radius: 12px;
+      background: rgba(255,255,255,0.06);
       display: flex; justify-content: center; align-items: center;
-      font-size: 24px; border: 1px solid rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.05);
+      margin-bottom: auto; /* Прижимаем текст вниз */
     }
+    .game-icon svg { width: 22px; height: 22px; stroke: #fff; }
+    
     .game-info { margin-top: 16px; }
-    .game-name { font-size: 15px; font-weight: 600; margin-bottom: 2px; }
-    .game-desc { font-size: 11px; color: var(--text-dim); }
+    .game-name { font-size: 15px; font-weight: 600; margin-bottom: 2px; color: #fff; }
+    .game-desc { font-size: 12px; color: var(--text-dim); }
 
     /* НАВИГАЦИЯ СНИЗУ */
     .bottom-nav {
       position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%);
-      width: calc(100% - 40px); height: 64px;
+      width: calc(100% - 40px); height: 72px;
       display: flex; justify-content: space-around; align-items: center;
-      z-index: 10; border-radius: 32px;
-      background: rgba(15, 15, 18, 0.8);
-      backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+      z-index: 10; border-radius: 36px;
+      background: rgba(20, 20, 22, 0.7);
+      backdrop-filter: blur(32px) saturate(200%); -webkit-backdrop-filter: blur(32px) saturate(200%);
       border: 1px solid rgba(255,255,255,0.08);
-      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-      padding: 0 10px;
+      box-shadow: 0 12px 32px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.1);
+      padding: 0 12px;
     }
     .nav-item {
       width: 56px; height: 56px; border-radius: 50%;
       display: flex; justify-content: center; align-items: center;
-      color: var(--text-dim); transition: all 0.3s; cursor: pointer;
+      color: var(--text-dim); transition: all 0.2s; cursor: pointer;
     }
-    .nav-item svg { width: 24px; height: 24px; stroke-width: 2; }
-    .nav-item.active { background: var(--turquoise-soft); color: var(--turquoise); }
-    .nav-item.active svg { filter: drop-shadow(0 0 6px var(--turquoise-glow)); }
+    .nav-item svg { width: 24px; height: 24px; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; fill: none; }
+    .nav-item.active { color: var(--turquoise); background: rgba(45, 212, 191, 0.1); }
+    .nav-item.active svg { filter: drop-shadow(0 0 8px var(--turquoise-glow)); }
 
     /* TOAST */
     .toast {
       position: absolute; top: 40px; left: 50%; transform: translateX(-50%) translateY(-20px);
-      padding: 12px 24px; border-radius: 20px; font-size: 13px; font-weight: 600;
-      background: rgba(45, 212, 191, 0.9); color: #000;
-      backdrop-filter: blur(10px);
-      opacity: 0; transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      padding: 12px 24px; border-radius: 30px; font-size: 14px; font-weight: 600;
+      background: #fff; color: #000;
+      opacity: 0; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
       pointer-events: none; z-index: 100;
-      box-shadow: 0 8px 24px var(--turquoise-glow);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
     }
     .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
   </style>
 </head>
 <body>
 
-  <!-- КОРПУС ТЕЛЕФОНА -->
   <div class="phone-mockup">
     
-    <!-- Жидкий фон -->
     <div class="liquid-bg">
       <div class="blob blob-1"></div>
       <div class="blob blob-2"></div>
     </div>
 
-    <!-- Навигация снизу (поверх контента) -->
+    <!-- Нижнее меню -->
     <div class="bottom-nav">
       <div class="nav-item active" onclick="switchTab(this)">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M21 15V6m0 0l-7 7-4-4-7 7"/>
-          <path d="M3 15h18"/>
-        </svg>
+        <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
       </div>
       <div class="nav-item" onclick="switchTab(this)">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="3" y="3" width="7" height="7" rx="2"/>
-          <rect x="14" y="3" width="7" height="7" rx="2"/>
-          <rect x="14" y="14" width="7" height="7" rx="2"/>
-          <rect x="3" y="14" width="7" height="7" rx="2"/>
-        </svg>
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
       </div>
       <div class="nav-item" onclick="switchTab(this)">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-          <circle cx="12" cy="7" r="4"/>
-        </svg>
+        <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
       </div>
     </div>
 
-    <!-- Контент -->
     <div class="app-content">
       
       <header class="header">
@@ -245,12 +247,14 @@
           <div class="greeting">Добро пожаловать</div>
           <div class="username" id="username">Игрок</div>
         </div>
-        <div class="avatar">👤</div>
+        <div class="avatar">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </div>
       </header>
 
-      <div class="balance-card glass">
+      <div class="balance-card">
         <div class="card-top">
-          <div class="card-label">Ваш Баланс</div>
+          <div class="card-label">Баланс</div>
           <div class="card-chip"></div>
         </div>
         <div class="balance-amount">
@@ -265,17 +269,23 @@
           <h3>Lucky Spin</h3>
           <p>Крути и забирай x1000</p>
         </div>
-        <div class="promo-icon">🎰</div>
+        <div class="promo-icon">
+          <!-- Иконка рулетки -->
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/><path d="M2 12h20"/></svg>
+        </div>
       </div>
 
       <div class="section-header">
         <div class="section-title">Игры</div>
-        <div class="see-all">Все игры</div>
+        <div class="see-all">Все</div>
       </div>
 
       <div class="games-grid">
-        <div class="game-card glass" onclick="showToast('Запуск слотов...')">
-          <div class="game-icon">🎲</div>
+        <div class="game-card glass" onclick="showToast('Запуск игры Dice...')">
+          <div class="game-icon">
+            <!-- Иконка кубика -->
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><circle cx="15.5" cy="8.5" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="8.5" cy="15.5" r="1.5"/><circle cx="15.5" cy="15.5" r="1.5"/></svg>
+          </div>
           <div class="game-info">
             <div class="game-name">Dice</div>
             <div class="game-desc">Угадай число</div>
@@ -283,7 +293,10 @@
         </div>
         
         <div class="game-card glass" onclick="showToast('Запуск рулетки...')">
-          <div class="game-icon">🎡</div>
+          <div class="game-icon">
+            <!-- Иконка мишени -->
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+          </div>
           <div class="game-info">
             <div class="game-name">Roulette</div>
             <div class="game-desc">Классика</div>
@@ -291,7 +304,10 @@
         </div>
         
         <div class="game-card glass" onclick="showToast('Запуск блэкджека...')">
-          <div class="game-icon">🃏</div>
+          <div class="game-icon">
+            <!-- Иконка карт -->
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="12" height="16" rx="2"/><path d="M6 2h12a2 2 0 0 1 2 2v14"/></svg>
+          </div>
           <div class="game-info">
             <div class="game-name">Blackjack</div>
             <div class="game-desc">21 очко</div>
@@ -299,7 +315,10 @@
         </div>
         
         <div class="game-card glass" onclick="showToast('Запуск краша...')">
-          <div class="game-icon">📈</div>
+          <div class="game-icon">
+            <!-- Иконка графика -->
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          </div>
           <div class="game-info">
             <div class="game-name">Crash</div>
             <div class="game-desc">Успей забрать</div>
@@ -309,74 +328,56 @@
 
     </div>
 
-    <!-- Тост-уведомление -->
     <div class="toast" id="toast">Текст</div>
   </div>
 
   <script>
-    // Инициализация Telegram WebApp
     const tg = window.Telegram?.WebApp;
     if (tg) {
       tg.ready();
       tg.expand();
-      
-      // Если открыто в реальном телеграме, подставим имя игрока
       const user = tg.initDataUnsafe?.user;
       if (user && user.first_name) {
         document.getElementById('username').innerText = user.first_name;
       }
     }
 
-    // Показ уведомлений (Toast)
     let toastTimer;
     function showToast(text) {
       if (tg) tg.HapticFeedback.impactOccurred('light');
-      
       const toast = document.getElementById('toast');
       toast.innerText = text;
       toast.classList.add('show');
-      
       clearTimeout(toastTimer);
-      toastTimer = setTimeout(() => {
-        toast.classList.remove('show');
-      }, 2000);
+      toastTimer = setTimeout(() => toast.classList.remove('show'), 2000);
     }
 
-    // Переключение вкладок меню
     function switchTab(el) {
       if (tg) tg.HapticFeedback.impactOccurred('light');
-      
       document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
       el.classList.add('active');
     }
 
-    // Красивая анимация баланса при загрузке
+    // Анимация баланса
     const balanceEl = document.getElementById('balance-display');
     let start = 0;
     const target = 1250.50;
-    const duration = 1500; // 1.5 секунды
+    const duration = 1500;
     const startTime = performance.now();
 
     function animateBalance(currentTime) {
       const elapsed = currentTime - startTime;
       const progress = Math.min(elapsed / duration, 1);
-      
-      // Ease-out кубическая функция для красоты
       const easeOut = 1 - Math.pow(1 - progress, 3);
       const currentVal = start + (target - start) * easeOut;
       
-      // Форматируем: 1 250.50
       balanceEl.innerText = currentVal.toLocaleString('ru-RU', {
         minimumFractionDigits: 2,
         maximumFractionDigits: 2
       });
 
-      if (progress < 1) {
-        requestAnimationFrame(animateBalance);
-      }
+      if (progress < 1) requestAnimationFrame(animateBalance);
     }
-    
-    // Запускаем анимацию чуть позже, чтобы страница успела прогрузиться
     setTimeout(() => requestAnimationFrame(animateBalance), 300);
   </script>
 </body>
