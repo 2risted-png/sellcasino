@@ -20,6 +20,29 @@ function switchTab(tabId) {
   if (activeTab) activeTab.classList.add('active');
   
   document.querySelector('.app-content').scrollTop = 0;
+
+  // ФИКС: При переходе на вкладку "Игры" всегда показываем список выбора игр
+  if (tabId === 'games') {
+    // Сбрасываем все экраны игр
+    if (document.getElementById('games-play-view')) document.getElementById('games-play-view').style.display = 'none';
+    if (document.getElementById('dice-play-view')) document.getElementById('dice-play-view').style.display = 'none';
+    if (document.getElementById('mines-play-view')) document.getElementById('mines-play-view').style.display = 'none';
+    if (document.getElementById('games-loading-view')) document.getElementById('games-loading-view').style.display = 'none';
+    
+    // Показываем список
+    if (document.getElementById('games-list-view')) document.getElementById('games-list-view').style.display = 'block';
+
+    // Останавливаем активные игры, если они были запущены
+    if (typeof gameState !== 'undefined' && gameState !== 'offline') {
+      if (typeof closeGame === 'function') closeGame();
+    }
+    if (typeof isDiceRolling !== 'undefined' && isDiceRolling) {
+      if (typeof closeDiceGame === 'function') closeDiceGame();
+    }
+    if (typeof isMinesPlaying !== 'undefined' && isMinesPlaying) {
+      if (typeof closeMinesGame === 'function') closeMinesGame();
+    }
+  }
 }
 
 document.querySelectorAll('.nav-item').forEach(item => {
