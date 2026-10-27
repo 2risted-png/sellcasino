@@ -249,3 +249,82 @@ function renderUserChat() {
 
   box.scrollTop = box.scrollHeight;
 }
+
+// ==========================================
+// СИСТЕМА ПОПОЛНЕНИЯ СРЕДСТВ
+// ==========================================
+let currentDepositMethod = null;
+let currentDepositCurrency = null;
+
+function openDepositModal() {
+    haptic('light');
+    document.getElementById('depositModal').style.display = 'flex';
+    backToDepositMethods(); // Всегда начинаем с первого экрана
+}
+
+function closeDepositModal() {
+    haptic('light');
+    document.getElementById('depositModal').style.display = 'none';
+}
+
+function backToDepositMethods() {
+    document.getElementById('deposit-step-1').style.display = 'block';
+    document.getElementById('deposit-step-crypto').style.display = 'none';
+    document.getElementById('deposit-step-amount').style.display = 'none';
+    document.getElementById('deposit-waiting').style.display = 'none';
+}
+
+function selectDepositMethod(method) {
+    haptic('light');
+    currentDepositMethod = method;
+    document.getElementById('deposit-step-1').style.display = 'none';
+
+    if (method === 'crypto') {
+        document.getElementById('deposit-step-crypto').style.display = 'block';
+    } else {
+        // Для карты и СБП сразу просим сумму
+        document.getElementById('deposit-step-amount').style.display = 'block';
+    }
+}
+
+function startDeposit(currency) {
+    haptic('light');
+    currentDepositCurrency = currency;
+    document.getElementById('deposit-step-crypto').style.display = 'none';
+    document.getElementById('deposit-step-amount').style.display = 'block';
+}
+
+function createDepositInvoice() {
+    const amount = parseFloat(document.getElementById('deposit-amount').value);
+    
+    if (!amount || amount < 10) {
+        showToast('⚠️ Минимальная сумма пополнения 10 TON');
+        return;
+    }
+
+    haptic('medium');
+    
+    // Имитация запроса к бэкенду
+    // В реальности здесь будет: 
+    // 1. fetch('/api/deposit', { method: 'POST', body: JSON.stringify({ method: currentDepositMethod, currency: currentDepositCurrency, amount }) })
+    // 2. Бэкенд вернет ссылку на оплату или счет.
+    
+    document.getElementById('deposit-step-amount').style.display = 'none';
+    document.getElementById('deposit-waiting').style.display = 'block';
+
+    // Имитация успешного ответа от бэкенда через 2 секунды
+    setTimeout(() => {
+        // В реальности бэкенд пришлет вебхук, и вы обновите баланс.
+        // Здесь мы просто имитируем зачисление для демонстрации.
+        currentBalance += amount;
+        updateBalanceUI();
+        
+        // Закрываем окно и показываем успех
+        closeDepositModal();
+        showToast(`✅ Баланс пополнен на ${amount.toFixed(2)} TON`);
+        
+        // Сбрасываем поля
+        document.getElementById('deposit-amount').value = '';
+        backToDepositMethods();
+    }, 2500); // Имитация задержки сети
+}
