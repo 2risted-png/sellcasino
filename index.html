@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <title>Neo Casino</title>
+  <title>Casino Sell</title>
   
   <script src="https://cdn.jsdelivr.net/gh/amirsadeghi1/telegram-appbots-desktop@master/telegram-web-app.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -40,7 +40,7 @@
       <div id="tab-home" class="tab-content active">
         <header class="header">
           <div>
-            <div class="greeting">Добро пожаловать</div>
+            <div class="greeting">Добро пожаловать в Casino Sell</div>
             <div class="username" id="username">Игрок</div>
           </div>
           <div class="avatar">
@@ -60,9 +60,13 @@
           <button class="topup-btn" onclick="showToast('🪙 Переход к пополнению...')">Пополнить</button>
         </section>
 
+        <!-- Обновленный Джекпот -->
         <section class="jackpot-card glass" onclick="showToast('🏆 Борьба за джекпот!')">
           <div class="jackpot-label">Общий джекпот</div>
-          <div class="jackpot-amount">15,430.00 <span>TON</span></div>
+          <div class="jackpot-amount">
+            <span class="jackpot-num">15,430.00</span>
+            <span class="jackpot-currency">TON</span>
+          </div>
           <div class="jackpot-glow"></div>
         </section>
 
@@ -84,6 +88,50 @@
             <div class="slot-name">Fruit Classic</div>
           </div>
         </div>
+
+        <!-- НОВЫЙ БЛОК: ОТЗЫВЫ -->
+        <div class="section-header" style="margin-top: 10px;">
+          <h2 class="section-title">Отзывы</h2>
+        </div>
+        <div class="reviews-wrapper">
+          <div class="reviews-track" id="reviewsTrack">
+            
+            <div class="review-card glass">
+              <div class="review-top">
+                <div class="review-user">
+                  <div class="review-avatar">A</div>
+                  <div class="review-name">Alex_99</div>
+                </div>
+                <div class="review-stars">★★★★★</div>
+              </div>
+              <div class="review-text">Вывел первый джекпот! Шок. Пришло за 2 минуты, всё честно. Интерфейс просто космос.</div>
+            </div>
+
+            <div class="review-card glass">
+              <div class="review-top">
+                <div class="review-user">
+                  <div class="review-avatar" style="background: #0d9488;">M</div>
+                  <div class="review-name">MaxCrypto</div>
+                </div>
+                <div class="review-stars">★★★★★</div>
+              </div>
+              <div class="review-text">Играю в Crash каждый вечер. Графика плавная, ничего не лагает. Радует адекватная поддержка.</div>
+            </div>
+
+            <div class="review-card glass">
+              <div class="review-top">
+                <div class="review-user">
+                  <div class="review-avatar" style="background: #2DD4BF; color: #000;">S</div>
+                  <div class="review-name">Satoshi</div>
+                </div>
+                <div class="review-stars">★★★★☆</div>
+              </div>
+              <div class="review-text">Топ слоты реально дают жару. Пока в плюсе на 500 TON. Дизайн приятный, глаза не устают.</div>
+            </div>
+
+          </div>
+        </div>
+
       </div>
 
       <!-- ВКЛАДКА 2: ИГРЫ -->
@@ -161,23 +209,50 @@
         </div>
 
         <div class="section-title" style="margin-top: 10px;">Документы</div>
-        <div class="menu-list glass">
-          <div class="menu-item" onclick="showToast('Открытие: Пользовательское соглашение')">
-            <span>Пользовательское соглашение</span>
-            <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+        
+        <!-- АККОРДЕОН ДОКУМЕНТОВ -->
+        <div class="accordion-list glass">
+          
+          <div class="accordion-item">
+            <div class="accordion-header">
+              <span>Пользовательское соглашение</span>
+              <svg class="chevron" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+            <div class="accordion-content">
+              <p>Настоящее Пользовательское соглашение регулирует отношения между платформой Casino Sell и Пользователем. Используя наш сервис, вы автоматически соглашаетесь с условиями. Игра ведется исключительно на виртуальные средства. Сервис не несет ответственности за возможные финансовые потери.</p>
+            </div>
           </div>
-          <div class="menu-item" onclick="showToast('Открытие: Лицензионное соглашение')">
-            <span>Лицензионное соглашение</span>
-            <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+
+          <div class="accordion-item">
+            <div class="accordion-header">
+              <span>Лицензионное соглашение</span>
+              <svg class="chevron" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+            <div class="accordion-content">
+              <p>Все права на программное обеспечение, графические материалы и алгоритмы принадлежат Casino Sell. Любое копирование, модификация или распространение исходного кода строго запрещены без письменного согласия правообладателя.</p>
+            </div>
           </div>
-          <div class="menu-item" onclick="showToast('Открытие: Правила проекта')">
-            <span>Правила проекта</span>
-            <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+
+          <div class="accordion-item">
+            <div class="accordion-header">
+              <span>Правила проекта</span>
+              <svg class="chevron" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+            <div class="accordion-content">
+              <p>Запрещено использование ботов, скриптов и любых сторонних программ для получения преимущества. При выявлении мошенничества аккаунт блокируется, а средства аннулируются. Администрация оставляет за собой право изменять правила в любое время.</p>
+            </div>
           </div>
-          <div class="menu-item" onclick="showToast('Открытие: Политика оферты')">
-            <span>Политика оферты</span>
-            <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+
+          <div class="accordion-item">
+            <div class="accordion-header">
+              <span>Политика оферты</span>
+              <svg class="chevron" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+            <div class="accordion-content">
+              <p>Пополнение баланса является добровольным действием. Возврат средств за проигранные ставки не предусмотрен. Все транзакции обрабатываются через блокчейн TON и являются необратимыми. В случае технических сбоев, средства возвращаются на баланс.</p>
+            </div>
           </div>
+
         </div>
       </div>
 
