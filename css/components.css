@@ -1,49 +1,33 @@
-/* 
-  ЭФФЕКТ ТЕМНОГО ЖИДКОГО СТЕКЛА 
-  Меньше белого, больше глубины и объема.
-*/
+/* ЭФФЕКТ СВЕТЛОГО ЖИДКОГО СТЕКЛА */
 .glass, 
 .balance-card, 
 .jet-game-container, 
 .admin-content,
 .bottom-nav {
   position: relative;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%);
   backdrop-filter: blur(40px) saturate(180%);
   -webkit-backdrop-filter: blur(40px) saturate(180%);
-  border-top: 1px solid rgba(255, 255, 255, 0.12);
-  border-left: 1px solid rgba(255, 255, 255, 0.06);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.02);
-  border-right: 1px solid rgba(255, 255, 255, 0.05);
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
   box-shadow: 
-    0 24px 48px rgba(0, 0, 0, 0.6), 
-    inset 0 1px 1px rgba(255, 255, 255, 0.15), 
-    inset 0 -1px 1px rgba(0, 0, 0, 0.3);
+    0 20px 40px rgba(0, 0, 0, 0.5), 
+    inset 0 1px 1px rgba(255, 255, 255, 0.25), 
+    inset 0 -1px 1px rgba(0, 0, 0, 0.2);
 }
 
-/* Легкий блик на верхней части стекла */
 .glass::before, 
 .balance-card::before,
 .jet-game-container::before {
   content: '';
   position: absolute;
   top: 0; left: 0; right: 0; height: 30%;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.06) 0%, transparent 100%);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.1) 0%, transparent 100%);
   border-radius: inherit;
   pointer-events: none;
   z-index: 0;
-}
-
-/* ПАРЯЩИЕ КАРТОЧКИ (ДИНАМИКА) */
-.balance-card, .jackpot-card, .game-widget {
-  animation: floatCard 5s ease-in-out infinite alternate;
-}
-.game-widget { animation-delay: -2s; }
-.jackpot-card { animation-delay: -1s; }
-
-@keyframes floatCard {
-  0% { transform: translateY(0); }
-  100% { transform: translateY(-4px); }
 }
 
 .balance-card {
@@ -51,50 +35,59 @@
   padding: 20px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 16px;
   color: var(--text-main);
   overflow: hidden;
 }
 
 .card-top { display: flex; justify-content: space-between; align-items: flex-start; position: relative; z-index: 1; flex-shrink: 0; }
-.card-label { font-size: 12px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; font-weight: 600; text-shadow: 0 1px 2px rgba(0,0,0,0.8); }
+.card-label { font-size: 12px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; font-weight: 600; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
 .card-chip {
   width: 34px; height: 24px; border-radius: 6px; flex-shrink: 0;
-  background: linear-gradient(135deg, #555 0%, #222 50%, #444 100%); /* Темный чип */
-  position: relative; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.8);
+  background: linear-gradient(135deg, #888 0%, #333 50%, #666 100%);
+  position: relative; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.5);
 }
-.card-chip::after { content: ''; position: absolute; top: 50%; left: 0; right: 0; height: 1px; background: rgba(0,0,0,0.6); }
+.card-chip::after { content: ''; position: absolute; top: 50%; left: 0; right: 0; height: 1px; background: rgba(0,0,0,0.4); }
 
 .balance-amount { 
   font-size: 34px; font-weight: 800; letter-spacing: -1px; 
   display: flex; align-items: baseline; gap: 6px; color: #fff; 
   position: relative; z-index: 1; line-height: 1.1; flex-shrink: 0;
-  text-shadow: 0 2px 15px rgba(0,0,0,0.6);
+  text-shadow: 0 2px 10px rgba(0,0,0,0.4);
 }
-.currency { font-size: 15px; color: var(--turquoise); font-weight: 700; text-shadow: 0 0 15px var(--turquoise-glow); }
+.currency { font-size: 15px; color: var(--turquoise); font-weight: 700; text-shadow: 0 0 10px var(--turquoise-glow); }
 
-/* Кнопка пополнения (динамичная) */
-.topup-btn {
-  width: 100%; 
+/* БЛОК С КНОПКАМИ (Пополнить и Вывести) */
+.balance-actions {
+  display: flex;
+  gap: 10px;
+  position: relative;
+  z-index: 1;
+}
+
+.topup-btn, .withdraw-btn {
+  flex: 1;
   min-height: 46px;
   padding: 10px 16px; 
   border-radius: 14px;
-  background: rgba(255, 255, 255, 0.8); 
-  color: #000; 
-  border: none; 
   font-size: 14px; 
   font-weight: 700;
   cursor: pointer; 
   transition: all 0.2s ease; 
-  position: relative; 
-  z-index: 1;
   display: flex; 
   justify-content: center; 
   align-items: center;
-  flex-shrink: 0;
+  line-height: 1;
+}
+
+/* Кнопка пополнить (белая) */
+.topup-btn {
+  background: rgba(255, 255, 255, 0.9); 
+  color: #000; 
+  border: none; 
+  position: relative;
   overflow: hidden;
 }
-/* Эффект переливания на кнопке */
 .topup-btn::after {
   content: '';
   position: absolute;
@@ -103,12 +96,22 @@
   transform: rotate(45deg);
   animation: shineBtn 3s infinite;
 }
-@keyframes shineBtn {
-  0% { transform: translateX(-100%) rotate(45deg); }
-  20% { transform: translateX(100%) rotate(45deg); }
-  100% { transform: translateX(100%) rotate(45deg); }
-}
+@keyframes shineBtn { 0% { transform: translateX(-100%) rotate(45deg); } 20% { transform: translateX(100%) rotate(45deg); } 100% { transform: translateX(100%) rotate(45deg); } }
 .topup-btn:active { transform: scale(0.96); background: #ccc; }
+
+/* Кнопка вывести (стеклянная с бирюзовым акцентом) */
+.withdraw-btn {
+  background: rgba(45, 212, 191, 0.15);
+  border: 1px solid rgba(45, 212, 191, 0.3);
+  color: #fff;
+  box-shadow: inset 0 1px 2px rgba(255,255,255,0.1);
+}
+.withdraw-btn svg {
+  width: 18px; height: 18px;
+  margin-right: 6px;
+  stroke: var(--turquoise);
+}
+.withdraw-btn:active { transform: scale(0.96); background: rgba(45, 212, 191, 0.25); }
 
 /* Нижнее меню */
 .bottom-nav {
@@ -152,61 +155,6 @@
   white-space: nowrap; 
 }
 .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
-
-/* ДЖЕКПОТ */
-.jackpot-card {
-  padding: 16px;
-  text-align: center;
-  border-radius: 20px;
-  cursor: pointer;
-}
-.jackpot-card:active { transform: scale(0.97); }
-.jackpot-label {
-  font-size: 11px;
-  color: var(--text-dim);
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  margin-bottom: 4px;
-  font-weight: 600;
-  position: relative; z-index: 1;
-}
-.jackpot-amount {
-  display: flex;
-  align-items: baseline;
-  justify-content: center;
-  gap: 4px;
-  position: relative; z-index: 1;
-}
-.jackpot-num {
-  font-size: 26px;
-  font-weight: 800;
-  color: #fff;
-  letter-spacing: -1px;
-  text-shadow: 0 2px 10px rgba(0,0,0,0.8);
-}
-.jackpot-currency {
-  font-size: 12px;
-  color: var(--turquoise);
-  font-weight: 700;
-}
-.jackpot-glow {
-  position: absolute;
-  bottom: -20px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 120px;
-  height: 40px;
-  background: var(--turquoise);
-  filter: blur(40px);
-  opacity: 0.3;
-  pointer-events: none;
-  z-index: 0;
-  animation: pulseGlow 2s infinite alternate;
-}
-@keyframes pulseGlow {
-  0% { opacity: 0.2; transform: translateX(-50%) scale(1); }
-  100% { opacity: 0.5; transform: translateX(-50%) scale(1.2); }
-}
 
 /* ПРОФИЛЬ И ОТЗЫВЫ */
 .profile-balance {
@@ -319,10 +267,10 @@
   padding: 16px; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: background 0.2s; 
   border-radius: 20px; width: 100%;
 }
-.game-widget:active { background: rgba(255, 255, 255, 0.08); }
+.game-widget:active { background: rgba(255, 255, 255, 0.1); }
 .game-widget-icon { width: 50px; height: 50px; border-radius: 14px; background: rgba(45, 212, 191, 0.15); display: flex; justify-content: center; align-items: center; font-size: 24px; flex-shrink: 0; position: relative; z-index: 1; box-shadow: inset 0 1px 3px rgba(255,255,255,0.1); }
 .game-widget-info { flex: 1; text-align: left; position: relative; z-index: 1; }
-.game-widget-title { font-size: 16px; font-weight: 800; color: #fff; margin-bottom: 2px; text-shadow: 0 2px 5px rgba(0,0,0,0.8); }
+.game-widget-title { font-size: 16px; font-weight: 800; color: #fff; margin-bottom: 2px; text-shadow: 0 2px 5px rgba(0,0,0,0.5); }
 .game-widget-desc { font-size: 12px; color: var(--text-dim); }
 .game-widget-arrow { width: 20px; height: 20px; flex-shrink: 0; display: flex; justify-content: center; align-items: center; position: relative; z-index: 1; }
 .game-widget-arrow svg { width: 100%; height: 100%; stroke: var(--turquoise); fill: none; stroke-width: 2; }
@@ -369,8 +317,8 @@
   min-height: 140px;
   width: 100%;
   border-radius: 16px;
-  background: rgba(0, 0, 0, 0.3); /* Более темное стекло */
-  box-shadow: inset 0 4px 15px rgba(0,0,0,0.6), inset 0 1px 1px rgba(255,255,255,0.05);
+  background: rgba(0, 0, 0, 0.2); 
+  box-shadow: inset 0 4px 15px rgba(0,0,0,0.5), inset 0 1px 1px rgba(255,255,255,0.05);
   margin-bottom: 10px;
 }
 
@@ -413,8 +361,7 @@
   color: #fff; 
   letter-spacing: -2px; 
   font-variant-numeric: tabular-nums; 
-  text-shadow: 0 4px 20px rgba(0,0,0,0.9), 0 0 15px rgba(255,255,255,0.1);
-  /* Пульсация текста при полете */
+  text-shadow: 0 4px 20px rgba(0,0,0,0.8), 0 0 15px rgba(255,255,255,0.1);
   animation: textPulse 1s infinite alternate;
 }
 @keyframes textPulse {
@@ -462,7 +409,7 @@
 .history-pill.win { background: rgba(45, 212, 191, 0.15); color: var(--turquoise); border-color: rgba(45, 212, 191, 0.3); }
 .history-pill.loss { background: rgba(248, 113, 113, 0.15); color: #F87171; border-color: rgba(248, 113, 113, 0.3); }
 
-.live-bets-container { background: rgba(0,0,0,0.3); border-radius: 14px; padding: 10px; margin-bottom: 12px; height: 70px; display: flex; flex-direction: column; flex-shrink: 0; box-shadow: inset 0 3px 8px rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.03); }
+.live-bets-container { background: rgba(0,0,0,0.2); border-radius: 14px; padding: 10px; margin-bottom: 12px; height: 70px; display: flex; flex-direction: column; flex-shrink: 0; box-shadow: inset 0 3px 8px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.03); }
 .live-bets-header { font-size: 11px; color: var(--text-dim); font-weight: 600; margin-bottom: 6px; display: flex; justify-content: space-between; }
 .live-bets-header span { color: var(--turquoise); }
 .live-bets-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 4px; }
@@ -485,13 +432,13 @@
 .jet-input-group { 
   display: flex; 
   align-items: center; 
-  background: rgba(0,0,0,0.4); 
-  border: 1px solid rgba(255,255,255,0.05); 
+  background: rgba(0,0,0,0.3); 
+  border: 1px solid rgba(255,255,255,0.08); 
   border-radius: 14px; 
   padding: 8px 12px; 
   position: relative; 
   transition: all 0.3s; 
-  box-shadow: inset 0 3px 6px rgba(0,0,0,0.5);
+  box-shadow: inset 0 3px 6px rgba(0,0,0,0.4);
 }
 .jet-input-group.disabled { opacity: 0.4; pointer-events: none; }
 .jet-currency { font-size: 12px; color: var(--turquoise); font-weight: 700; margin-right: 8px; }
@@ -520,7 +467,6 @@
   position: relative;
   overflow: hidden;
 }
-/* Блик для объема */
 .jet-action-btn::before {
   content: ''; position: absolute; top: 0; left: 0; right: 0; height: 50%;
   background: linear-gradient(180deg, rgba(255,255,255,0.2), transparent);
@@ -528,8 +474,8 @@
 }
 .jet-action-btn:active { transform: scale(0.97); }
 
-.jet-action-btn.waiting { background: linear-gradient(180deg, #2DD4BF, #14b8a6); color: #000; box-shadow: 0 8px 25px rgba(45, 212, 191, 0.3); }
-.jet-action-btn.cashout { background: linear-gradient(180deg, #FBBF24, #F59E0B); color: #000; box-shadow: 0 8px 25px rgba(251, 191, 36, 0.3); }
+.jet-action-btn.waiting { background: linear-gradient(180deg, #2DD4BF, #14b8a6); color: #000; box-shadow: 0 8px 25px rgba(45, 212, 191, 0.4); }
+.jet-action-btn.cashout { background: linear-gradient(180deg, #FBBF24, #F59E0B); color: #000; box-shadow: 0 8px 25px rgba(251, 191, 36, 0.4); }
 .jet-action-btn.crashed { background: linear-gradient(180deg, #F87171, #EF4444); color: #fff; box-shadow: none; pointer-events: none; }
 .jet-action-btn.cashed-out { background: rgba(255,255,255,0.08); color: var(--text-dim); box-shadow: none; pointer-events: none; border-color: transparent; }
 .jet-action-btn.cashed-out::before { display: none; }
@@ -538,12 +484,12 @@
 .jet-action-btn > * { position: relative; z-index: 1; }
 
 /* =========================================
-   АДМИН ПАНЕЛЬ (Стеклянная, темная)
+   АДМИН ПАНЕЛЬ
    ========================================= */
 .admin-login-btn { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1); color: var(--text-main); padding: 6px 12px; border-radius: 10px; font-size: 12px; font-weight: 600; cursor: pointer; transition: 0.2s; }
 .admin-login-btn:active { transform: scale(0.95); }
 
-.admin-panel { position: absolute; top: 0; left: 0; right: 0; bottom: 0; width: 100%; height: 100%; z-index: 99999; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(15px); display: flex; justify-content: center; align-items: center; opacity: 0; visibility: hidden; transition: all 0.3s ease; }
+.admin-panel { position: absolute; top: 0; left: 0; right: 0; bottom: 0; width: 100%; height: 100%; z-index: 99999; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(15px); display: flex; justify-content: center; align-items: center; opacity: 0; visibility: hidden; transition: all 0.3s ease; }
 .admin-panel.active { opacity: 1; visibility: visible; }
 
 .admin-content { 
@@ -565,7 +511,7 @@
 .admin-header h2 { font-size: 18px; color: #fff; }
 .close-btn { background: rgba(255,255,255,0.08); border: none; color: #fff; width: 28px; height: 28px; border-radius: 50%; cursor: pointer; display: flex; justify-content: center; align-items: center; font-size: 12px; }
 
-.admin-tabs { display: flex; gap: 6px; margin-bottom: 12px; flex-shrink: 0; background: rgba(0,0,0,0.4); padding: 4px; border-radius: 12px; }
+.admin-tabs { display: flex; gap: 6px; margin-bottom: 12px; flex-shrink: 0; background: rgba(0,0,0,0.3); padding: 4px; border-radius: 12px; }
 .admin-tab { flex: 1; padding: 8px 4px; background: transparent; border: none; border-radius: 8px; color: var(--text-dim); font-weight: 600; font-size: 12px; cursor: pointer; transition: 0.2s; }
 .admin-tab.active { background: rgba(255,255,255,0.1); color: #fff; }
 
