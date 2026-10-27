@@ -23,6 +23,7 @@ const API_URL = 'https://casino-api.vercel-coder.workers.dev';
 
 // Функция загрузки баланса с сервера
 async function fetchUserBalance() {
+  console.log("Проверка initData:", tg ? tg.initData : "tg объекта нет");
     if (!tg || !tg.initData) {
         console.warn('Не в Telegram, баланс не загружен');
         return;
