@@ -1,10 +1,12 @@
 :root {
-  --bg-dark: #000000;
-  --bg-app: #09090b;
-  --text-main: #FFFFFF;
-  --text-dim: #A1A1AA;
+  --bg-dark: #030305;
+  --bg-app: #08080a;
+  /* Текст сделали чуть приглушенным, чтобы не слепил */
+  --text-main: #E2E2E5; 
+  --text-dim: #7A7A82;
   --turquoise: #2DD4BF;
-  --turquoise-glow: rgba(45, 212, 191, 0.4);
+  /* Свечение стало мягче */
+  --turquoise-glow: rgba(45, 212, 191, 0.25);
   --glass-bg: rgba(255, 255, 255, 0.03);
-  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-border: rgba(255, 255, 255, 0.06);
 }
