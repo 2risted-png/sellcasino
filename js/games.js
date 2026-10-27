@@ -50,6 +50,73 @@ function generateCrashPoint() {
 }
 
 // ==========================================
+// УПРАВЛЕНИЕ ГРАФИКОМ
+// ==========================================
+const graphLine = document.getElementById('graph-line');
+const graphFill = document.getElementById('graph-fill');
+const graphDot = document.getElementById('graph-dot');
+
+function resetGraph() {
+  if (graphLine) graphLine.setAttribute('d', '');
+  if (graphFill) graphFill.setAttribute('d', '');
+  if (graphDot) {
+    graphDot.setAttribute('cx', 0);
+    graphDot.setAttribute('cy', 150);
+    graphDot.style.opacity = '0';
+  }
+}
+
+function updateGraph(elapsed) {
+  if (!graphLine || !graphFill || !graphDot) return;
+  
+  graphDot.style.opacity = '1';
+
+  // Ограничиваем график, чтобы он не улетал за пределы экрана
+  const maxX = 290;
+  const maxY = 10;
+
+  // X растет линейно со временем (движение вправо)
+  let x = Math.min(maxX, 10 + elapsed * 25);
+  
+  // Y вычисляется на основе текущего множителя. 
+  // Логарифмическая шкала делает график красивым.
+  let y = 150 - (Math.log(currentMultiplier) * 45);
+  
+  if (y < maxY) y = maxY; // Не даем улететь выше верхней границы
+
+  // Строим кривую Безье для эффекта "горки"
+  // Начальная точка: 0,150. Контрольная точка: (x/2, 150). Конечная: (x, y)
+  const pathD = `M 0 150 Q ${x * 0.6} 150, ${x} ${y}`;
+  
+  graphLine.setAttribute('d', pathD);
+  
+  // Заливка под графиком (добавляем линию вниз и замыкаем)
+  const fillD = `${pathD} L ${x} 150 L 0 150 Z`;
+  graphFill.setAttribute('d', fillD);
+
+  // Двигаем светящуюся точку в конец графика
+  graphDot.setAttribute('cx', x);
+  graphDot.setAttribute('cy', y);
+}
+
+function colorGraphRed() {
+  if (!graphLine) return;
+  graphLine.setAttribute('stroke', '#F87171');
+  graphFill.setAttribute('fill', 'rgba(248, 113, 113, 0.1)');
+  graphDot.setAttribute('fill', '#F87171');
+  graphDot.setAttribute('filter', 'drop-shadow(0 0 8px rgba(248, 113, 113, 0.8))');
+}
+
+function colorGraphDefault() {
+  if (!graphLine) return;
+  graphLine.setAttribute('stroke', 'url(#line-gradient)');
+  graphFill.setAttribute('fill', 'url(#graph-gradient)');
+  graphDot.setAttribute('fill', '#fff');
+  graphDot.setAttribute('filter', 'drop-shadow(0 0 6px #2DD4BF)');
+}
+
+
+// ==========================================
 // УПРАВЛЕНИЕ РАУНДАМИ
 // ==========================================
 function startWaitingPhase() {
@@ -78,22 +145,17 @@ function startWaitingPhase() {
   actionBtn.innerText = 'СДЕЛАТЬ СТАВКУ';
   
   if (inputGroup) inputGroup.classList.remove('disabled');
-  // Разблокируем поля ввода для новой ставки
   if (betInput) betInput.disabled = false;
   if (autoInput) autoInput.disabled = false;
-  
-  const jetIcon = document.getElementById('jet-icon');
-  if (jetIcon) {
-    jetIcon.style.opacity = '1';
-    jetIcon.style.left = '10%';
-    jetIcon.style.transform = 'translateY(0) scale(1) rotate(0deg)';
-  }
   
   const jetGlow = document.getElementById('jet-glow');
   if (jetGlow) {
     jetGlow.style.opacity = '0.1';
     jetGlow.style.background = 'var(--turquoise)';
   }
+
+  resetGraph();
+  colorGraphDefault();
 
   startLiveBetsSimulation();
 
@@ -153,7 +215,6 @@ function loop() {
 
   const multiplierDisplay = document.getElementById('game-multiplier');
   const jetGlow = document.getElementById('jet-glow');
-  const jetIcon = document.getElementById('jet-icon');
 
   if (multiplierDisplay) {
     multiplierDisplay.innerText = currentMultiplier.toFixed(2) + 'x';
@@ -173,13 +234,8 @@ function loop() {
     jetGlow.style.transform = `scale(${1 + currentMultiplier * 0.1})`;
   }
   
-  if (jetIcon) {
-    const planeLeft = 10 + (elapsed * 2) + Math.pow(elapsed, 1.8) * 2;
-    if (planeLeft < 90) {
-      jetIcon.style.left = planeLeft + '%';
-    }
-    jetIcon.style.transform = `translateY(${Math.sin(elapsed * 5) * 10}px) scale(${1 + currentMultiplier * 0.01}) rotate(${currentMultiplier * 1.5}deg)`;
-  }
+  // ОБНОВЛЯЕМ ГРАФИК
+  updateGraph(elapsed);
 
   if (playerBet.active && !playerBet.cashedOut) {
     if (playerBet.autoCashout > 0 && currentMultiplier >= playerBet.autoCashout) {
@@ -211,9 +267,10 @@ function endRoundCrash() {
     crashedText.innerText = `УЛЕТЕЛ!`;
   }
   
-  const jetIcon = document.getElementById('jet-icon');
+  // КРАСИМ ГРАФИК В КРАСНЫЙ
+  colorGraphRed();
+
   const jetGlow = document.getElementById('jet-glow');
-  if (jetIcon) jetIcon.style.opacity = '0';
   if (jetGlow) jetGlow.style.opacity = '0';
   
   if (playerBet.active && !playerBet.cashedOut) {
@@ -241,7 +298,7 @@ function endRoundCrash() {
 // ДЕЙСТВИЯ ИГРОКА
 // ==========================================
 function setBet(amount) {
-  if (gameState !== 'waiting' || playerBet.active) return; // Блокируем, если уже есть ставка
+  if (gameState !== 'waiting' || playerBet.active) return; 
   haptic('light');
   
   let betAmount = 10;
@@ -264,7 +321,6 @@ function handleGameAction() {
 }
 
 function placeBet() {
-  // ГЛАВНАЯ ЗАЩИТА: Если ставка уже сделана, выходим из функции
   if (playerBet.active) return;
 
   const betInput = document.getElementById('bet-amount');
@@ -298,7 +354,6 @@ function placeBet() {
     actionBtn.innerText = 'СТАВКА ПРИНЯТА!';
   }
   
-  // Блокируем поля ввода
   betInput.disabled = true;
   if (autoInput) autoInput.disabled = true;
   
@@ -335,7 +390,6 @@ function addPlayerToLiveList(name, bet) {
   const list = document.getElementById('live-bets-list');
   if (!list) return;
   
-  // Удаляем старую ставку игрока, если она есть (чтобы не дублировалась)
   const oldBet = document.getElementById('player-bet');
   if (oldBet) oldBet.remove();
 
