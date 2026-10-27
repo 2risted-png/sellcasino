@@ -300,6 +300,21 @@ function handlePlayerCashout(isAuto) {
   playerBet.cashedOut = true;
   const winAmount = playerBet.amount * currentMultiplier;
   currentBalance += winAmount;
+    // Функция для обновления баланса на сервере (добавь в games.js)
+async function updateBalanceOnServer(newBalance) {
+    const tg = window.Telegram?.WebApp;
+    if (!tg || !tg.initData) return;
+
+    try {
+        await fetch(`${API_URL}/api/update-balance`, { // Этот эндпоинт нужно создать на сервере
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ initData: tg.initData, balance: newBalance })
+        });
+    } catch (err) {
+        console.error('Ошибка обновления баланса:', err);
+    }
+}
   updateBalanceUI();
   if (!isAuto) haptic('heavy');
 
