@@ -76,8 +76,6 @@
           <div class="jackpot-glow"></div>
         </section>
 
-        <!-- Блок Топ Слоты удален -->
-
         <div class="section-header" style="margin-top: 10px;">
           <h2 class="section-title">Отзывы</h2>
         </div>
@@ -86,7 +84,7 @@
         </div>
       </div>
 
-      <!-- ВКЛАДКА 2: ИГРЫ (СПИСОК И ЗАГРУЗКА) -->
+      <!-- ВКЛАДКА 2: ИГРЫ -->
       <div id="tab-games" class="tab-content">
         
         <!-- Экран 1: Список игр -->
@@ -95,8 +93,7 @@
             <div class="username">Выбор игры</div>
           </header>
           
-          <!-- Виджет EIGHT JET -->
-          <div class="game-widget glass" onclick="startGameLoading()">
+          <div class="game-widget glass" id="widget-eight-jet">
             <div class="game-widget-icon">✈️</div>
             <div class="game-widget-info">
               <div class="game-widget-title">EIGHT JET</div>
@@ -108,21 +105,26 @@
           </div>
         </div>
 
-        <!-- Экран 2: Загрузка игры -->
-        <div id="games-loading-view" style="display: none; height: 100%; flex-direction: column; justify-content: center; align-items: center;">
+        <!-- Экран 2: Загрузка -->
+        <div id="games-loading-view" style="display: none; height: 80%; flex-direction: column; justify-content: center; align-items: center;">
           <div class="game-loader-plane">✈️</div>
-          <div class="game-loader-text">Загрузка EIGHT JET...</div>
+          <div class="game-loader-text">Подключение к серверу...</div>
         </div>
 
         <!-- Экран 3: Сама игра -->
         <div id="games-play-view" style="display: none;">
           
           <div class="game-header">
-            <button class="game-back-btn" onclick="closeGame()">
+            <button class="game-back-btn" id="game-back-btn">
               <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
             </button>
             <div class="username">EIGHT JET</div>
             <div class="game-balance"><span id="game-balance-display">1250.50</span> TON</div>
+          </div>
+
+          <!-- История полетов -->
+          <div class="flight-history" id="flight-history">
+            <!-- Заполняется через JS -->
           </div>
 
           <div class="jet-game-container glass">
@@ -131,6 +133,14 @@
               <div class="jet-multiplier" id="game-multiplier">1.00x</div>
               <div class="jet-icon" id="jet-icon">✈️</div>
               <div class="jet-crashed-text" id="jet-crashed-text">УЛЕТЕЛ!</div>
+            </div>
+
+            <!-- Онлайн игроки -->
+            <div class="live-bets-container">
+              <div class="live-bets-header">Онлайн ставки <span id="online-count">0</span></div>
+              <div class="live-bets-list" id="live-bets-list">
+                <!-- Заполняется через JS -->
+              </div>
             </div>
 
             <div class="jet-controls">
@@ -145,7 +155,7 @@
                 </div>
               </div>
               
-              <button class="jet-action-btn" id="jet-action-btn" onclick="handleGameAction()">СДЕЛАТЬ СТАВКУ</button>
+              <button class="jet-action-btn" id="jet-action-btn">СДЕЛАТЬ СТАВКУ</button>
             </div>
           </div>
 
@@ -190,43 +200,20 @@
         
         <div class="accordion-list glass">
           <div class="accordion-item">
-            <div class="accordion-header">
-              <span>Пользовательское соглашение</span>
-              <svg class="chevron" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
-            </div>
-            <div class="accordion-content">
-              <p>Настоящее Пользовательское соглашение регулирует отношения между платформой Casino Sell и Пользователем. Используя наш сервис, вы автоматически соглашаетесь с условиями. Игра ведется исключительно на виртуальные средства. Сервис не несет ответственности за возможные финансовые потери.</p>
-            </div>
+            <div class="accordion-header"><span>Пользовательское соглашение</span><svg class="chevron" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
+            <div class="accordion-content"><p>Настоящее Пользовательское соглашение регулирует отношения между платформой Casino Sell и Пользователем. Используя наш сервис, вы автоматически соглашаетесь с условиями. Игра ведется исключительно на виртуальные средства. Сервис не несет ответственности за возможные финансовые потери.</p></div>
           </div>
-
           <div class="accordion-item">
-            <div class="accordion-header">
-              <span>Лицензионное соглашение</span>
-              <svg class="chevron" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
-            </div>
-            <div class="accordion-content">
-              <p>Все права на программное обеспечение, графические материалы и алгоритмы принадлежат Casino Sell. Любое копирование, модификация или распространение исходного кода строго запрещены без письменного согласия правообладателя.</p>
-            </div>
+            <div class="accordion-header"><span>Лицензионное соглашение</span><svg class="chevron" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
+            <div class="accordion-content"><p>Все права на программное обеспечение, графические материалы и алгоритмы принадлежат Casino Sell. Любое копирование, модификация или распространение исходного кода строго запрещены без письменного согласия правообладателя.</p></div>
           </div>
-
           <div class="accordion-item">
-            <div class="accordion-header">
-              <span>Правила проекта</span>
-              <svg class="chevron" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
-            </div>
-            <div class="accordion-content">
-              <p>Запрещено использование ботов, скриптов и любых сторонних программ для получения преимущества. При выявлении мошенничества аккаунт блокируется, а средства аннулируются. Администрация оставляет за собой право изменять правила в любое время.</p>
-            </div>
+            <div class="accordion-header"><span>Правила проекта</span><svg class="chevron" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
+            <div class="accordion-content"><p>Запрещено использование ботов, скриптов и любых сторонних программ для получения преимущества. При выявлении мошенничества аккаунт блокируется, а средства аннулируются. Администрация оставляет за собой право изменять правила в любое время.</p></div>
           </div>
-
           <div class="accordion-item">
-            <div class="accordion-header">
-              <span>Политика оферты</span>
-              <svg viewBox="0 0 24 24" class="chevron"><polyline points="9 18 15 12 9 6"/></svg>
-            </div>
-            <div class="accordion-content">
-              <p>Пополнение баланса является добровольным действием. Возврат средств за проигранные ставки не предусмотрен. Все транзакции обрабатываются через блокчейн TON и являются необратимыми. В случае технических сбоев, средства возвращаются на баланс.</p>
-            </div>
+            <div class="accordion-header"><span>Политика оферты</span><svg class="chevron" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
+            <div class="accordion-content"><p>Пополнение баланса является добровольным действием. Возврат средств за проигранные ставки не предусмотрен. Все транзакции обрабатываются через блокчейн TON и являются необратимыми.</p></div>
           </div>
         </div>
       </div>
@@ -235,7 +222,7 @@
 
     <div class="toast" id="toast"></div>
 
-    <!-- АДМИН ПАНЕЛЬ -->
+    <!-- АДМИН ПАНЕЛЬ (ОСТАЕТСЯ БЕЗ ИЗМЕНЕНИЙ) -->
     <div class="admin-panel" id="adminPanel">
       <div class="admin-content glass">
         <div class="admin-login-view" id="adminLoginView">
@@ -245,49 +232,38 @@
           <button class="admin-save-btn" onclick="loginAdmin()" style="margin-top: 15px;">Войти</button>
           <button class="close-btn-text" onclick="toggleAdminPanel()">Отмена</button>
         </div>
-
         <div class="admin-main-view" id="adminMainView" style="display: none;">
           <div class="admin-header">
             <h2>Админ-панель</h2>
             <button class="close-btn" onclick="toggleAdminPanel()">✕</button>
           </div>
-          
           <div class="admin-tabs">
             <button class="admin-tab active" onclick="switchAdminTab('settings', this)">Настройки</button>
             <button class="admin-tab" onclick="switchAdminTab('stats', this)">Статистика</button>
             <button class="admin-tab" onclick="switchAdminTab('reviews', this)">Отзывы</button>
           </div>
-
           <div class="admin-scroll-area">
             <div id="admin-settings" class="admin-section active">
-              <label>Название проекта</label>
-              <input type="text" id="admin-app-name" placeholder="Casino Sell">
-              <label>Общий джекпот</label>
-              <input type="text" id="admin-jackpot" placeholder="15,430.00">
+              <label>Название проекта</label><input type="text" id="admin-app-name">
+              <label>Общий джекпот</label><input type="text" id="admin-jackpot">
               <button class="admin-save-btn" onclick="saveAdminSettings()">Сохранить настройки</button>
             </div>
-
             <div id="admin-stats" class="admin-section">
-              <label>Кол-во игроков</label>
-              <input type="text" id="admin-players" placeholder="1,245">
-              <label>Сумма выводов (TON)</label>
-              <input type="text" id="admin-withdraws" placeholder="50,000">
-              <label>RTP проекта (%)</label>
-              <input type="text" id="admin-rtp" placeholder="96.5">
+              <label>Кол-во игроков</label><input type="text" id="admin-players">
+              <label>Сумма выводов (TON)</label><input type="text" id="admin-withdraws">
+              <label>RTP проекта (%)</label><input type="text" id="admin-rtp">
               <button class="admin-save-btn" onclick="saveAdminSettings()">Сохранить статистику</button>
             </div>
-
             <div id="admin-reviews" class="admin-section">
               <div class="admin-reviews-list" id="admin-reviews-list"></div>
               <hr style="border-color: rgba(255,255,255,0.1); margin: 15px 0;">
               <label>Новый отзыв</label>
-              <input type="text" id="review-name" placeholder="Имя игрока">
-              <textarea id="review-text" placeholder="Текст отзыва" rows="3"></textarea>
-              <button class="admin-save-btn" onclick="addReview()">Добавить отзыв</button>
+              <input type="text" id="review-name" placeholder="Имя">
+              <textarea id="review-text" placeholder="Текст" rows="2"></textarea>
+              <button class="admin-save-btn" onclick="addReview()">Добавить</button>
             </div>
           </div>
-          
-          <button class="logout-btn" onclick="logoutAdmin()">Выйти из аккаунта</button>
+          <button class="logout-btn" onclick="logoutAdmin()">Выйти</button>
         </div>
       </div>
     </div>
