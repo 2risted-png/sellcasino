@@ -1,4 +1,4 @@
-let currentBalance = 1250.50;
+let currentBalance = 0;
 
 function updateBalanceUI() {
   const formatted = currentBalance.toLocaleString('ru-RU', {
