@@ -16,7 +16,7 @@
 }
 .avatar svg { width: 20px; height: 20px; stroke: #fff; fill: none; stroke-width: 2; }
 
-/* КАРТА БАЛАНСА (Починена) */
+/* КАРТА БАЛАНСА */
 .balance-card {
   padding: 24px; 
   position: relative; 
@@ -39,7 +39,7 @@
 }
 @keyframes shine { 0% { left: -100%; } 20% { left: 200%; } 100% { left: 200%; } }
 
-.card-top { display: flex; justify-content: space-between; align-items: flex-start; position: relative; z-index: 1; }
+.card-top { display: flex; justify-content: space-between; align-items: flex-start; position: relative; z-index: 1; flex-shrink: 0; }
 .card-label { font-size: 12px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
 .card-chip {
   width: 36px; height: 26px; border-radius: 6px; flex-shrink: 0;
@@ -51,16 +51,31 @@
 .balance-amount { 
   font-size: 40px; font-weight: 800; letter-spacing: -1.5px; 
   display: flex; align-items: baseline; gap: 8px; color: #fff; 
-  position: relative; z-index: 1; line-height: 1; /* Фикс высоты строки */
+  position: relative; z-index: 1; line-height: 1.2; flex-shrink: 0; /* Фикс обрезки текста */
 }
 .currency { font-size: 16px; color: var(--turquoise); font-weight: 700; text-shadow: 0 0 10px var(--turquoise-glow); }
 
+/* КНОПКА ПОПОЛНИТЬ (Тотальный фикс) */
 .topup-btn {
-  width: 100%; padding: 16px; border-radius: 16px;
-  background: #fff; color: #000; border: none; font-size: 15px; font-weight: 700;
-  cursor: pointer; transition: all 0.2s ease; position: relative; z-index: 1;
+  width: 100%; 
+  min-height: 54px; /* Жестко задаем минимальную высоту */
+  padding: 14px 16px; 
+  border-radius: 16px;
+  background: #fff; 
+  color: #000; 
+  border: none; 
+  font-size: 15px; 
+  font-weight: 700;
+  cursor: pointer; 
+  transition: all 0.2s ease; 
+  position: relative; 
+  z-index: 1;
   animation: btnPulse 2s infinite;
-  display: flex; justify-content: center; align-items: center;
+  display: flex; 
+  justify-content: center; 
+  align-items: center;
+  flex-shrink: 0; /* Запрещаем сплющивать кнопку */
+  line-height: 1; /* Убираем лишние отступы текста */
 }
 .topup-btn:active { transform: scale(0.96); animation: none; background: #e0e0e0; }
 @keyframes btnPulse { 0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.2); } 70% { box-shadow: 0 0 0 10px rgba(255, 255, 255, 0); } }
@@ -112,7 +127,7 @@
 /* НИЖНЕЕ МЕНЮ */
 .bottom-nav {
   position: absolute; 
-  bottom: calc(24px + env(safe-area-inset-bottom, 0px)); /* Отступ для iPhone */
+  bottom: calc(24px + env(safe-area-inset-bottom, 0px)); 
   left: 50%; transform: translateX(-50%);
   width: calc(100% - 40px); height: 72px;
   display: flex; justify-content: space-around; align-items: center;
@@ -136,15 +151,15 @@
 }
 @keyframes popIn { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
 
-/* ТОСТ (Исправлено положение, чтобы не наезжал на шапку) */
+/* ТОСТ */
 .toast {
   position: absolute; 
-  top: 80px; /* Опустили ниже */
+  top: 80px; 
   left: 50%; 
   transform: translateX(-50%) translateY(-20px);
   padding: 12px 24px; border-radius: 30px; font-size: 14px; font-weight: 600;
   background: #fff; color: #000; opacity: 0; transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
   pointer-events: none; z-index: 100; box-shadow: 0 8px 24px rgba(0,0,0,0.5);
-  white-space: nowrap; /* Текст в одну строку */
+  white-space: nowrap; 
 }
 .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
