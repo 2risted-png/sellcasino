@@ -8,27 +8,19 @@ function showToast(text) {
   toastTimer = setTimeout(() => toast.classList.remove('show'), 2000);
 }
 
-// ЛОГИКА ПЕРЕКЛЮЧЕНИЯ ВКЛАДОК
 function switchTab(tabId) {
-  // 1. Убираем активный класс со всех кнопок меню
   document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
-  
-  // 2. Скрываем все экраны
   document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
   
-  // 3. Добавляем активный класс нужной кнопке меню
   const activeNavBtn = document.querySelector(`.nav-item[data-tab="${tabId}"]`);
   if (activeNavBtn) activeNavBtn.classList.add('active');
   
-  // 4. Показываем нужный экран
   const activeTab = document.getElementById(`tab-${tabId}`);
   if (activeTab) activeTab.classList.add('active');
   
-  // Прокручиваем контент наверх при смене вкладки
   document.querySelector('.app-content').scrollTop = 0;
 }
 
-// Привязываем клики к нижнему меню
 document.querySelectorAll('.nav-item').forEach(item => {
   item.addEventListener('click', () => {
     haptic('light');
@@ -37,7 +29,6 @@ document.querySelectorAll('.nav-item').forEach(item => {
   });
 });
 
-// Анимация баланса (оставляем как было)
 const balanceEl = document.getElementById('balance-display');
 let start = 0;
 const target = 1250.50;
