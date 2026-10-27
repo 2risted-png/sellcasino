@@ -10,10 +10,10 @@ if (tg) {
   }
 }
 
-// Безопасный вызов вибрации
+// Безопасный вызов вибрации с проверкой версии
 function haptic(type = 'light') {
   try {
-    if (tg && tg.HapticFeedback) {
+    if (tg && tg.HapticFeedback && tg.isVersionAtLeast('6.1')) {
       tg.HapticFeedback.impactOccurred(type);
     }
   } catch (e) {
