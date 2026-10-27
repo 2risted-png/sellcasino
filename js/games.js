@@ -1,18 +1,6 @@
-// --- ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ИГРЫ ---
+// --- ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ---
 let currentBalance = 1250.50;
-let isPlaying = false;
-let isCrashed = false;
-let isWaiting = false;
-let currentMultiplier = 1.00;
-let crashPoint = 1.00;
-let betAmount = 10;
-let autoCashoutValue = 0;
-let animationFrameId = null;
-let gameStartTime = 0;
-let playerInterval = null;
-let fakePlayers = [];
 
-// --- ОБНОВЛЕНИЕ БАЛАНСА ---
 function updateBalanceUI() {
   const formatted = currentBalance.toLocaleString('ru-RU', {
     minimumFractionDigits: 2,
@@ -23,7 +11,7 @@ function updateBalanceUI() {
   if (document.getElementById('profile-balance-display')) document.getElementById('profile-balance-display').innerText = formatted;
 }
 
-// --- ИСТОРИЯ ПОЛЕТОВ ---
+// --- ИСТОРИЯ ---
 let flightHistory = [1.23, 4.50, 1.05, 2.80, 12.40, 1.50, 1.01, 3.20];
 function renderHistory() {
   const container = document.getElementById('flight-history');
@@ -37,8 +25,303 @@ function renderHistory() {
   });
 }
 
-// --- СИМУЛЯЦИЯ ОНЛАЙН ИГРОКОВ ---
+// ==========================================
+// ДВИЖОК ИГРЫ (БЕСКОНЕЧНЫЙ ЦИКЛ)
+// ==========================================
+let gameState = 'offline'; // offline, waiting, flying, crashed
+let crashPoint = 1.00;
+let currentMultiplier = 1.00;
+let roundStartTime = 0;
+let waitStartTime = 0;
+let animationFrameId = null;
+let waitIntervalId = null;
+
+// Состояние ставки игрока
+let playerBet = {
+  active: false,
+  amount: 0,
+  cashedOut: false,
+  autoCashout: 0
+};
+
+// Боты
+let fakePlayers = [];
+let playerInterval = null;
 const fakeNames = ["Alex", "Max", "Satoshi", "CryptoKing", "Lucky7", "Whale", "N00b", "Gambler", "MoonBoy"];
+
+// --- ГЕНЕРАТОР КРАША (Рандом) ---
+function generateCrashPoint() {
+  const r = Math.random();
+  const point = Math.max(1.00, 0.97 / (1 - r));
+  return point > 100 ? 100 : point;
+}
+
+// ==========================================
+// УПРАВЛЕНИЕ РАУНДАМИ
+// ==========================================
+function startWaitingPhase() {
+  gameState = 'waiting';
+  crashPoint = generateCrashPoint();
+  currentMultiplier = 1.00;
+  playerBet.active = false;
+  playerBet.cashedOut = false;
+  
+  const overlay = document.getElementById('game-overlay');
+  const countdownText = document.getElementById('countdown-text');
+  const actionBtn = document.getElementById('jet-action-btn');
+  const inputGroup = document.getElementById('jet-input-group');
+  
+  overlay.innerHTML = `<div class="countdown-text" id="countdown-text">5.0s</div><div class="countdown-sub">Прием ставок</div>`;
+  overlay.classList.add('active');
+  
+  actionBtn.className = 'jet-action-btn waiting';
+  actionBtn.innerText = 'СДЕЛАТЬ СТАВКУ';
+  inputGroup.classList.remove('disabled');
+  
+  document.getElementById('jet-icon').style.opacity = '1';
+  document.getElementById('jet-icon').style.left = '10%';
+  document.getElementById('jet-icon').style.transform = 'translateY(0) scale(1) rotate(0deg)';
+  document.getElementById('jet-crashed-text').classList.remove('show');
+  document.getElementById('game-multiplier').style.color = '#fff';
+  document.getElementById('game-multiplier').innerText = '1.00x';
+
+  // Лайв-ставки ботов
+  startLiveBetsSimulation();
+
+  // Таймер 5 секунд
+  waitStartTime = performance.now();
+  let timeLeft = 5.0;
+  
+  if (waitIntervalId) clearInterval(waitIntervalId);
+  waitIntervalId = setInterval(() => {
+    timeLeft -= 0.1;
+    const cdText = document.getElementById('countdown-text');
+    if (cdText) cdText.innerText = Math.max(0, timeLeft).toFixed(1) + 's';
+    
+    if (timeLeft <= 0) {
+      clearInterval(waitIntervalId);
+      startFlyingPhase();
+    }
+  }, 100);
+}
+
+function startFlyingPhase() {
+  gameState = 'flying';
+  roundStartTime = performance.now();
+  
+  document.getElementById('game-overlay').classList.remove('active');
+  
+  const actionBtn = document.getElementById('jet-action-btn');
+  if (playerBet.active && !playerBet.cashedOut) {
+    actionBtn.className = 'jet-action-btn cashout';
+  } else {
+    actionBtn.className = 'jet-action-btn cashed-out';
+    actionBtn.innerText = 'ЖДЕМ СЛЕДУЮЩИЙ РАУНД';
+  }
+  
+  document.getElementById('jet-input-group').classList.add('disabled');
+  
+  loop();
+}
+
+function loop() {
+  if (gameState !== 'flying') return;
+
+  const elapsed = (performance.now() - roundStartTime) / 1000;
+  
+  // Плавный рост: 2x достигается за ~4.6 секунды
+  currentMultiplier = Math.exp(0.15 * elapsed);
+
+  // Проверка на краш
+  if (currentMultiplier >= crashPoint) {
+    endRoundCrash();
+    return;
+  }
+
+  // Обновление множителя на экране
+  const multiplierDisplay = document.getElementById('game-multiplier');
+  const jetGlow = document.getElementById('jet-glow');
+  const jetIcon = document.getElementById('jet-icon');
+
+  multiplierDisplay.innerText = currentMultiplier.toFixed(2) + 'x';
+  
+  if (currentMultiplier > 3) {
+    multiplierDisplay.style.color = '#FBBF24';
+    jetGlow.style.background = '#FBBF24';
+  }
+  if (currentMultiplier > 5) {
+    multiplierDisplay.style.color = '#F87171';
+    jetGlow.style.background = '#F87171';
+  }
+
+  jetGlow.style.opacity = 0.1 + (currentMultiplier * 0.05);
+  jetGlow.style.transform = `scale(${1 + currentMultiplier * 0.1})`;
+  
+  // Самолет летит
+  const planeLeft = 10 + (elapsed * 8);
+  if (planeLeft < 80) {
+    jetIcon.style.left = planeLeft + '%';
+  }
+  jetIcon.style.transform = `translateY(${Math.sin(elapsed * 5) * 10}px) scale(${1 + currentMultiplier * 0.01}) rotate(${currentMultiplier * 1.5}deg)`;
+
+  // Проверка авто-вывода
+  if (playerBet.active && !playerBet.cashedOut) {
+    if (playerBet.autoCashout > 0 && currentMultiplier >= playerBet.autoCashout) {
+      handlePlayerCashout(true);
+    } else {
+      // Обновляем кнопку
+      const cashoutEl = document.getElementById('cashout-val');
+      if (cashoutEl) {
+        cashoutEl.innerText = (playerBet.amount * currentMultiplier).toFixed(2) + ' TON';
+      }
+    }
+  }
+
+  // Боты забирают
+  updateLiveBetsCashout(currentMultiplier);
+
+  animationFrameId = requestAnimationFrame(loop);
+}
+
+function endRoundCrash() {
+  gameState = 'crashed';
+  cancelAnimationFrame(animationFrameId);
+  clearInterval(waitIntervalId);
+  stopLiveBetsSimulation();
+  haptic('heavy');
+
+  const multiplierDisplay = document.getElementById('game-multiplier');
+  const crashedText = document.getElementById('jet-crashed-text');
+  const actionBtn = document.getElementById('jet-action-btn');
+  
+  multiplierDisplay.innerText = crashPoint.toFixed(2) + 'x';
+  multiplierDisplay.style.color = '#F87171';
+  crashedText.classList.add('show');
+  document.getElementById('jet-icon').style.opacity = '0';
+  document.getElementById('jet-glow').style.opacity = '0';
+  
+  if (playerBet.active && !playerBet.cashedOut) {
+    // Игрок проиграл
+    if (typeof showToast === 'function') showToast(`💥 Вы проиграли ${playerBet.amount.toFixed(2)} TON`);
+  }
+
+  actionBtn.className = 'jet-action-btn crashed';
+  actionBtn.innerText = 'УЛЕТЕЛ!';
+  document.getElementById('jet-input-group').classList.remove('disabled');
+  
+  flightHistory.unshift(crashPoint);
+  if (flightHistory.length > 10) flightHistory.pop();
+  renderHistory();
+
+  // Ждем 3 секунды и начинаем новый раунд
+  setTimeout(() => {
+    if (gameState !== 'offline') startWaitingPhase();
+  }, 3000);
+}
+
+// ==========================================
+// ДЕЙСТВИЯ ИГРОКА
+// ==========================================
+function setBet(amount) {
+  if (gameState !== 'waiting') return;
+  haptic('light');
+  
+  if (amount === 'max') betAmount = Math.floor(currentBalance);
+  else betAmount = amount;
+  
+  if (betAmount > currentBalance) betAmount = Math.floor(currentBalance);
+  if (betAmount < 1) betAmount = 1;
+  
+  document.getElementById('bet-amount').value = betAmount;
+}
+
+function handleGameAction() {
+  if (gameState === 'waiting') {
+    placeBet();
+  } else if (gameState === 'flying' && playerBet.active && !playerBet.cashedOut) {
+    handlePlayerCashout(false);
+  }
+}
+
+function placeBet() {
+  const betInput = document.getElementById('bet-amount');
+  const amount = parseFloat(betInput.value);
+  const auto = parseFloat(document.getElementById('auto-cashout').value) || 0;
+
+  if (isNaN(amount) || amount < 1) {
+    if (typeof showToast === 'function') showToast('⚠️ Мин. ставка 1 TON');
+    return;
+  }
+  if (amount > currentBalance) {
+    if (typeof showToast === 'function') showToast('❌ Недостаточно средств');
+    return;
+  }
+
+  haptic('medium');
+  currentBalance -= amount;
+  updateBalanceUI();
+
+  playerBet.active = true;
+  playerBet.amount = amount;
+  playerBet.cashedOut = false;
+  playerBet.autoCashout = auto;
+
+  const actionBtn = document.getElementById('jet-action-btn');
+  actionBtn.className = 'jet-action-btn waiting';
+  actionBtn.innerText = 'СТАВКА ПРИНЯТА!';
+  
+  // Добавляем в список лайв-ставок
+  addPlayerToLiveList("ВЫ", amount);
+}
+
+function handlePlayerCashout(isAuto) {
+  if (!playerBet.active || playerBet.cashedOut) return;
+  
+  playerBet.cashedOut = true;
+  const winAmount = playerBet.amount * currentMultiplier;
+  currentBalance += winAmount;
+  updateBalanceUI();
+
+  if (!isAuto) haptic('heavy');
+
+  const actionBtn = document.getElementById('jet-action-btn');
+  actionBtn.className = 'jet-action-btn cashed-out';
+  actionBtn.innerText = `ЗАБРАНО ${winAmount.toFixed(2)} TON`;
+
+  if (typeof showToast === 'function') {
+    showToast(isAuto ? `🤖 Авто-вывод ${winAmount.toFixed(2)} TON` : `✅ Вы забрали ${winAmount.toFixed(2)} TON`);
+  }
+  
+  // Обновляем статус в лайв-списке
+  updatePlayerLiveStatus(winAmount, currentMultiplier);
+}
+
+// ==========================================
+// СИМУЛЯЦИЯ БОТОВ
+// ==========================================
+function addPlayerToLiveList(name, bet) {
+  const list = document.getElementById('live-bets-list');
+  if (!list) return;
+  
+  const id = 'player-bet';
+  const item = document.createElement('div');
+  item.className = 'live-bet-item';
+  item.id = id;
+  item.innerHTML = `
+    <div class="live-bet-user" style="color: var(--turquoise)">👤 ${name}</div>
+    <div class="live-bet-amount">${bet} TON</div>
+  `;
+  list.prepend(item);
+}
+
+function updatePlayerLiveStatus(win, mult) {
+  const el = document.getElementById('player-bet');
+  if (el) {
+    const amountDiv = el.querySelector('.live-bet-amount');
+    amountDiv.className = 'live-bet-cashout';
+    amountDiv.innerText = `+${win.toFixed(0)} TON (${mult.toFixed(2)}x)`;
+  }
+}
 
 function startLiveBetsSimulation() {
   const list = document.getElementById('live-bets-list');
@@ -47,39 +330,36 @@ function startLiveBetsSimulation() {
   
   list.innerHTML = '';
   fakePlayers = [];
-  let online = Math.floor(Math.random() * 20) + 15;
-  count.innerText = online;
+  count.innerText = Math.floor(Math.random() * 30) + 10;
 
-  // Игроки ставят во время отсчета
-  let betInterval = setInterval(() => {
-    if (!isWaiting && !isPlaying) {
-      clearInterval(betInterval);
-      return;
-    }
-    if (isWaiting) {
-      const name = fakeNames[Math.floor(Math.random() * fakeNames.length)] + Math.floor(Math.random() * 99);
-      const bet = Math.floor(Math.random() * 500) + 10;
-      const id = Date.now() + Math.random();
-      
-      fakePlayers.push({ id, name, bet, cashedOut: false });
+  if (playerInterval) clearInterval(playerInterval);
+  
+  // Боты ставят во время фазы ожидания
+  playerInterval = setInterval(() => {
+    if (gameState !== 'waiting') return;
+    
+    const name = fakeNames[Math.floor(Math.random() * fakeNames.length)] + Math.floor(Math.random() * 99);
+    const bet = Math.floor(Math.random() * 500) + 10;
+    const id = Date.now() + Math.random();
+    
+    fakePlayers.push({ id, name, bet, cashedOut: false, autoCashout: Math.random() * 5 + 1.1 });
 
-      const item = document.createElement('div');
-      item.className = 'live-bet-item';
-      item.id = `bet-${id}`;
-      item.innerHTML = `
-        <div class="live-bet-user">👤 ${name}</div>
-        <div class="live-bet-amount">${bet} TON</div>
-      `;
-      list.prepend(item);
+    const item = document.createElement('div');
+    item.className = 'live-bet-item';
+    item.id = `bet-${id}`;
+    item.innerHTML = `
+      <div class="live-bet-user">👤 ${name}</div>
+      <div class="live-bet-amount">${bet} TON</div>
+    `;
+    list.prepend(item);
 
-      if (list.children.length > 6) list.lastChild.remove();
-    }
-  }, 300);
+    if (list.children.length > 8) list.lastChild.remove();
+  }, 400);
 }
 
 function updateLiveBetsCashout(mult) {
   fakePlayers.forEach(p => {
-    if (!p.cashedOut && Math.random() < 0.05) {
+    if (!p.cashedOut && (mult >= p.autoCashout || Math.random() < 0.02)) {
       p.cashedOut = true;
       const el = document.getElementById(`bet-${p.id}`);
       if (el) {
@@ -106,290 +386,28 @@ function startGameLoading() {
   setTimeout(() => {
     document.getElementById('games-loading-view').style.display = 'none';
     document.getElementById('games-play-view').style.display = 'block';
-    resetGame();
     renderHistory();
+    startWaitingPhase(); // Запускаем бесконечный цикл
   }, 1500);
 }
 
 function closeGame() {
   haptic('light');
-  if (isPlaying || isWaiting) {
-    currentBalance += betAmount;
+  gameState = 'offline'; // Останавливаем движок
+  
+  if (waitIntervalId) clearInterval(waitIntervalId);
+  cancelAnimationFrame(animationFrameId);
+  stopLiveBetsSimulation();
+  
+  // Возврат ставки, если раунд не закончился
+  if (playerBet.active && !playerBet.cashedOut) {
+    currentBalance += playerBet.amount;
     updateBalanceUI();
-    isPlaying = false;
-    isWaiting = false;
-    cancelAnimationFrame(animationFrameId);
     if (typeof showToast === 'function') showToast('Ставка возвращена');
   }
-  
-  stopLiveBetsSimulation();
-  resetGame();
+
   document.getElementById('games-play-view').style.display = 'none';
   document.getElementById('games-list-view').style.display = 'block';
-}
-
-// ==========================================
-// ЛОГИКА ИГРЫ
-// ==========================================
-function setBet(amount) {
-  if (isPlaying || isWaiting) return;
-  haptic('light');
-  
-  if (amount === 'max') betAmount = Math.floor(currentBalance);
-  else betAmount = amount;
-  
-  if (betAmount > currentBalance) betAmount = Math.floor(currentBalance);
-  if (betAmount < 1) betAmount = 1;
-  
-  document.getElementById('bet-amount').value = betAmount;
-}
-
-function handleGameAction() {
-  if (isWaiting) return; // Во время отсчета ничего не делаем
-  if (isCrashed) {
-    resetGame();
-    return;
-  }
-
-  if (isPlaying) {
-    cashOut(true);
-  } else {
-    startGame();
-  }
-}
-
-function startGame() {
-  const betInput = document.getElementById('bet-amount');
-  betAmount = parseFloat(betInput.value);
-  autoCashoutValue = parseFloat(document.getElementById('auto-cashout').value) || 0;
-
-  if (isNaN(betAmount) || betAmount < 1) {
-    if (typeof showToast === 'function') showToast('⚠️ Минимальная ставка 1 TON');
-    return;
-  }
-  if (betAmount > currentBalance) {
-    if (typeof showToast === 'function') showToast('❌ Недостаточно средств');
-    return;
-  }
-
-  haptic('medium');
-  currentBalance -= betAmount;
-  updateBalanceUI();
-
-  isWaiting = true;
-  isCrashed = false;
-  currentMultiplier = 1.00;
-  
-  // Генерация точки краша (стандартная формула Crash)
-  const r = Math.random();
-  crashPoint = Math.max(1.00, 0.95 / (1 - r)); 
-  if (crashPoint > 100) crashPoint = 100;
-
-  const inputGroup = document.getElementById('jet-input-group');
-  const actionBtn = document.getElementById('jet-action-btn');
-  const overlay = document.getElementById('game-overlay');
-  const countdownText = document.getElementById('countdown-text');
-  const profitText = document.getElementById('profit-text');
-
-  inputGroup.classList.add('disabled');
-  actionBtn.className = 'jet-action-btn';
-  actionBtn.innerText = 'ОЖИДАНИЕ...';
-  overlay.classList.add('active');
-  profitText.classList.remove('show');
-  document.getElementById('jet-crashed-text').classList.remove('show');
-  
-  startLiveBetsSimulation();
-
-  // Отсчет 3 секунды
-  let count = 3.0;
-  countdownText.innerText = '3.0s';
-  
-  const countdownInterval = setInterval(() => {
-    count -= 0.1;
-    if (count <= 0) {
-      clearInterval(countdownInterval);
-      overlay.classList.remove('active');
-      launchPlane();
-    } else {
-      countdownText.innerText = count.toFixed(1) + 's';
-    }
-  }, 100);
-}
-
-function launchPlane() {
-  isWaiting = false;
-  isPlaying = true;
-  gameStartTime = performance.now();
-  
-  const actionBtn = document.getElementById('jet-action-btn');
-  const jetIcon = document.getElementById('jet-icon');
-  
-  actionBtn.className = 'jet-action-btn cashout';
-  actionBtn.innerHTML = `ЗАБРАТЬ <span class="jet-action-sub" id="cashout-val">${betAmount.toFixed(2)} TON</span>`;
-  
-  jetIcon.style.opacity = '1';
-  jetIcon.style.left = '10%'; // Сброс позиции самолета
-  jetIcon.style.transform = 'translateY(0) scale(1) rotate(0deg)';
-  
-  loop();
-}
-
-function loop() {
-  if (!isPlaying) return;
-
-  const elapsed = (performance.now() - gameStartTime) / 1000;
-  
-  // ПРИЯТНАЯ МАТЕМАТИКА: 2x достигается за 5 секунд
-  currentMultiplier = Math.exp(0.15 * elapsed);
-
-  if (currentMultiplier >= crashPoint) {
-    crash();
-    return;
-  }
-
-  // Проверка на авто-вывод
-  if (autoCashoutValue > 0 && currentMultiplier >= autoCashoutValue) {
-    cashOut(false); // false означает авто-вывод
-    return;
-  }
-
-  const multiplierDisplay = document.getElementById('game-multiplier');
-  const jetGlow = document.getElementById('jet-glow');
-  const jetIcon = document.getElementById('jet-icon');
-  const cashoutEl = document.getElementById('cashout-val');
-
-  multiplierDisplay.innerText = currentMultiplier.toFixed(2) + 'x';
-  
-  // Цвета и позиции
-  if (currentMultiplier > 3) {
-    multiplierDisplay.style.color = '#FBBF24';
-    jetGlow.style.background = '#FBBF24';
-  }
-  if (currentMultiplier > 5) {
-    multiplierDisplay.style.color = '#F87171';
-    jetGlow.style.background = '#F87171';
-  }
-
-  jetGlow.style.opacity = 0.1 + (currentMultiplier * 0.05);
-  jetGlow.style.transform = `scale(${1 + currentMultiplier * 0.1})`;
-  
-  // Самолет летит вправо и покачивается
-  const planeLeft = 10 + (elapsed * 5); // Движение по X
-  if (planeLeft < 80) {
-    jetIcon.style.left = planeLeft + '%';
-  }
-  jetIcon.style.transform = `translateY(${Math.sin(elapsed * 5) * 10}px) scale(${1 + currentMultiplier * 0.01}) rotate(${currentMultiplier * 1.5}deg)`;
-
-  if (cashoutEl) cashoutEl.innerText = (betAmount * currentMultiplier).toFixed(2) + ' TON';
-
-  updateLiveBetsCashout(currentMultiplier);
-
-  animationFrameId = requestAnimationFrame(loop);
-}
-
-function cashOut(isManual) {
-  if (!isPlaying) return;
-  isPlaying = false;
-  cancelAnimationFrame(animationFrameId);
-  
-  if (isManual) haptic('heavy');
-
-  const winAmount = betAmount * currentMultiplier;
-  currentBalance += winAmount;
-  updateBalanceUI();
-
-  const actionBtn = document.getElementById('jet-action-btn');
-  const inputGroup = document.getElementById('jet-input-group');
-  const profitText = document.getElementById('profit-text');
-  const overlay = document.getElementById('game-overlay');
-  const jetIcon = document.getElementById('jet-icon');
-
-  // Визуал выигрыша
-  overlay.classList.add('active');
-  profitText.innerText = `+${winAmount.toFixed(2)} TON`;
-  profitText.classList.add('show');
-  
-  // Улетаем вправо
-  jetIcon.style.left = '120%';
-  jetIcon.style.transform = 'scale(1.5) rotate(10deg)';
-  
-  actionBtn.className = 'jet-action-btn';
-  actionBtn.innerText = 'ВЫИГРЫШ!';
-  inputGroup.classList.remove('disabled');
-  
-  if (typeof showToast === 'function') showToast(`✅ Вы забрали ${winAmount.toFixed(2)} TON`);
-
-  flightHistory.unshift(currentMultiplier);
-  if (flightHistory.length > 10) flightHistory.pop();
-  renderHistory();
-
-  setTimeout(resetGame, 2500);
-}
-
-function crash() {
-  isPlaying = false;
-  isCrashed = true;
-  cancelAnimationFrame(animationFrameId);
-  haptic('heavy');
-
-  const multiplierDisplay = document.getElementById('game-multiplier');
-  const crashedText = document.getElementById('jet-crashed-text');
-  const jetIcon = document.getElementById('jet-icon');
-  const jetGlow = document.getElementById('jet-glow');
-  const actionBtn = document.getElementById('jet-action-btn');
-  const inputGroup = document.getElementById('jet-input-group');
-
-  multiplierDisplay.innerText = crashPoint.toFixed(2) + 'x';
-  multiplierDisplay.style.color = '#F87171';
-  crashedText.classList.add('show');
-  jetIcon.style.opacity = '0';
-  jetGlow.style.opacity = '0';
-  
-  actionBtn.className = 'jet-action-btn crashed';
-  actionBtn.innerText = 'УЛЕТЕЛ!';
-  inputGroup.classList.remove('disabled');
-  
-  if (typeof showToast === 'function') showToast(`💥 Краш на ${crashPoint.toFixed(2)}x`);
-
-  flightHistory.unshift(crashPoint);
-  if (flightHistory.length > 10) flightHistory.pop();
-  renderHistory();
-
-  setTimeout(resetGame, 3000);
-}
-
-function resetGame() {
-  isPlaying = false;
-  isCrashed = false;
-  isWaiting = false;
-  currentMultiplier = 1.00;
-  
-  const multiplierDisplay = document.getElementById('game-multiplier');
-  if (!multiplierDisplay) return;
-  
-  multiplierDisplay.innerText = '1.00x';
-  multiplierDisplay.style.color = '#fff';
-  document.getElementById('jet-crashed-text').classList.remove('show');
-  document.getElementById('jet-icon').style.opacity = '1';
-  document.getElementById('jet-icon').style.left = '10%'; // Сброс
-  document.getElementById('jet-icon').style.transform = 'translateY(0) scale(1) rotate(0deg)';
-  document.getElementById('jet-glow').style.opacity = '0.1';
-  document.getElementById('jet-glow').style.background = 'var(--turquoise)';
-  
-  document.getElementById('jet-action-btn').className = 'jet-action-btn';
-  document.getElementById('jet-action-btn').innerText = 'СДЕЛАТЬ СТАВКУ';
-  
-  document.getElementById('jet-input-group').classList.remove('disabled');
-  document.getElementById('bet-amount').value = betAmount;
-  
-  // Сброс оверлея
-  document.getElementById('game-overlay').classList.remove('active');
-  document.getElementById('profit-text').classList.remove('show');
-
-  const list = document.getElementById('live-bets-list');
-  if (list) list.innerHTML = '';
-  const count = document.getElementById('online-count');
-  if (count) count.innerText = '0';
 }
 
 document.addEventListener('DOMContentLoaded', () => {
