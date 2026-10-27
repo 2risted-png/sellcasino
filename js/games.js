@@ -1,18 +1,47 @@
-// --- ГЛОБАЛЬНЫЙ БАЛАНС (Синхронизирован с UI) ---
+// --- ГЛОБАЛЬНЫЙ БАЛАНС ---
 let currentBalance = 1250.50;
-const startBalance = 1250.50; // Для сброса при перезагрузке (в будущем из БД)
 
 function updateBalanceUI() {
   const formatted = currentBalance.toLocaleString('ru-RU', {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2
   });
-  document.getElementById('balance-display').innerText = formatted;
-  document.getElementById('game-balance-display').innerText = formatted;
-  document.getElementById('profile-balance-display').innerText = formatted;
+  if (document.getElementById('balance-display')) document.getElementById('balance-display').innerText = formatted;
+  if (document.getElementById('game-balance-display')) document.getElementById('game-balance-display').innerText = formatted;
+  if (document.getElementById('profile-balance-display')) document.getElementById('profile-balance-display').innerText = formatted;
 }
 
-// --- ПЕРЕМЕННЫЕ ИГРЫ EIGHT JET ---
+// ==========================================
+// ЛОГИКА ПЕРЕХОДОВ ЭКРАНОВ ИГРЫ
+// ==========================================
+function startGameLoading() {
+  haptic('medium');
+  document.getElementById('games-list-view').style.display = 'none';
+  document.getElementById('games-loading-view').style.display = 'flex';
+  
+  // Имитация загрузки 1.5 секунды
+  setTimeout(() => {
+    document.getElementById('games-loading-view').style.display = 'none';
+    document.getElementById('games-play-view').style.display = 'block';
+  }, 1500);
+}
+
+function closeGame() {
+  haptic('light');
+  // Если игра была активна, сбрасываем её
+  if (isPlaying) {
+    isPlaying = false;
+    cancelAnimationFrame(animationFrameId);
+    resetGame(); // Сбрасываем состояние
+  }
+  
+  document.getElementById('games-play-view').style.display = 'none';
+  document.getElementById('games-list-view').style.display = 'block';
+}
+
+// ==========================================
+// ЛОГИКА EIGHT JET
+// ==========================================
 let isPlaying = false;
 let isCrashed = false;
 let currentMultiplier = 1.00;
@@ -28,7 +57,6 @@ const jetGlow = document.getElementById('jet-glow');
 const crashedText = document.getElementById('jet-crashed-text');
 const inputGroup = document.getElementById('jet-input-group');
 
-// Установка быстрой ставки
 function setBet(amount) {
   if (isPlaying) return;
   haptic('light');
@@ -45,7 +73,6 @@ function setBet(amount) {
   document.getElementById('bet-amount').value = betAmount;
 }
 
-// Обработка нажатия на главную кнопку
 function handleGameAction() {
   if (isCrashed) {
     resetGame();
@@ -59,7 +86,6 @@ function handleGameAction() {
   }
 }
 
-// Начало игры
 function startGame() {
   const betInput = document.getElementById('bet-amount');
   betAmount = parseFloat(betInput.value);
@@ -75,23 +101,18 @@ function startGame() {
 
   haptic('medium');
   
-  // Списываем ставку
   currentBalance -= betAmount;
   updateBalanceUI();
 
-  // Настройки игры
   isPlaying = true;
   isCrashed = false;
   currentMultiplier = 1.00;
   startTime = performance.now();
   
-  // Генерация точки краша (от 1.0 до 15.0, чаще падает рано)
-  // Используем логарифмическое распределение для реалистичности
   const r = Math.random();
   crashPoint = 1 + (Math.pow(1 / (1 - r), 1.5) - 1);
-  if (crashPoint > 50) crashPoint = 50; // Кап
+  if (crashPoint > 50) crashPoint = 50;
 
-  // UI
   inputGroup.classList.add('disabled');
   actionBtn.className = 'jet-action-btn cashout';
   actionBtn.innerHTML = `ЗАБРАТЬ <span class="jet-action-sub" id="cashout-val">${(betAmount).toFixed(2)} TON</span>`;
@@ -99,46 +120,37 @@ function startGame() {
   jetIcon.style.opacity = '1';
   jetIcon.style.transform = 'scale(1) rotate(0deg)';
   
-  // Запуск цикла
   loop();
 }
 
-// Главный игровой цикл (60 fps)
 function loop(timestamp) {
   if (!isPlaying) return;
 
-  const elapsed = (performance.now() - startTime) / 1000; // В секундах
+  const elapsed = (performance.now() - startTime) / 1000;
   
-  // Формула роста множителя (экспоненциальная)
   currentMultiplier = Math.pow(1.001, elapsed * 1000);
-  // Для слишком высоких значений ускоряем
   if (currentMultiplier > 2) currentMultiplier = 2 * Math.pow(1.002, (elapsed - 0.69) * 1000);
 
-  // Проверка на краш
   if (currentMultiplier >= crashPoint) {
     crash();
     return;
   }
 
-  // Обновление UI
   multiplierDisplay.innerText = currentMultiplier.toFixed(2) + 'x';
   
-  // Динамика цвета в зависимости от множителя
   if (currentMultiplier > 3) {
-    multiplierDisplay.style.color = '#FBBF24'; // Желтый
+    multiplierDisplay.style.color = '#FBBF24';
     jetGlow.style.background = '#FBBF24';
   }
   if (currentMultiplier > 5) {
-    multiplierDisplay.style.color = '#F87171'; // Красный
+    multiplierDisplay.style.color = '#F87171';
     jetGlow.style.background = '#F87171';
   }
 
-  // Динамика свечения и самолета
   jetGlow.style.opacity = 0.1 + (currentMultiplier * 0.05);
   jetGlow.style.transform = `scale(${1 + currentMultiplier * 0.1})`;
   jetIcon.style.transform = `translateY(${Math.sin(elapsed * 10) * 5}px) scale(${1 + currentMultiplier * 0.02}) rotate(${currentMultiplier * 2}deg)`;
 
-  // Обновляем кнопку кэшаута
   const cashoutVal = betAmount * currentMultiplier;
   if (document.getElementById('cashout-val')) {
     document.getElementById('cashout-val').innerText = cashoutVal.toFixed(2) + ' TON';
@@ -147,7 +159,6 @@ function loop(timestamp) {
   animationFrameId = requestAnimationFrame(loop);
 }
 
-// Забрать деньги
 function cashOut() {
   if (!isPlaying) return;
   isPlaying = false;
@@ -158,25 +169,21 @@ function cashOut() {
   currentBalance += winAmount;
   updateBalanceUI();
 
-  // UI
   actionBtn.className = 'jet-action-btn';
   actionBtn.innerText = 'ЗАБРАТЬ ' + winAmount.toFixed(2) + ' TON';
   inputGroup.classList.remove('disabled');
   
   showToast(`✅ Вы забрали ${winAmount.toFixed(2)} TON`);
 
-  // Сброс через 2 секунды
   setTimeout(resetGame, 2000);
 }
 
-// Краш (проигрыш)
 function crash() {
   isPlaying = false;
   isCrashed = true;
   cancelAnimationFrame(animationFrameId);
   haptic('heavy');
 
-  // UI
   multiplierDisplay.innerText = crashPoint.toFixed(2) + 'x';
   multiplierDisplay.style.color = '#F87171';
   crashedText.classList.add('show');
@@ -189,11 +196,9 @@ function crash() {
   
   showToast(`💥 Краш на ${crashPoint.toFixed(2)}x`);
 
-  // Автоматический сброс через 3 секунды
   setTimeout(resetGame, 3000);
 }
 
-// Сброс игры в начальное состояние
 function resetGame() {
   isPlaying = false;
   isCrashed = false;
@@ -213,7 +218,6 @@ function resetGame() {
   inputGroup.classList.remove('disabled');
 }
 
-// Инициализация при загрузке
 document.addEventListener('DOMContentLoaded', () => {
   updateBalanceUI();
 });
