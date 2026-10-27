@@ -78,23 +78,7 @@ document.querySelectorAll('.accordion-header').forEach(header => {
   });
 });
 
-// АВТОМАТИЧЕСКАЯ КАРУСЕЛЬ ОТЗЫВОВ
-const track = document.getElementById('reviewsTrack');
-if (track) {
-  const cards = track.querySelectorAll('.review-card');
-  let currentIndex = 0;
-
-  setInterval(() => {
-    currentIndex++;
-    if (currentIndex >= cards.length) {
-      currentIndex = 0;
-    }
-    track.style.transform = `translateX(-${currentIndex * 100}%)`;
-  }, 4000);
-}
-
-// СКРЫТИЕ ЭКРАНА ЗАГРУЗКИ (Исправлено)
-// Вместо window.onload используем простой таймер, который сработает всегда
+// СКРЫТИЕ ЭКРАНА ЗАГРУЗКИ
 document.addEventListener('DOMContentLoaded', () => {
   setTimeout(() => {
     const loader = document.getElementById('loader');
@@ -102,5 +86,40 @@ document.addEventListener('DOMContentLoaded', () => {
       loader.style.opacity = '0';
       loader.style.visibility = 'hidden';
     }
-  }, 2000); // Экран загрузки исчезнет через 2 секунды
+  }, 2000);
 });
+
+// ЛОГИКА ПЕРЕКЛЮЧЕНИЯ ВКЛАДОК В АДМИНКЕ
+function switchAdminTab(tabId, btn) {
+  document.querySelectorAll('.admin-tab').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
+  
+  btn.classList.add('active');
+  document.getElementById(`admin-${tabId}`).classList.add('active');
+}
+
+// КАРУСЕЛЬ ОТЗЫВОВ (С возможностью перезапуска)
+let carouselInterval;
+function resetCarousel() {
+  const track = document.getElementById('reviewsTrack');
+  if (!track) return;
+  
+  const cards = track.querySelectorAll('.review-card');
+  let currentIndex = 0;
+
+  // Сбрасываем позицию
+  track.style.transform = `translateX(0%)`;
+
+  // Очищаем старый интервал, если есть
+  if (carouselInterval) clearInterval(carouselInterval);
+
+  if (cards.length > 1) {
+    carouselInterval = setInterval(() => {
+      currentIndex++;
+      if (currentIndex >= cards.length) {
+        currentIndex = 0;
+      }
+      track.style.transform = `translateX(-${currentIndex * 100}%)`;
+    }, 4000);
+  }
+}
