@@ -1,5 +1,39 @@
 let currentBalance = 0;
 
+// js/telegram.js (или games.js)
+const API_URL = 'http://localhost:3000'; // Замени на URL твоего сервера после деплоя
+
+async function fetchUserBalance() {
+    const tg = window.Telegram?.WebApp;
+    if (!tg || !tg.initData) {
+        console.warn('Не в Telegram, баланс не загружен');
+        return;
+    }
+
+    try {
+        const response = await fetch(`${API_URL}/api/auth`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ initData: tg.initData })
+        });
+        const data = await response.json();
+        
+        if (data.success) {
+            currentBalance = data.balance;
+            updateBalanceUI(); // Обновляем все элементы на странице
+            console.log('Баланс загружен с сервера:', currentBalance);
+        }
+    } catch (err) {
+        console.error('Ошибка загрузки баланса:', err);
+        // Показываем старый баланс из localStorage как временную заглушку
+        currentBalance = parseFloat(localStorage.getItem('cachedBalance') || '0');
+        updateBalanceUI();
+    }
+}
+
+// Вызываем при загрузке страницы
+document.addEventListener('DOMContentLoaded', fetchUserBalance);
+
 function updateBalanceUI() {
   const formatted = currentBalance.toLocaleString('ru-RU', {
     minimumFractionDigits: 2,
