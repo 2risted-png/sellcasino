@@ -65,6 +65,12 @@ function startWaitingPhase() {
   const multiplierDisplay = document.getElementById('game-multiplier');
   const crashedText = document.getElementById('jet-crashed-text');
   
+  // ЖЕСТКАЯ ПРОВЕРКА (чтобы игра не зависла, если HTML не обновился)
+  if (!timerDisplay || !multiplierDisplay || !crashedText || !actionBtn) {
+    console.error("Ошибка: не найдены элементы HTML для игры!");
+    return;
+  }
+  
   // Показываем таймер вместо X
   timerDisplay.style.display = 'flex';
   multiplierDisplay.style.display = 'none';
@@ -72,14 +78,20 @@ function startWaitingPhase() {
   
   actionBtn.className = 'jet-action-btn waiting';
   actionBtn.innerText = 'СДЕЛАТЬ СТАВКУ';
-  inputGroup.classList.remove('disabled');
+  if (inputGroup) inputGroup.classList.remove('disabled');
   
-  document.getElementById('jet-icon').style.opacity = '1';
-  document.getElementById('jet-icon').style.left = '10%';
-  document.getElementById('jet-icon').style.transform = 'translateY(0) scale(1) rotate(0deg)';
+  const jetIcon = document.getElementById('jet-icon');
+  if (jetIcon) {
+    jetIcon.style.opacity = '1';
+    jetIcon.style.left = '10%';
+    jetIcon.style.transform = 'translateY(0) scale(1) rotate(0deg)';
+  }
   
-  document.getElementById('jet-glow').style.opacity = '0.1';
-  document.getElementById('jet-glow').style.background = 'var(--turquoise)';
+  const jetGlow = document.getElementById('jet-glow');
+  if (jetGlow) {
+    jetGlow.style.opacity = '0.1';
+    jetGlow.style.background = 'var(--turquoise)';
+  }
 
   startLiveBetsSimulation();
 
@@ -103,20 +115,25 @@ function startFlyingPhase() {
   gameState = 'flying';
   roundStartTime = performance.now();
   
-  // Скрываем таймер, показываем X
-  document.getElementById('waiting-timer').style.display = 'none';
-  document.getElementById('game-multiplier').style.display = 'block';
+  const timerDisplay = document.getElementById('waiting-timer');
+  const multiplierDisplay = document.getElementById('game-multiplier');
+  
+  if (timerDisplay) timerDisplay.style.display = 'none';
+  if (multiplierDisplay) multiplierDisplay.style.display = 'block';
   
   const actionBtn = document.getElementById('jet-action-btn');
-  if (playerBet.active && !playerBet.cashedOut) {
-    actionBtn.className = 'jet-action-btn cashout';
-    actionBtn.innerHTML = `ЗАБРАТЬ <span class="jet-action-sub" id="cashout-val">${playerBet.amount.toFixed(2)} TON</span>`;
-  } else {
-    actionBtn.className = 'jet-action-btn cashed-out';
-    actionBtn.innerText = 'ЖДЕМ СЛЕДУЮЩИЙ РАУНД';
+  if (actionBtn) {
+    if (playerBet.active && !playerBet.cashedOut) {
+      actionBtn.className = 'jet-action-btn cashout';
+      actionBtn.innerHTML = `ЗАБРАТЬ <span class="jet-action-sub" id="cashout-val">${playerBet.amount.toFixed(2)} TON</span>`;
+    } else {
+      actionBtn.className = 'jet-action-btn cashed-out';
+      actionBtn.innerText = 'ЖДЕМ СЛЕДУЮЩИЙ РАУНД';
+    }
   }
   
-  document.getElementById('jet-input-group').classList.add('disabled');
+  const inputGroup = document.getElementById('jet-input-group');
+  if (inputGroup) inputGroup.classList.add('disabled');
   
   loop();
 }
@@ -136,25 +153,31 @@ function loop() {
   const jetGlow = document.getElementById('jet-glow');
   const jetIcon = document.getElementById('jet-icon');
 
-  multiplierDisplay.innerText = currentMultiplier.toFixed(2) + 'x';
-  
-  if (currentMultiplier > 3) {
-    multiplierDisplay.style.color = '#FBBF24';
-    jetGlow.style.background = '#FBBF24';
-  }
-  if (currentMultiplier > 5) {
-    multiplierDisplay.style.color = '#F87171';
-    jetGlow.style.background = '#F87171';
+  if (multiplierDisplay) {
+    multiplierDisplay.innerText = currentMultiplier.toFixed(2) + 'x';
+    
+    if (currentMultiplier > 3) {
+      multiplierDisplay.style.color = '#FBBF24';
+      if (jetGlow) jetGlow.style.background = '#FBBF24';
+    }
+    if (currentMultiplier > 5) {
+      multiplierDisplay.style.color = '#F87171';
+      if (jetGlow) jetGlow.style.background = '#F87171';
+    }
   }
 
-  jetGlow.style.opacity = 0.1 + (currentMultiplier * 0.05);
-  jetGlow.style.transform = `scale(${1 + currentMultiplier * 0.1})`;
-  
-  const planeLeft = 10 + (elapsed * 2) + Math.pow(elapsed, 1.8) * 2;
-  if (planeLeft < 90) {
-    jetIcon.style.left = planeLeft + '%';
+  if (jetGlow) {
+    jetGlow.style.opacity = 0.1 + (currentMultiplier * 0.05);
+    jetGlow.style.transform = `scale(${1 + currentMultiplier * 0.1})`;
   }
-  jetIcon.style.transform = `translateY(${Math.sin(elapsed * 5) * 10}px) scale(${1 + currentMultiplier * 0.01}) rotate(${currentMultiplier * 1.5}deg)`;
+  
+  if (jetIcon) {
+    const planeLeft = 10 + (elapsed * 2) + Math.pow(elapsed, 1.8) * 2;
+    if (planeLeft < 90) {
+      jetIcon.style.left = planeLeft + '%';
+    }
+    jetIcon.style.transform = `translateY(${Math.sin(elapsed * 5) * 10}px) scale(${1 + currentMultiplier * 0.01}) rotate(${currentMultiplier * 1.5}deg)`;
+  }
 
   if (playerBet.active && !playerBet.cashedOut) {
     if (playerBet.autoCashout > 0 && currentMultiplier >= playerBet.autoCashout) {
@@ -180,20 +203,28 @@ function endRoundCrash() {
   const crashedText = document.getElementById('jet-crashed-text');
   const actionBtn = document.getElementById('jet-action-btn');
   
-  multiplierDisplay.style.display = 'none';
-  crashedText.style.display = 'block';
-  crashedText.innerText = `УЛЕТЕЛ!`;
+  if (multiplierDisplay) multiplierDisplay.style.display = 'none';
+  if (crashedText) {
+    crashedText.style.display = 'block';
+    crashedText.innerText = `УЛЕТЕЛ!`;
+  }
   
-  document.getElementById('jet-icon').style.opacity = '0';
-  document.getElementById('jet-glow').style.opacity = '0';
+  const jetIcon = document.getElementById('jet-icon');
+  const jetGlow = document.getElementById('jet-glow');
+  if (jetIcon) jetIcon.style.opacity = '0';
+  if (jetGlow) jetGlow.style.opacity = '0';
   
   if (playerBet.active && !playerBet.cashedOut) {
     if (typeof showToast === 'function') showToast(`💥 Вы проиграли ${playerBet.amount.toFixed(2)} TON`);
   }
 
-  actionBtn.className = 'jet-action-btn crashed';
-  actionBtn.innerText = 'УЛЕТЕЛ!';
-  document.getElementById('jet-input-group').classList.remove('disabled');
+  if (actionBtn) {
+    actionBtn.className = 'jet-action-btn crashed';
+    actionBtn.innerText = 'УЛЕТЕЛ!';
+  }
+  
+  const inputGroup = document.getElementById('jet-input-group');
+  if (inputGroup) inputGroup.classList.remove('disabled');
   
   flightHistory.unshift(crashPoint);
   if (flightHistory.length > 10) flightHistory.pop();
@@ -218,7 +249,8 @@ function setBet(amount) {
   if (betAmount > currentBalance) betAmount = Math.floor(currentBalance);
   if (betAmount < 1) betAmount = 1;
   
-  document.getElementById('bet-amount').value = betAmount;
+  const betInput = document.getElementById('bet-amount');
+  if (betInput) betInput.value = betAmount;
 }
 
 function handleGameAction() {
@@ -231,8 +263,11 @@ function handleGameAction() {
 
 function placeBet() {
   const betInput = document.getElementById('bet-amount');
+  if (!betInput) return;
+  
   const amount = parseFloat(betInput.value);
-  const auto = parseFloat(document.getElementById('auto-cashout').value) || 0;
+  const autoInput = document.getElementById('auto-cashout');
+  const auto = autoInput ? parseFloat(autoInput.value) || 0 : 0;
 
   if (isNaN(amount) || amount < 1) {
     if (typeof showToast === 'function') showToast('⚠️ Мин. ставка 1 TON');
@@ -253,8 +288,10 @@ function placeBet() {
   playerBet.autoCashout = auto;
 
   const actionBtn = document.getElementById('jet-action-btn');
-  actionBtn.className = 'jet-action-btn waiting';
-  actionBtn.innerText = 'СТАВКА ПРИНЯТА!';
+  if (actionBtn) {
+    actionBtn.className = 'jet-action-btn waiting';
+    actionBtn.innerText = 'СТАВКА ПРИНЯТА!';
+  }
   
   addPlayerToLiveList("ВЫ", amount);
 }
@@ -270,8 +307,10 @@ function handlePlayerCashout(isAuto) {
   if (!isAuto) haptic('heavy');
 
   const actionBtn = document.getElementById('jet-action-btn');
-  actionBtn.className = 'jet-action-btn cashed-out';
-  actionBtn.innerText = `ЗАБРАНО ${winAmount.toFixed(2)} TON`;
+  if (actionBtn) {
+    actionBtn.className = 'jet-action-btn cashed-out';
+    actionBtn.innerText = `ЗАБРАНО ${winAmount.toFixed(2)} TON`;
+  }
 
   if (typeof showToast === 'function') {
     showToast(isAuto ? `🤖 Авто-вывод ${winAmount.toFixed(2)} TON` : `✅ Вы забрали ${winAmount.toFixed(2)} TON`);
@@ -302,8 +341,10 @@ function updatePlayerLiveStatus(win, mult) {
   const el = document.getElementById('player-bet');
   if (el) {
     const amountDiv = el.querySelector('.live-bet-amount');
-    amountDiv.className = 'live-bet-cashout';
-    amountDiv.innerText = `+${win.toFixed(0)} TON (${mult.toFixed(2)}x)`;
+    if (amountDiv) {
+      amountDiv.className = 'live-bet-cashout';
+      amountDiv.innerText = `+${win.toFixed(0)} TON (${mult.toFixed(2)}x)`;
+    }
   }
 }
 
@@ -314,7 +355,7 @@ function startLiveBetsSimulation() {
   
   list.innerHTML = '';
   fakePlayers = [];
-  count.innerText = Math.floor(Math.random() * 30) + 10;
+  if (count) count.innerText = Math.floor(Math.random() * 30) + 10;
 
   if (playerInterval) clearInterval(playerInterval);
   
@@ -347,8 +388,10 @@ function updateLiveBetsCashout(mult) {
       const el = document.getElementById(`bet-${p.id}`);
       if (el) {
         const amountDiv = el.querySelector('.live-bet-amount');
-        amountDiv.className = 'live-bet-cashout';
-        amountDiv.innerText = `+${(p.bet * mult).toFixed(0)} TON (${mult.toFixed(2)}x)`;
+        if (amountDiv) {
+          amountDiv.className = 'live-bet-cashout';
+          amountDiv.innerText = `+${(p.bet * mult).toFixed(0)} TON (${mult.toFixed(2)}x)`;
+        }
       }
     }
   });
