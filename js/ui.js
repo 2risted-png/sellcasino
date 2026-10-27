@@ -8,15 +8,36 @@ function showToast(text) {
   toastTimer = setTimeout(() => toast.classList.remove('show'), 2000);
 }
 
+// ЛОГИКА ПЕРЕКЛЮЧЕНИЯ ВКЛАДОК
+function switchTab(tabId) {
+  // 1. Убираем активный класс со всех кнопок меню
+  document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+  
+  // 2. Скрываем все экраны
+  document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+  
+  // 3. Добавляем активный класс нужной кнопке меню
+  const activeNavBtn = document.querySelector(`.nav-item[data-tab="${tabId}"]`);
+  if (activeNavBtn) activeNavBtn.classList.add('active');
+  
+  // 4. Показываем нужный экран
+  const activeTab = document.getElementById(`tab-${tabId}`);
+  if (activeTab) activeTab.classList.add('active');
+  
+  // Прокручиваем контент наверх при смене вкладки
+  document.querySelector('.app-content').scrollTop = 0;
+}
+
+// Привязываем клики к нижнему меню
 document.querySelectorAll('.nav-item').forEach(item => {
   item.addEventListener('click', () => {
     haptic('light');
-    document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-    item.classList.add('active');
+    const tabId = item.getAttribute('data-tab');
+    switchTab(tabId);
   });
 });
 
-// Анимация баланса
+// Анимация баланса (оставляем как было)
 const balanceEl = document.getElementById('balance-display');
 let start = 0;
 const target = 1250.50;
@@ -29,10 +50,12 @@ function animateBalance(currentTime) {
   const easeOut = 1 - Math.pow(1 - progress, 3);
   const currentVal = start + (target - start) * easeOut;
   
-  balanceEl.innerText = currentVal.toLocaleString('ru-RU', {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2
-  });
+  if (balanceEl) {
+    balanceEl.innerText = currentVal.toLocaleString('ru-RU', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    });
+  }
 
   if (progress < 1) requestAnimationFrame(animateBalance);
 }
