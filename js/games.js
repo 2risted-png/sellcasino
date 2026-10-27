@@ -65,20 +65,22 @@ function startWaitingPhase() {
   const multiplierDisplay = document.getElementById('game-multiplier');
   const crashedText = document.getElementById('jet-crashed-text');
   
-  // ЖЕСТКАЯ ПРОВЕРКА (чтобы игра не зависла, если HTML не обновился)
-  if (!timerDisplay || !multiplierDisplay || !crashedText || !actionBtn) {
-    console.error("Ошибка: не найдены элементы HTML для игры!");
-    return;
-  }
+  const betInput = document.getElementById('bet-amount');
+  const autoInput = document.getElementById('auto-cashout');
+
+  if (!timerDisplay || !multiplierDisplay || !crashedText || !actionBtn) return;
   
-  // Показываем таймер вместо X
   timerDisplay.style.display = 'flex';
   multiplierDisplay.style.display = 'none';
   crashedText.style.display = 'none';
   
   actionBtn.className = 'jet-action-btn waiting';
   actionBtn.innerText = 'СДЕЛАТЬ СТАВКУ';
+  
   if (inputGroup) inputGroup.classList.remove('disabled');
+  // Разблокируем поля ввода для новой ставки
+  if (betInput) betInput.disabled = false;
+  if (autoInput) autoInput.disabled = false;
   
   const jetIcon = document.getElementById('jet-icon');
   if (jetIcon) {
@@ -239,7 +241,7 @@ function endRoundCrash() {
 // ДЕЙСТВИЯ ИГРОКА
 // ==========================================
 function setBet(amount) {
-  if (gameState !== 'waiting') return;
+  if (gameState !== 'waiting' || playerBet.active) return; // Блокируем, если уже есть ставка
   haptic('light');
   
   let betAmount = 10;
@@ -262,6 +264,9 @@ function handleGameAction() {
 }
 
 function placeBet() {
+  // ГЛАВНАЯ ЗАЩИТА: Если ставка уже сделана, выходим из функции
+  if (playerBet.active) return;
+
   const betInput = document.getElementById('bet-amount');
   if (!betInput) return;
   
@@ -292,6 +297,10 @@ function placeBet() {
     actionBtn.className = 'jet-action-btn waiting';
     actionBtn.innerText = 'СТАВКА ПРИНЯТА!';
   }
+  
+  // Блокируем поля ввода
+  betInput.disabled = true;
+  if (autoInput) autoInput.disabled = true;
   
   addPlayerToLiveList("ВЫ", amount);
 }
@@ -326,6 +335,10 @@ function addPlayerToLiveList(name, bet) {
   const list = document.getElementById('live-bets-list');
   if (!list) return;
   
+  // Удаляем старую ставку игрока, если она есть (чтобы не дублировалась)
+  const oldBet = document.getElementById('player-bet');
+  if (oldBet) oldBet.remove();
+
   const id = 'player-bet';
   const item = document.createElement('div');
   item.className = 'live-bet-item';
