@@ -49,9 +49,10 @@ let fakePlayers = [];
 let playerInterval = null;
 const fakeNames = ["Alex", "Max", "Satoshi", "CryptoKing", "Lucky7", "Whale", "N00b", "Gambler", "MoonBoy"];
 
-// --- ГЕНЕРАТОР КРАША (Рандом) ---
+// --- ГЕНЕРАТОР КРАША ---
 function generateCrashPoint() {
   const r = Math.random();
+  // Вероятностное распределение: чаще падает рано, реже — высоко
   const point = Math.max(1.00, 0.97 / (1 - r));
   return point > 100 ? 100 : point;
 }
@@ -67,7 +68,6 @@ function startWaitingPhase() {
   playerBet.cashedOut = false;
   
   const overlay = document.getElementById('game-overlay');
-  const countdownText = document.getElementById('countdown-text');
   const actionBtn = document.getElementById('jet-action-btn');
   const inputGroup = document.getElementById('jet-input-group');
   
@@ -84,11 +84,11 @@ function startWaitingPhase() {
   document.getElementById('jet-crashed-text').classList.remove('show');
   document.getElementById('game-multiplier').style.color = '#fff';
   document.getElementById('game-multiplier').innerText = '1.00x';
+  document.getElementById('jet-glow').style.opacity = '0.1';
+  document.getElementById('jet-glow').style.background = 'var(--turquoise)';
 
-  // Лайв-ставки ботов
   startLiveBetsSimulation();
 
-  // Таймер 5 секунд
   waitStartTime = performance.now();
   let timeLeft = 5.0;
   
@@ -114,6 +114,7 @@ function startFlyingPhase() {
   const actionBtn = document.getElementById('jet-action-btn');
   if (playerBet.active && !playerBet.cashedOut) {
     actionBtn.className = 'jet-action-btn cashout';
+    actionBtn.innerHTML = `ЗАБРАТЬ <span class="jet-action-sub" id="cashout-val">${playerBet.amount.toFixed(2)} TON</span>`;
   } else {
     actionBtn.className = 'jet-action-btn cashed-out';
     actionBtn.innerText = 'ЖДЕМ СЛЕДУЮЩИЙ РАУНД';
@@ -129,8 +130,9 @@ function loop() {
 
   const elapsed = (performance.now() - roundStartTime) / 1000;
   
-  // Плавный рост: 2x достигается за ~4.6 секунды
-  currentMultiplier = Math.exp(0.15 * elapsed);
+  // --- НОВАЯ ПРИЯТНАЯ МАТЕМАТИКА ---
+  // 1.50x достигается за ~5 сек, 2.00x за ~8.6 сек, 10x за ~28 сек.
+  currentMultiplier = Math.exp(0.08 * elapsed);
 
   // Проверка на краш
   if (currentMultiplier >= crashPoint) {
@@ -157,11 +159,14 @@ function loop() {
   jetGlow.style.opacity = 0.1 + (currentMultiplier * 0.05);
   jetGlow.style.transform = `scale(${1 + currentMultiplier * 0.1})`;
   
-  // Самолет летит
-  const planeLeft = 10 + (elapsed * 8);
-  if (planeLeft < 80) {
+  // --- УСКОРЕНИЕ САМОЛЕТА ---
+  // Сначала летит медленно, но с ростом времени скорость растет квадратично
+  const planeLeft = 10 + (elapsed * 2) + Math.pow(elapsed, 1.8) * 2;
+  
+  if (planeLeft < 90) {
     jetIcon.style.left = planeLeft + '%';
   }
+  // Вращение и вибрация тоже усиливаются
   jetIcon.style.transform = `translateY(${Math.sin(elapsed * 5) * 10}px) scale(${1 + currentMultiplier * 0.01}) rotate(${currentMultiplier * 1.5}deg)`;
 
   // Проверка авто-вывода
@@ -169,7 +174,6 @@ function loop() {
     if (playerBet.autoCashout > 0 && currentMultiplier >= playerBet.autoCashout) {
       handlePlayerCashout(true);
     } else {
-      // Обновляем кнопку
       const cashoutEl = document.getElementById('cashout-val');
       if (cashoutEl) {
         cashoutEl.innerText = (playerBet.amount * currentMultiplier).toFixed(2) + ' TON';
@@ -177,7 +181,6 @@ function loop() {
     }
   }
 
-  // Боты забирают
   updateLiveBetsCashout(currentMultiplier);
 
   animationFrameId = requestAnimationFrame(loop);
@@ -201,7 +204,6 @@ function endRoundCrash() {
   document.getElementById('jet-glow').style.opacity = '0';
   
   if (playerBet.active && !playerBet.cashedOut) {
-    // Игрок проиграл
     if (typeof showToast === 'function') showToast(`💥 Вы проиграли ${playerBet.amount.toFixed(2)} TON`);
   }
 
@@ -213,7 +215,6 @@ function endRoundCrash() {
   if (flightHistory.length > 10) flightHistory.pop();
   renderHistory();
 
-  // Ждем 3 секунды и начинаем новый раунд
   setTimeout(() => {
     if (gameState !== 'offline') startWaitingPhase();
   }, 3000);
@@ -226,6 +227,7 @@ function setBet(amount) {
   if (gameState !== 'waiting') return;
   haptic('light');
   
+  let betAmount = 10;
   if (amount === 'max') betAmount = Math.floor(currentBalance);
   else betAmount = amount;
   
@@ -270,7 +272,6 @@ function placeBet() {
   actionBtn.className = 'jet-action-btn waiting';
   actionBtn.innerText = 'СТАВКА ПРИНЯТА!';
   
-  // Добавляем в список лайв-ставок
   addPlayerToLiveList("ВЫ", amount);
 }
 
@@ -292,7 +293,6 @@ function handlePlayerCashout(isAuto) {
     showToast(isAuto ? `🤖 Авто-вывод ${winAmount.toFixed(2)} TON` : `✅ Вы забрали ${winAmount.toFixed(2)} TON`);
   }
   
-  // Обновляем статус в лайв-списке
   updatePlayerLiveStatus(winAmount, currentMultiplier);
 }
 
@@ -334,7 +334,6 @@ function startLiveBetsSimulation() {
 
   if (playerInterval) clearInterval(playerInterval);
   
-  // Боты ставят во время фазы ожидания
   playerInterval = setInterval(() => {
     if (gameState !== 'waiting') return;
     
@@ -387,19 +386,18 @@ function startGameLoading() {
     document.getElementById('games-loading-view').style.display = 'none';
     document.getElementById('games-play-view').style.display = 'block';
     renderHistory();
-    startWaitingPhase(); // Запускаем бесконечный цикл
+    startWaitingPhase();
   }, 1500);
 }
 
 function closeGame() {
   haptic('light');
-  gameState = 'offline'; // Останавливаем движок
+  gameState = 'offline';
   
   if (waitIntervalId) clearInterval(waitIntervalId);
   cancelAnimationFrame(animationFrameId);
   stopLiveBetsSimulation();
   
-  // Возврат ставки, если раунд не закончился
   if (playerBet.active && !playerBet.cashedOut) {
     currentBalance += playerBet.amount;
     updateBalanceUI();
