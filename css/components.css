@@ -1,70 +1,48 @@
 /* ... (Весь предыдущий CSS оставляем без изменений) ... */
-/* Скопируй всё, что было, и добавь в конец: */
 
-/* Оверлей для отсчета и профита */
 .game-overlay {
   position: absolute;
   inset: 0;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   z-index: 10;
   pointer-events: none;
   opacity: 0;
   transition: opacity 0.3s;
+  background: rgba(10, 10, 12, 0.8); /* Затемняем фон во время ожидания */
+  backdrop-filter: blur(5px);
+  border-radius: 24px;
 }
 .game-overlay.active {
   opacity: 1;
 }
 .countdown-text {
-  font-size: 48px;
+  font-size: 32px;
   font-weight: 800;
   color: var(--turquoise);
   text-shadow: 0 0 20px var(--turquoise-glow);
-  transform: scale(0.8);
-  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  margin-bottom: 10px;
 }
-.game-overlay.active .countdown-text {
-  transform: scale(1);
-}
-.profit-text {
-  display: none;
-  font-size: 42px;
-  font-weight: 900;
-  color: #10B981; /* Зеленый */
-  text-shadow: 0 0 30px rgba(16, 185, 129, 0.6);
-  transform: translateY(20px);
-  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-.profit-text.show {
-  display: block;
-  transform: translateY(0);
+.countdown-sub {
+  font-size: 14px;
+  color: var(--text-dim);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
-/* Ряд с инпутами */
-.jet-inputs-row {
-  display: flex;
-  gap: 10px;
+.jet-action-btn {
+  transition: all 0.3s ease;
 }
-.jet-inputs-row .jet-input-group {
-  flex: 1;
+.jet-action-btn.waiting {
+  background: #FBBF24; /* Желтый при ожидании */
+  color: #000;
 }
-.auto-cashout-group {
-  max-width: 110px;
-}
-.auto-cashout-group input {
-  text-align: center;
-}
-
-/* Обновленный полет самолета */
-.jet-icon {
-  position: absolute;
-  left: 20%; /* Начальная позиция */
-  font-size: 40px;
-  z-index: 2;
-  transition: transform 0.1s linear, left 0.1s linear;
-}
-.jet-visual-area {
-  position: relative;
-  overflow: hidden; /* Чтобы самолет не вылетал за края */
+.jet-action-btn.cashed-out {
+  background: rgba(255,255,255,0.1);
+  color: var(--text-dim);
+  box-shadow: none;
+  pointer-events: none;
 }
