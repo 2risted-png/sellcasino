@@ -119,7 +119,7 @@
           </div>
         </div>
 
-        <!-- ЭКРАН ИГРЫ -->
+        <!-- ЭКРАН ИГРЫ (ПЕРЕРАБОТАН ПОД БОЛЬШОЙ ПАЛЕЦ) -->
         <div id="games-play-view" style="display: none; flex: 1; flex-direction: column;">
           
           <div class="game-header">
@@ -127,9 +127,7 @@
               <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
             </button>
             <div class="username">EIGHT JET</div>
-            
             <button class="game-rules-btn" onclick="toggleRules()">?</button>
-            
             <div class="game-balance"><span id="game-balance-display">1250.50</span> TON</div>
           </div>
 
@@ -137,6 +135,7 @@
 
           <div class="jet-game-container glass">
             
+            <!-- Верхняя часть: График -->
             <div class="jet-visual-area">
               <div class="jet-glow" id="jet-glow"></div>
               
@@ -158,19 +157,23 @@
 
               <div class="multiplier-container">
                 <div class="jet-multiplier" id="game-multiplier">1.00x</div>
-                
                 <div class="waiting-timer" id="waiting-timer" style="display: none;">
                   <div class="timer-sec" id="countdown-text">5.0s</div>
                   <div class="timer-lbl">ПРИЕМ СТАВОК</div>
                 </div>
-
                 <div class="jet-crashed-text" id="jet-crashed-text" style="display:none;">УЛЕТЕЛ!</div>
               </div>
             </div>
 
-            <!-- БЛОК УПРАВЛЕНИЯ СТАВКОЙ (Теперь растягивается) -->
+            <!-- Нижняя часть: Управление (всё внизу для удобства) -->
             <div class="jet-controls">
               
+              <!-- Блок с вашей ставкой -->
+              <div class="live-bets-container">
+                <div class="live-bets-header">Ваша ставка в игре</div>
+                <div class="live-bets-list" id="live-bets-list"></div>
+              </div>
+
               <div class="jet-inputs-row">
                 <div class="jet-input-group" id="jet-input-group">
                   <span class="jet-currency">TON</span>
@@ -182,20 +185,14 @@
                     <button onclick="setBet('max')">MAX</button>
                   </div>
                 </div>
-
                 <div class="jet-input-group auto-cashout-group">
                   <span class="jet-currency">x</span>
                   <input type="number" id="auto-cashout" placeholder="Авто" min="1.1" step="0.1">
                 </div>
               </div>
               
+              <!-- Главная кнопка -->
               <button class="jet-action-btn" id="jet-action-btn" onclick="handleGameAction()">СДЕЛАТЬ СТАВКУ</button>
-              
-              <!-- БЛОК СТАВОК (ТЕПЕРЬ РАСТЯГИВАЕТСЯ) -->
-              <div class="live-bets-container">
-                <div class="live-bets-header">Ваша ставка в игре</div>
-                <div class="live-bets-list" id="live-bets-list"></div>
-              </div>
 
             </div>
           </div>
@@ -214,6 +211,33 @@
           <div class="card-label">Текущий баланс</div>
           <div class="balance-amount" style="font-size: 28px; margin-top: 4px;">
             <span id="profile-balance-display">1250.50</span> <span class="currency">TON</span>
+          </div>
+        </div>
+
+        <div class="section-title" style="margin-top: 8px;">История выводов</div>
+        <div class="withdraw-history glass">
+          <div class="history-list">
+            <div class="history-item">
+              <div class="history-info">
+                <div class="history-date">Сегодня, 14:20</div>
+                <div class="history-amount">- 500.00 TON</div>
+              </div>
+              <div class="history-status success">Успешно</div>
+            </div>
+            <div class="history-item">
+              <div class="history-info">
+                <div class="history-date">Вчера, 18:45</div>
+                <div class="history-amount">- 120.00 TON</div>
+              </div>
+              <div class="history-status success">Успешно</div>
+            </div>
+            <div class="history-item">
+              <div class="history-info">
+                <div class="history-date">12 Окт, 10:15</div>
+                <div class="history-amount">- 1500.00 TON</div>
+              </div>
+              <div class="history-status success">Успешно</div>
+            </div>
           </div>
         </div>
 
