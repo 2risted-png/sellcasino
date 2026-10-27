@@ -1,15 +1,14 @@
 :root {
-  --bg-dark: #050507;
-  --bg-app: #0A0A0F;
+  --bg-dark: #000000;
+  --bg-app: #050505;
+  
   --text-main: #FFFFFF;
-  --text-dim: #8A8A93;
+  --text-dim: #A1A1AA;
   
-  --primary: #00E5FF;
-  --primary-glow: rgba(0, 229, 255, 0.4);
+  --gold: #D4AF37;
+  --gold-glow: rgba(212, 175, 55, 0.3);
+  --gold-gradient: linear-gradient(135deg, #F9D976 0%, #D4AF37 100%);
   
-  --secondary: #7000FF;
-  --secondary-glow: rgba(112, 0, 255, 0.4);
-  
-  --glass-bg: rgba(255, 255, 255, 0.04);
+  --glass-bg: rgba(255, 255, 255, 0.03);
   --glass-border: rgba(255, 255, 255, 0.08);
 }
