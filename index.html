@@ -66,7 +66,6 @@
           </div>
           <div class="balance-actions">
             <button class="topup-btn" onclick="showToast('🪙 Переход к пополнению...')">Пополнить</button>
-            <!-- КНОПКА ВЫВОДА ВМЕСТО ДЖЕКПОТА -->
             <button class="withdraw-btn glass" onclick="showToast('💸 Запрос на вывод создан')">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M21 12V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-5z"/>
@@ -120,6 +119,7 @@
           </div>
         </div>
 
+        <!-- ЭКРАН ИГРЫ -->
         <div id="games-play-view" style="display: none; flex: 1; flex-direction: column;">
           
           <div class="game-header">
@@ -127,6 +127,10 @@
               <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
             </button>
             <div class="username">EIGHT JET</div>
+            
+            <!-- Кнопка правил игры -->
+            <button class="game-rules-btn" onclick="toggleRules()">?</button>
+            
             <div class="game-balance"><span id="game-balance-display">1250.50</span> TON</div>
           </div>
 
@@ -172,6 +176,8 @@
 
             <div class="jet-controls">
               <div class="jet-inputs-row">
+                
+                <!-- ИСПРАВЛЕНО: Поле ввода с отступами -->
                 <div class="jet-input-group" id="jet-input-group">
                   <span class="jet-currency">TON</span>
                   <input type="number" id="bet-amount" value="10" min="1" step="1">
@@ -255,7 +261,23 @@
 
     <div class="toast" id="toast"></div>
 
-    <!-- АДМИН ПАНЕЛЬ (Убрали настройку джекпота) -->
+    <!-- МОДАЛЬНОЕ ОКНО: ПРАВИЛА ИГРЫ -->
+    <div class="rules-modal" id="rulesModal">
+      <div class="rules-content glass">
+        <div class="rules-header">
+          <h2>Как играть в EIGHT JET</h2>
+          <button class="close-btn" onclick="toggleRules()">✕</button>
+        </div>
+        <div class="rules-body">
+          <p><strong>Суть игры:</strong> Это игра на умножение ставки (Crash). Самолет летит, а коэффициент (множитель) растет.</p>
+          <p><strong>Ваша задача:</strong> Успеть нажать кнопку <strong>«ЗАБРАТЬ»</strong>, пока самолет не улетел. Если вы заберете вовремя — ваш выигрыш составит: <em>Ставка × Текущий коэффициент</em>.</p>
+          <p><strong>Смысл:</strong> Чем дольше летит самолет, тем больше ваш потенциальный выигрыш. Но если вы не успеете забрать деньги до «краша», ваша ставка сгорает. Это игра на хладнокровие и жадность.</p>
+          <p><strong>Авто-вывод:</strong> В поле «Авто» можно указать коэффициент (например, 2.0), и игра сама заберет выигрыш, когда самолет достигнет этой отметки.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- АДМИН ПАНЕЛЬ -->
     <div class="admin-panel" id="adminPanel">
       <div class="admin-content glass">
         <div class="admin-login-view" id="adminLoginView">
