@@ -5,10 +5,18 @@ if (tg) {
   tg.expand();
   const user = tg.initDataUnsafe?.user;
   if (user && user.first_name) {
-    document.getElementById('username').innerText = user.first_name;
+    const usernameEl = document.getElementById('username');
+    if (usernameEl) usernameEl.innerText = user.first_name;
   }
 }
 
+// Безопасный вызов вибрации
 function haptic(type = 'light') {
-  if (tg) tg.HapticFeedback.impactOccurred(type);
+  try {
+    if (tg && tg.HapticFeedback) {
+      tg.HapticFeedback.impactOccurred(type);
+    }
+  } catch (e) {
+    // Игнорируем ошибку, если версия Telegram старая
+  }
 }
