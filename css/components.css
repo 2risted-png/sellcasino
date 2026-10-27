@@ -324,9 +324,9 @@
   overflow: hidden; 
 }
 
-/* Внутренняя область графика */
+/* Внутренняя область графика (занимает больше места) */
 .jet-visual-area { 
-  flex: 1; 
+  flex: 1.5; /* Увеличили, чтобы график был большим */
   display: flex; 
   flex-direction: column; 
   justify-content: center; 
@@ -427,9 +427,15 @@
 .history-pill.win { background: rgba(45, 212, 191, 0.15); color: var(--turquoise); border-color: rgba(45, 212, 191, 0.3); }
 .history-pill.loss { background: rgba(248, 113, 113, 0.15); color: #F87171; border-color: rgba(248, 113, 113, 0.3); }
 
-/* Контролы */
-.jet-controls { display: flex; flex-direction: column; gap: 8px; z-index: 2; flex-shrink: 0; }
-.jet-inputs-row { display: flex; gap: 8px; }
+/* КОНТРОЛЫ (ТЕПЕРЬ РАСТЯГИВАЮТСЯ) */
+.jet-controls { 
+  display: flex; 
+  flex-direction: column; 
+  gap: 8px; 
+  z-index: 2; 
+  flex: 1; /* Растягиваем на всю доступную высоту */
+}
+.jet-inputs-row { display: flex; gap: 8px; flex-shrink: 0; }
 .jet-inputs-row .jet-input-group { flex: 1; }
 .auto-cashout-group { max-width: 80px; }
 .auto-cashout-group input { text-align: center; }
@@ -486,6 +492,7 @@
   line-height: 1.1; 
   position: relative;
   overflow: hidden;
+  flex-shrink: 0; /* Не сжимать кнопку */
 }
 .jet-action-btn::before {
   content: ''; position: absolute; top: 0; left: 0; right: 0; height: 50%;
@@ -503,20 +510,20 @@
 .jet-action-sub { font-size: 11px; font-weight: 600; opacity: 0.8; position: relative; z-index: 1; }
 .jet-action-btn > * { position: relative; z-index: 1; }
 
-/* ИСПРАВЛЕННЫЙ БЛОК ОНЛАЙН СТАВОК (ПОД КНОПКОЙ) */
+/* БЛОК ОНЛАЙН СТАВОК (РАСТЯГИВАЕТСЯ) */
 .live-bets-container { 
   background: rgba(0,0,0,0.2); 
   border-radius: 14px; 
   padding: 10px; 
   margin-top: 4px; 
-  height: 60px; 
+  flex: 1; /* Блок занимает всё оставшееся место внизу */
+  min-height: 80px;
   display: flex; 
   flex-direction: column; 
-  flex-shrink: 0; 
   box-shadow: inset 0 3px 8px rgba(0,0,0,0.3); 
   border: 1px solid rgba(255,255,255,0.03); 
 }
-.live-bets-header { font-size: 11px; color: var(--text-dim); font-weight: 600; margin-bottom: 6px; display: flex; justify-content: space-between; }
+.live-bets-header { font-size: 11px; color: var(--text-dim); font-weight: 600; margin-bottom: 6px; display: flex; justify-content: space-between; flex-shrink: 0; }
 .live-bets-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 4px; }
 .live-bets-list::-webkit-scrollbar { width: 3px; }
 .live-bets-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 3px; }
