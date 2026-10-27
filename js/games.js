@@ -38,10 +38,6 @@ let waitIntervalId = null;
 
 let playerBet = { active: false, amount: 0, cashedOut: false, autoCashout: 0 };
 
-let fakePlayers = [];
-let playerInterval = null;
-const fakeNames = ["Alex", "Max", "Satoshi", "CryptoKing", "Lucky7", "Whale", "N00b", "Gambler", "MoonBoy"];
-
 // --- ГЕНЕРАТОР КРАША ---
 function generateCrashPoint() {
   const r = Math.random();
@@ -146,7 +142,7 @@ function startWaitingPhase() {
   resetGraph();
   colorGraphDefault();
 
-  startLiveBetsSimulation();
+  clearLiveBets();
 
   waitStartTime = performance.now();
   let timeLeft = 5.0;
@@ -234,7 +230,6 @@ function loop() {
     }
   }
 
-  updateLiveBetsCashout(currentMultiplier);
   animationFrameId = requestAnimationFrame(loop);
 }
 
@@ -242,7 +237,6 @@ function endRoundCrash() {
   gameState = 'crashed';
   cancelAnimationFrame(animationFrameId);
   clearInterval(waitIntervalId);
-  stopLiveBetsSimulation();
   haptic('heavy');
 
   const multiplierDisplay = document.getElementById('game-multiplier');
@@ -371,22 +365,31 @@ function handlePlayerCashout(isAuto) {
 }
 
 // ==========================================
-// СИМУЛЯЦИЯ БОТОВ
+// СПИСОК СТАВОК (ЧЕСТНЫЙ, БЕЗ БОТОВ)
 // ==========================================
+function clearLiveBets() {
+  const list = document.getElementById('live-bets-list');
+  if (list) list.innerHTML = '';
+}
+
 function addPlayerToLiveList(name, bet) {
   const list = document.getElementById('live-bets-list');
   if (!list) return;
   
-  const oldBet = document.getElementById('player-bet');
-  if (oldBet) oldBet.remove();
+  list.innerHTML = ''; // Очищаем старые перед новой ставкой
 
-  const id = 'player-bet';
   const item = document.createElement('div');
   item.className = 'live-bet-item';
-  item.id = id;
+  item.id = 'player-bet';
   item.innerHTML = `
-    <div class="live-bet-user" style="color: var(--turquoise)">👤 ${name}</div>
-    <div class="live-bet-amount">${bet} TON</div>
+    <div class="live-bet-user">👤 ${name}</div>
+    <div class="live-bet-data">
+      <span class="live-bet-bet">${bet} TON</span>
+      <span class="live-bet-sep">-</span>
+      <span class="live-bet-win">0 TON</span>
+      <span class="live-bet-sep">-</span>
+      <span class="live-bet-mult">0.00x</span>
+    </div>
   `;
   list.prepend(item);
 }
@@ -394,65 +397,12 @@ function addPlayerToLiveList(name, bet) {
 function updatePlayerLiveStatus(win, mult) {
   const el = document.getElementById('player-bet');
   if (el) {
-    const amountDiv = el.querySelector('.live-bet-amount');
-    if (amountDiv) {
-      amountDiv.className = 'live-bet-cashout';
-      amountDiv.innerText = `+${win.toFixed(0)} TON (${mult.toFixed(2)}x)`;
-    }
+    const winEl = el.querySelector('.live-bet-win');
+    const multEl = el.querySelector('.live-bet-mult');
+    if (winEl) winEl.innerText = `+${win.toFixed(2)} TON`;
+    if (multEl) multEl.innerText = `${mult.toFixed(2)}x`;
+    el.classList.add('cashed-out');
   }
-}
-
-function startLiveBetsSimulation() {
-  const list = document.getElementById('live-bets-list');
-  const count = document.getElementById('online-count');
-  if (!list) return;
-  
-  list.innerHTML = '';
-  fakePlayers = [];
-  if (count) count.innerText = Math.floor(Math.random() * 30) + 10;
-
-  if (playerInterval) clearInterval(playerInterval);
-  
-  playerInterval = setInterval(() => {
-    if (gameState !== 'waiting') return;
-    
-    const name = fakeNames[Math.floor(Math.random() * fakeNames.length)] + Math.floor(Math.random() * 99);
-    const bet = Math.floor(Math.random() * 500) + 10;
-    const id = Date.now() + Math.random();
-    
-    fakePlayers.push({ id, name, bet, cashedOut: false, autoCashout: Math.random() * 5 + 1.1 });
-
-    const item = document.createElement('div');
-    item.className = 'live-bet-item';
-    item.id = `bet-${id}`;
-    item.innerHTML = `
-      <div class="live-bet-user">👤 ${name}</div>
-      <div class="live-bet-amount">${bet} TON</div>
-    `;
-    list.prepend(item);
-
-    if (list.children.length > 8) list.lastChild.remove();
-  }, 400);
-}
-
-function updateLiveBetsCashout(mult) {
-  fakePlayers.forEach(p => {
-    if (!p.cashedOut && (mult >= p.autoCashout || Math.random() < 0.02)) {
-      p.cashedOut = true;
-      const el = document.getElementById(`bet-${p.id}`);
-      if (el) {
-        const amountDiv = el.querySelector('.live-bet-amount');
-        if (amountDiv) {
-          amountDiv.className = 'live-bet-cashout';
-          amountDiv.innerText = `+${(p.bet * mult).toFixed(0)} TON (${mult.toFixed(2)}x)`;
-        }
-      }
-    }
-  });
-}
-
-function stopLiveBetsSimulation() {
-  if (playerInterval) clearInterval(playerInterval);
 }
 
 // ==========================================
@@ -477,7 +427,6 @@ function closeGame() {
   
   if (waitIntervalId) clearInterval(waitIntervalId);
   cancelAnimationFrame(animationFrameId);
-  stopLiveBetsSimulation();
   
   if (playerBet.active && !playerBet.cashedOut) {
     currentBalance += playerBet.amount;
