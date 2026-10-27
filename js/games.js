@@ -1,7 +1,7 @@
 let currentBalance = 0;
 
 // js/telegram.js (или games.js)
-const API_URL = 'http://localhost:3000'; // Замени на URL твоего сервера после деплоя
+const API_URL = 'https://casino-api.vercel-coder.workers.dev/'; // Замени на URL твоего сервера после деплоя
 
 async function fetchUserBalance() {
     const tg = window.Telegram?.WebApp;
