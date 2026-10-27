@@ -1,39 +1,8 @@
-let currentBalance = 0;
-
-// js/telegram.js (или games.js)
-const API_URL = 'https://casino-api.vercel-coder.workers.dev'; // Замени на URL твоего сервера после деплоя
-
-async function fetchUserBalance() {
-    const tg = window.Telegram?.WebApp;
-    if (!tg || !tg.initData) {
-        console.warn('Не в Telegram, баланс не загружен');
-        return;
-    }
-
-    try {
-        console.log('Отправка запроса на сервер...');
-        const response = await fetch(`${API_URL}/api/auth`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ initData: tg.initData })
-        });
-        const data = await response.json();
-        
-        console.log('Ответ сервера:', data); // <-- Смотрим, что пришло
-
-        if (data.success) {
-            currentBalance = data.balance;
-            updateBalanceUI(); 
-            showToast(`Баланс загружен: ${currentBalance} TON`);
-        }
-    } catch (err) {
-        console.error('Ошибка загрузки баланса:', err);
-        showToast('Ошибка связи с сервером');
-    }
-}
-
-// Вызываем при загрузке страницы
-document.addEventListener('DOMContentLoaded', fetchUserBalance);
+// ==========================================
+// ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ И БАЛАНС
+// ==========================================
+let currentBalance = 0; 
+const API_URL = 'https://casino-api.vercel-coder.workers.dev'; // Твоя ссылка на Cloudflare Worker
 
 function updateBalanceUI() {
   const formatted = currentBalance.toLocaleString('ru-RU', {
@@ -47,7 +16,47 @@ function updateBalanceUI() {
   if (document.getElementById('profile-balance-display')) document.getElementById('profile-balance-display').innerText = formatted;
 }
 
-// --- EIGHT JET ---
+async function fetchUserBalance() {
+    const tg = window.Telegram?.WebApp;
+    console.log("1. Функция fetchUserBalance запущена");
+    
+    if (!tg || !tg.initData) {
+        console.warn("2. ОШИБКА: Нет данных от Telegram (initData). Открывай строго через кнопку меню!");
+        return;
+    }
+
+    console.log("3. Данные от Telegram есть. Отправляем на сервер...");
+    try {
+        const response = await fetch(`${API_URL}/api/auth`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ initData: tg.initData })
+        });
+        
+        console.log("4. Сервер ответил, статус:", response.status);
+        const data = await response.json();
+        console.log("5. Ответ сервера:", data);
+
+        if (data.success) {
+            currentBalance = data.balance;
+            updateBalanceUI();
+            console.log("6. Баланс успешно обновлен:", data.balance);
+        } else {
+            console.error("6. Сервер вернул ошибку:", data.error);
+        }
+    } catch (err) {
+        console.error("6. Ошибка сети:", err);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    updateBalanceUI();
+    setTimeout(fetchUserBalance, 1000); // Запускаем загрузку баланса через секунду
+});
+
+// ==========================================
+// EIGHT JET
+// ==========================================
 let flightHistory = [1.23, 4.50, 1.05, 2.80, 12.40, 1.50, 1.01, 3.20];
 function renderHistory() {
   const container = document.getElementById('flight-history');
@@ -89,8 +98,7 @@ function resetGraph() {
 function updateGraph(elapsed) {
   if (!graphLine || !graphFill || !graphDot) return;
   graphDot.style.opacity = '1';
-  const maxX = 290;
-  const maxY = 10;
+  const maxX = 290; const maxY = 10;
   let x = Math.min(maxX, 10 + elapsed * 25);
   let y = 150 - (Math.log(currentMultiplier) * 45);
   if (y < maxY) y = maxY;
@@ -301,21 +309,6 @@ function handlePlayerCashout(isAuto) {
   playerBet.cashedOut = true;
   const winAmount = playerBet.amount * currentMultiplier;
   currentBalance += winAmount;
-    // Функция для обновления баланса на сервере (добавь в games.js)
-async function updateBalanceOnServer(newBalance) {
-    const tg = window.Telegram?.WebApp;
-    if (!tg || !tg.initData) return;
-
-    try {
-        await fetch(`${API_URL}/api/update-balance`, { // Этот эндпоинт нужно создать на сервере
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ initData: tg.initData, balance: newBalance })
-        });
-    } catch (err) {
-        console.error('Ошибка обновления баланса:', err);
-    }
-}
   updateBalanceUI();
   if (!isAuto) haptic('heavy');
 
@@ -386,13 +379,11 @@ function toggleRules() {
   if (modal) modal.style.display = modal.style.display === 'flex' ? 'none' : 'flex';
 }
 
-
 // ==========================================
-// DICE (С кастомным кубиком)
+// DICE
 // ==========================================
 let isDiceRolling = false;
 
-// Функция генерации HTML для граней кубика
 function getDiceFaceHTML(num) {
   const pips = {
     1: '<span class="pip p-center"></span>',
@@ -459,7 +450,7 @@ function playDice(choice) {
   resultText.classList.remove('show', 'win', 'loss');
   
   diceCube.classList.add('rolling');
-  diceCube.innerHTML = getDiceFaceHTML(1); // Сброс на 1 при начале броска
+  diceCube.innerHTML = getDiceFaceHTML(1);
 
   setTimeout(() => {
     diceCube.classList.remove('rolling');
@@ -502,9 +493,8 @@ function resetDiceUI() {
   if (resultText) resultText.classList.remove('show', 'win', 'loss');
 }
 
-
 // ==========================================
-// MINES GAME
+// MINES
 // ==========================================
 let minesCount = 3;
 let isMinesPlaying = false;
@@ -529,7 +519,7 @@ function startMinesLoading() {
 function closeMinesGame() {
   haptic('light');
   if (isMinesPlaying) {
-    cashOutMines(true); // Авто-кэшаут при выходе
+    cashOutMines(true); 
   }
   document.getElementById('mines-play-view').style.display = 'none';
   document.getElementById('games-list-view').style.display = 'block';
@@ -541,7 +531,7 @@ function setMinesCount(count, btn) {
   minesCount = count;
   document.querySelectorAll('.mine-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
-  updateMinesNextMultiplier(0); // Обновляем множитель для 0 кликов
+  updateMinesNextMultiplier(0);
 }
 
 function setMinesBet(amount) {
@@ -560,7 +550,6 @@ function calculateMinesMultiplier(safeClicks) {
   for (let i = 0; i < safeClicks; i++) {
     prob *= (TOTAL_CELLS - minesCount - i) / (TOTAL_CELLS - i);
   }
-  // Комиссия казино ~3%
   return (1 / prob) * 0.97;
 }
 
@@ -620,7 +609,6 @@ function startMinesGame() {
   isMinesPlaying = true;
   currentMinesSafeClicks = 0;
   
-  // Генерируем позиции мин
   minesPositions = [];
   while(minesPositions.length < minesCount) {
     const r = Math.floor(Math.random() * TOTAL_CELLS);
@@ -647,13 +635,11 @@ function handleMinesClick(index, cell) {
   cell.classList.add('revealed');
 
   if (minesPositions.includes(index)) {
-    // Взрыв
     cell.classList.add('mine', 'crashed');
     cell.innerText = '💥';
     isMinesPlaying = false;
     haptic('heavy');
     
-    // Открываем все мины
     const grid = document.getElementById('mines-grid');
     Array.from(grid.children).forEach((c, i) => {
       if (minesPositions.includes(i) && i !== index) {
@@ -673,7 +659,6 @@ function handleMinesClick(index, cell) {
     setTimeout(initMinesGame, 3000);
 
   } else {
-    // Алмаз
     cell.classList.add('safe');
     cell.innerText = '💎';
     currentMinesSafeClicks++;
@@ -687,7 +672,6 @@ function handleMinesClick(index, cell) {
     
     updateMinesNextMultiplier(currentMinesSafeClicks);
     
-    // Если открыли все безопасные ячейки - авто-выигрыш
     if (currentMinesSafeClicks === TOTAL_CELLS - minesCount) {
       cashOutMines(false);
     }
@@ -717,7 +701,6 @@ function cashOutMines(isSilent) {
     showToast(`Авто-вывод: ${winAmount.toFixed(2)} TON`);
   }
 
-  // Открываем поле на пару секунд перед сбросом
   const grid = document.getElementById('mines-grid');
   Array.from(grid.children).forEach((c, i) => {
     if (!c.classList.contains('revealed') && minesPositions.includes(i)) {
@@ -728,10 +711,3 @@ function cashOutMines(isSilent) {
 
   setTimeout(initMinesGame, 2500);
 }
-
-document.addEventListener('DOMContentLoaded', () => {
-  updateBalanceUI();
-  if (typeof fetchUserBalance === 'function') {
-    fetchUserBalance(); // <--- Добавляем загрузку с сервера
-  }
-});
