@@ -117,7 +117,6 @@
             <div class="username">Выбор игры</div>
           </header>
           
-          <!-- EIGHT JET -->
           <div class="game-widget glass" onclick="startGameLoading()">
             <div class="game-widget-logo jet-logo">
               <svg viewBox="0 0 24 24" fill="none" stroke="url(#jet-grad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -132,7 +131,6 @@
             <div class="game-widget-arrow"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
           </div>
 
-          <!-- DICE -->
           <div class="game-widget glass" onclick="startDiceLoading()">
             <div class="game-widget-logo dice-logo">
               <svg viewBox="0 0 24 24" fill="none" stroke="url(#dice-grad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -152,7 +150,6 @@
             <div class="game-widget-arrow"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
           </div>
 
-          <!-- MINES -->
           <div class="game-widget glass" onclick="startMinesLoading()">
             <div class="game-widget-logo mines-logo">
               <svg viewBox="0 0 24 24" fill="none" stroke="url(#mines-grad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -168,7 +165,6 @@
           </div>
         </div>
 
-        <!-- ЗАГРУЗКА -->
         <div id="games-loading-view" style="display: none; height: 80%; flex-direction: column; justify-content: center; align-items: center;">
           <div class="custom-loader">
             <div class="radar-container">
@@ -241,14 +237,9 @@
           <div class="dice-game-container glass">
             <div class="dice-visual-area">
               <div class="dice-glow" id="dice-glow"></div>
-              
-              <!-- КАСТОМНЫЙ КУБИК -->
               <div class="custom-dice" id="dice-cube">
-                <div class="die-face face-1">
-                  <span class="pip p-center"></span>
-                </div>
+                <div class="die-face face-1"><span class="pip p-center"></span></div>
               </div>
-
               <div class="dice-result-text" id="dice-result-text"></div>
             </div>
 
@@ -275,7 +266,6 @@
           </div>
 
           <div class="mines-game-container glass">
-            
             <div class="mines-top-bar">
               <div class="mines-mult-display">
                 <span class="mines-mult-label">Следующий X</span>
@@ -288,9 +278,7 @@
               </div>
             </div>
 
-            <div class="mines-grid" id="mines-grid">
-              <!-- Grid generated via JS -->
-            </div>
+            <div class="mines-grid" id="mines-grid"></div>
 
             <div class="mines-controls">
               <div class="jet-input-group glass" id="mines-input-group">
