@@ -730,4 +730,7 @@ function cashOutMines(isSilent) {
 
 document.addEventListener('DOMContentLoaded', () => {
   updateBalanceUI();
+  if (typeof fetchUserBalance === 'function') {
+    fetchUserBalance(); // <--- Добавляем загрузку с сервера
+  }
 });
