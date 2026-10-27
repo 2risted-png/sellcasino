@@ -128,7 +128,6 @@
             </button>
             <div class="username">EIGHT JET</div>
             
-            <!-- Кнопка правил игры -->
             <button class="game-rules-btn" onclick="toggleRules()">?</button>
             
             <div class="game-balance"><span id="game-balance-display">1250.50</span> TON</div>
@@ -169,15 +168,9 @@
               </div>
             </div>
 
-            <div class="live-bets-container">
-              <div class="live-bets-header">Онлайн ставки <span id="online-count">0</span></div>
-              <div class="live-bets-list" id="live-bets-list"></div>
-            </div>
-
+            <!-- БЛОК УПРАВЛЕНИЯ СТАВКОЙ -->
             <div class="jet-controls">
               <div class="jet-inputs-row">
-                
-                <!-- ИСПРАВЛЕНО: Поле ввода с отступами -->
                 <div class="jet-input-group" id="jet-input-group">
                   <span class="jet-currency">TON</span>
                   <input type="number" id="bet-amount" value="10" min="1" step="1">
@@ -196,6 +189,13 @@
               </div>
               
               <button class="jet-action-btn" id="jet-action-btn" onclick="handleGameAction()">СДЕЛАТЬ СТАВКУ</button>
+              
+              <!-- ПЕРЕМЕЩЕННЫЙ БЛОК СТАВОК (ТЕПЕРЬ ПОД КНОПКОЙ) -->
+              <div class="live-bets-container">
+                <div class="live-bets-header">Ваша ставка в игре</div>
+                <div class="live-bets-list" id="live-bets-list"></div>
+              </div>
+
             </div>
           </div>
 
@@ -271,7 +271,7 @@
         <div class="rules-body">
           <p><strong>Суть игры:</strong> Это игра на умножение ставки (Crash). Самолет летит, а коэффициент (множитель) растет.</p>
           <p><strong>Ваша задача:</strong> Успеть нажать кнопку <strong>«ЗАБРАТЬ»</strong>, пока самолет не улетел. Если вы заберете вовремя — ваш выигрыш составит: <em>Ставка × Текущий коэффициент</em>.</p>
-          <p><strong>Смысл:</strong> Чем дольше летит самолет, тем больше ваш потенциальный выигрыш. Но если вы не успеете забрать деньги до «краша», ваша ставка сгорает. Это игра на хладнокровие и жадность.</p>
+          <p><strong>Смысл:</strong> Чем дольше летит самолет, тем больше ваш потенциальный выигрыш. Но если вы не успеете забрать деньги до «краша», ваша ставка сгорает.</p>
           <p><strong>Авто-вывод:</strong> В поле «Авто» можно указать коэффициент (например, 2.0), и игра сама заберет выигрыш, когда самолет достигнет этой отметки.</p>
         </div>
       </div>
