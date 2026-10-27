@@ -8,6 +8,7 @@ function showToast(text) {
   toastTimer = setTimeout(() => toast.classList.remove('show'), 2000);
 }
 
+// ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК
 function switchTab(tabId) {
   document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
   document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
@@ -29,6 +30,7 @@ document.querySelectorAll('.nav-item').forEach(item => {
   });
 });
 
+// АНИМАЦИЯ БАЛАНСА
 const balanceEl = document.getElementById('balance-display');
 let start = 0;
 const target = 1250.50;
@@ -51,3 +53,43 @@ function animateBalance(currentTime) {
   if (progress < 1) requestAnimationFrame(animateBalance);
 }
 setTimeout(() => requestAnimationFrame(animateBalance), 300);
+
+// ЛОГИКА АККОРДЕОНА (Документы)
+document.querySelectorAll('.accordion-header').forEach(header => {
+  header.addEventListener('click', () => {
+    haptic('light');
+    const item = header.parentElement;
+    const content = header.nextElementSibling;
+    
+    // Закрываем остальные
+    document.querySelectorAll('.accordion-item').forEach(otherItem => {
+      if (otherItem !== item && otherItem.classList.contains('active')) {
+        otherItem.classList.remove('active');
+        otherItem.querySelector('.accordion-content').style.maxHeight = null;
+      }
+    });
+
+    item.classList.toggle('active');
+    
+    if (item.classList.contains('active')) {
+      content.style.maxHeight = content.scrollHeight + "px";
+    } else {
+      content.style.maxHeight = null;
+    }
+  });
+});
+
+// АВТОМАТИЧЕСКАЯ КАРУСЕЛЬ ОТЗЫВОВ
+const track = document.getElementById('reviewsTrack');
+if (track) {
+  const cards = track.querySelectorAll('.review-card');
+  let currentIndex = 0;
+
+  setInterval(() => {
+    currentIndex++;
+    if (currentIndex >= cards.length) {
+      currentIndex = 0;
+    }
+    track.style.transform = `translateX(-${currentIndex * 100}%)`;
+  }, 4000);
+}
