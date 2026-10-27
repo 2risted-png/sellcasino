@@ -164,52 +164,33 @@
   border-radius: 20px;
 }
 
-/* ИСТОРИЯ ВЫВОДОВ */
-.withdraw-history {
-  padding: 16px;
-  border-radius: 20px;
-  display: flex;
-  flex-direction: column;
-}
-.history-list {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-.history-item {
+/* Кнопка-меню в профиле (История выводов) */
+.profile-menu-btn {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-bottom: 10px;
-  border-bottom: 1px solid rgba(255,255,255,0.05);
-}
-.history-item:last-child {
-  border-bottom: none;
-  padding-bottom: 0;
-}
-.history-info {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-.history-date {
-  font-size: 11px;
-  color: var(--text-dim);
-}
-.history-amount {
-  font-size: 14px;
-  font-weight: 700;
+  width: 100%;
+  padding: 16px;
+  border-radius: 20px;
   color: #fff;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  margin-top: 8px;
+  transition: background 0.2s;
 }
-.history-status {
-  font-size: 11px;
-  font-weight: 600;
-  padding: 4px 8px;
-  border-radius: 6px;
+.profile-menu-btn svg {
+  width: 18px;
+  height: 18px;
+  stroke: var(--text-dim);
+  fill: none;
+  stroke-width: 2;
 }
-.history-status.success {
-  background: rgba(45, 212, 191, 0.15);
-  color: var(--turquoise);
+.profile-menu-btn:active {
+  transform: scale(0.98);
+  background: rgba(255,255,255,0.08);
 }
 
 .stats-grid {
@@ -376,7 +357,7 @@
 
 /* Внутренняя область графика (растягивается) */
 .jet-visual-area { 
-  flex: 1; /* Занимает всё доступное место сверху */
+  flex: 1; 
   display: flex; 
   flex-direction: column; 
   justify-content: center; 
@@ -482,7 +463,7 @@
   flex-direction: column; 
   gap: 8px; 
   z-index: 2; 
-  flex-shrink: 0; /* Блок не сжимается */
+  flex-shrink: 0; 
 }
 .jet-inputs-row { display: flex; gap: 8px; flex-shrink: 0; }
 .jet-inputs-row .jet-input-group { flex: 1; }
@@ -527,7 +508,7 @@
 /* Главные кнопки */
 .jet-action-btn { 
   width: 100%; 
-  height: 54px; /* Чуть увеличили для удобства */
+  height: 54px; 
   border-radius: 16px; 
   border: none; 
   font-size: 16px; 
@@ -598,7 +579,7 @@
 .live-bet-item.cashed-out .live-bet-mult { color: var(--turquoise); }
 
 /* =========================================
-   МОДАЛЬНОЕ ОКНО ПРАВИЛ
+   МОДАЛЬНОЕ ОКНО ПРАВИЛ И ИСТОРИИ
    ========================================= */
 .rules-modal {
   position: absolute;
