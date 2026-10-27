@@ -1,12 +1,11 @@
-// Дефолтные данные (если LocalStorage пуст)
 const defaultData = {
   appName: "Casino Sell",
   jackpot: "15,430.00",
   stats: { players: "1,245", withdraws: "50,000", rtp: "96.5" },
   reviews: [
-    { name: "Alex_99", avatar: "A", color: "#2DD4BF", stars: "★★★★★", text: "Вывел первый джекпот! Шок. Пришло за 2 минуты, всё честно. Интерфейс просто космос." },
-    { name: "MaxCrypto", avatar: "M", color: "#0d9488", stars: "★★★★★", text: "Играю в Crash каждый вечер. Графика плавная, ничего не лагает. Радует адекватная поддержка." },
-    { name: "Satoshi", avatar: "S", color: "#2DD4BF", stars: "★★★★☆", text: "Топ слоты реально дают жару. Пока в плюсе на 500 TON. Дизайн приятный, глаза не устают." }
+    { name: "Alex_99", avatar: "A", color: "#2DD4BF", stars: "★★★★★", text: "Вывел первый джекпот! Шок. Пришло за 2 минуты, всё честно." },
+    { name: "MaxCrypto", avatar: "M", color: "#0d9488", stars: "★★★★★", text: "Играю в Crash каждый вечер. Графика плавная, ничего не лагает." },
+    { name: "Satoshi", avatar: "S", color: "#2DD4BF", stars: "★★★★☆", text: "Топ слоты реально дают жару. Пока в плюсе на 500 TON." }
   ]
 };
 
@@ -19,16 +18,17 @@ function saveData() {
 
 function applyDataToUI() {
   document.title = appData.appName;
-  document.getElementById('greeting-text').innerText = `Добро пожаловать в ${appData.appName}`;
-  document.getElementById('jackpot-display').innerText = appData.jackpot;
-  document.getElementById('stat-players').innerText = appData.stats.players;
-  document.getElementById('stat-withdraws').innerText = appData.stats.withdraws;
-  document.getElementById('stat-rtp').innerText = appData.stats.rtp + '%';
+  if (document.getElementById('greeting-text')) document.getElementById('greeting-text').innerText = `Добро пожаловать в ${appData.appName}`;
+  if (document.getElementById('jackpot-display')) document.getElementById('jackpot-display').innerText = appData.jackpot;
+  if (document.getElementById('stat-players')) document.getElementById('stat-players').innerText = appData.stats.players;
+  if (document.getElementById('stat-withdraws')) document.getElementById('stat-withdraws').innerText = appData.stats.withdraws;
+  if (document.getElementById('stat-rtp')) document.getElementById('stat-rtp').innerText = appData.stats.rtp + '%';
   renderReviews();
 }
 
 function renderReviews() {
   const track = document.getElementById('reviewsTrack');
+  if (!track) return;
   track.innerHTML = ''; 
 
   appData.reviews.forEach(review => {
@@ -51,18 +51,17 @@ function renderReviews() {
 }
 
 // ==========================================
-// ЛОГИКА АВТОРИЗАЦИИ И ОТКРЫТИЯ
+// ЛОГИКА АВТОРИЗАЦИИ
 // ==========================================
 function toggleAdminPanel() {
   const panel = document.getElementById('adminPanel');
   const loginView = document.getElementById('adminLoginView');
   const mainView = document.getElementById('adminMainView');
-  const bottomNav = document.querySelector('.bottom-nav'); // Находим меню
+  const bottomNav = document.querySelector('.bottom-nav');
   
   const isActive = panel.classList.toggle('active');
-  haptic('medium');
+  if (typeof haptic === 'function') haptic('medium');
 
-  // Скрываем нижнее меню, если панель открыта, иначе показываем
   if (bottomNav) {
     bottomNav.style.display = isActive ? 'none' : 'flex';
   }
@@ -90,16 +89,16 @@ function loginAdmin() {
     document.getElementById('login-user').value = '';
     document.getElementById('login-pass').value = '';
     fillAdminInputs();
-    showToast('✅ Вход выполнен');
+    if (typeof showToast === 'function') showToast('✅ Вход выполнен');
   } else {
-    showToast('❌ Неверный логин или пароль');
+    if (typeof showToast === 'function') showToast('❌ Неверный логин или пароль');
   }
 }
 
 function logoutAdmin() {
   sessionStorage.removeItem('adminAuth');
-  toggleAdminPanel(); // Закроет панель и вернет меню
-  showToast('Вы вышли из админки');
+  toggleAdminPanel();
+  if (typeof showToast === 'function') showToast('Вы вышли из админки');
 }
 
 // ==========================================
@@ -130,7 +129,7 @@ function saveAdminSettings() {
   appData.stats.rtp = document.getElementById('admin-rtp').value;
   
   saveData();
-  showToast('✅ Настройки сохранены!');
+  if (typeof showToast === 'function') showToast('✅ Настройки сохранены!');
 }
 
 function addReview() {
@@ -138,7 +137,7 @@ function addReview() {
   const text = document.getElementById('review-text').value;
   
   if (!name || !text) {
-    showToast('⚠️ Заполните имя и текст');
+    if (typeof showToast === 'function') showToast('⚠️ Заполните имя и текст');
     return;
   }
 
@@ -156,18 +155,19 @@ function addReview() {
   document.getElementById('review-text').value = '';
   
   renderAdminReviewsList();
-  showToast('✅ Отзыв добавлен!');
+  if (typeof showToast === 'function') showToast('✅ Отзыв добавлен!');
 }
 
 function deleteReview(index) {
   appData.reviews.splice(index, 1);
   saveData();
   renderAdminReviewsList();
-  showToast('🗑️ Отзыв удален');
+  if (typeof showToast === 'function') showToast('🗑️ Отзыв удален');
 }
 
 function renderAdminReviewsList() {
   const list = document.getElementById('admin-reviews-list');
+  if (!list) return;
   list.innerHTML = '';
   
   appData.reviews.forEach((review, index) => {
@@ -181,7 +181,6 @@ function renderAdminReviewsList() {
   });
 }
 
-// Инициализация
 document.addEventListener('DOMContentLoaded', () => {
   applyDataToUI();
 });
