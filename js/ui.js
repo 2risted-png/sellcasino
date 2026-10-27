@@ -93,13 +93,14 @@ if (track) {
   }, 4000);
 }
 
-// СКРЫТИЕ ЭКРАНА ЗАГРУЗКИ
-window.addEventListener('load', () => {
-  const loader = document.getElementById('loader');
-  if (loader) {
-    // Ждем 2 секунды для красоты, затем скрываем
-    setTimeout(() => {
-      loader.classList.add('hidden');
-    }, 2000);
-  }
+// СКРЫТИЕ ЭКРАНА ЗАГРУЗКИ (Исправлено)
+// Вместо window.onload используем простой таймер, который сработает всегда
+document.addEventListener('DOMContentLoaded', () => {
+  setTimeout(() => {
+    const loader = document.getElementById('loader');
+    if (loader) {
+      loader.style.opacity = '0';
+      loader.style.visibility = 'hidden';
+    }
+  }, 2000); // Экран загрузки исчезнет через 2 секунды
 });
