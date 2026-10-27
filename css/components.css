@@ -1,64 +1,77 @@
-/* Эффект Матового Стекла */
-.glass {
-  background: var(--glass-bg);
-  backdrop-filter: blur(24px) saturate(180%);
-  -webkit-backdrop-filter: blur(24px) saturate(180%);
-  border: 1px solid var(--glass-border);
-  border-radius: 20px;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), 0 8px 24px rgba(0,0,0,0.2);
+/* 
+  ОСНОВНОЙ ЭФФЕКТ ЖИДКОГО СТЕКЛА 
+  (Использует полупрозрачность, сильное размытие, внутренние блики и объемные тени)
+*/
+.glass, 
+.balance-card, 
+.jet-game-container, 
+.admin-content,
+.bottom-nav {
+  position: relative;
+  /* Многослойный градиент для имитации преломления света */
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.02) 100%);
+  backdrop-filter: blur(40px) saturate(200%);
+  -webkit-backdrop-filter: blur(40px) saturate(200%);
+  /* Светлая рамка сверху и слева, темная снизу и справа (эффект объема) */
+  border-top: 1px solid rgba(255, 255, 255, 0.3);
+  border-left: 1px solid rgba(255, 255, 255, 0.15);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  /* Тени: сильная внешняя и мягкая внутренняя */
+  box-shadow: 
+    0 20px 40px rgba(0, 0, 0, 0.4), 
+    inset 0 1px 1px rgba(255, 255, 255, 0.4), 
+    inset 0 -1px 1px rgba(0, 0, 0, 0.2);
 }
 
-.avatar {
-  width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0;
-  background: var(--glass-bg); border: 1px solid var(--glass-border);
-  display: flex; justify-content: center; align-items: center; position: relative;
+/* Блик (отражение) на верхней части стекла */
+.glass::before, 
+.balance-card::before,
+.jet-game-container::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 40%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.15) 0%, transparent 100%);
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 0;
 }
-.avatar svg { width: 18px; height: 18px; stroke: #fff; fill: none; stroke-width: 2; }
 
+/* Убираем стандартный фон у карточки баланса, так как он теперь стеклянный */
 .balance-card {
-  padding: 16px 20px;
-  position: relative; 
-  overflow: hidden;
-  background: linear-gradient(145deg, rgba(30, 30, 35, 0.8) 0%, rgba(10, 10, 12, 0.9) 100%);
-  border: 1px solid rgba(255,255,255,0.1);
-  box-shadow: 0 12px 40px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1);
-  border-radius: 24px; 
-  color: var(--text-main);
-  display: flex; 
-  flex-direction: column; 
+  border-radius: 24px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
   gap: 12px;
+  color: var(--text-main);
+  overflow: hidden;
 }
-
-.balance-card::before { 
-  content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
-  transform: skewX(-20deg); animation: shine 5s infinite; pointer-events: none;
-}
-@keyframes shine { 0% { left: -100%; } 20% { left: 200%; } 100% { left: 200%; } }
 
 .card-top { display: flex; justify-content: space-between; align-items: flex-start; position: relative; z-index: 1; flex-shrink: 0; }
-.card-label { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
+.card-label { font-size: 12px; color: rgba(255,255,255,0.7); text-transform: uppercase; letter-spacing: 1px; font-weight: 600; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
 .card-chip {
-  width: 32px; height: 22px; border-radius: 4px; flex-shrink: 0;
+  width: 34px; height: 24px; border-radius: 6px; flex-shrink: 0;
   background: linear-gradient(135deg, #e0e0e0 0%, #888 50%, #ccc 100%);
-  position: relative; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+  position: relative; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.5);
 }
 .card-chip::after { content: ''; position: absolute; top: 50%; left: 0; right: 0; height: 1px; background: rgba(0,0,0,0.3); }
 
 .balance-amount { 
-  font-size: 32px; 
-  font-weight: 800; letter-spacing: -1px; 
+  font-size: 34px; font-weight: 800; letter-spacing: -1px; 
   display: flex; align-items: baseline; gap: 6px; color: #fff; 
   position: relative; z-index: 1; line-height: 1.1; flex-shrink: 0;
+  text-shadow: 0 2px 10px rgba(0,0,0,0.3);
 }
-.currency { font-size: 14px; color: var(--turquoise); font-weight: 700; text-shadow: 0 0 10px var(--turquoise-glow); }
+.currency { font-size: 15px; color: var(--turquoise); font-weight: 700; text-shadow: 0 0 10px var(--turquoise-glow); }
 
+/* Стеклянная кнопка */
 .topup-btn {
   width: 100%; 
-  min-height: 44px;
+  min-height: 46px;
   padding: 10px 16px; 
-  border-radius: 12px;
-  background: #fff; 
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.9); 
   color: #000; 
   border: none; 
   font-size: 14px; 
@@ -67,50 +80,53 @@
   transition: all 0.2s ease; 
   position: relative; 
   z-index: 1;
-  animation: btnPulse 2s infinite;
   display: flex; 
   justify-content: center; 
   align-items: center;
   flex-shrink: 0;
   line-height: 1;
+  box-shadow: 0 4px 15px rgba(255,255,255,0.2), inset 0 -2px 5px rgba(0,0,0,0.1);
 }
-.topup-btn:active { transform: scale(0.96); animation: none; background: #e0e0e0; }
-@keyframes btnPulse { 0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.2); } 70% { box-shadow: 0 0 0 10px rgba(255, 255, 255, 0); } }
+.topup-btn:active { transform: scale(0.96); background: #e0e0e0; }
 
+/* Нижнее меню (тоже делаем жидким) */
 .bottom-nav {
   position: absolute; 
   bottom: calc(16px + env(safe-area-inset-bottom, 0px)); 
   left: 50%; transform: translateX(-50%);
-  width: calc(100% - 32px); height: 64px; 
+  width: calc(100% - 32px); height: 66px; 
   display: flex; justify-content: space-around; align-items: center;
-  z-index: 10; border-radius: 32px;
-  background: rgba(20, 20, 22, 0.8);
-  backdrop-filter: blur(32px) saturate(200%); -webkit-backdrop-filter: blur(32px) saturate(200%);
-  border: 1px solid rgba(255,255,255,0.08); box-shadow: 0 12px 32px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.1);
+  z-index: 10; 
+  border-radius: 33px;
   padding: 0 8px;
 }
 .nav-item {
   width: 50px; height: 50px; border-radius: 50%;
   display: flex; justify-content: center; align-items: center;
-  color: var(--text-dim); transition: all 0.3s; cursor: pointer; position: relative;
-  background: none; border: none;
+  color: rgba(255,255,255,0.5); transition: all 0.3s; cursor: pointer; position: relative;
+  background: none; border: none; z-index: 2;
 }
-.nav-item svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; z-index: 2; }
+.nav-item svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 .nav-item.active { color: var(--turquoise); }
 .nav-item.active::before {
   content: ''; position: absolute; inset: 0; border-radius: 50%;
-  background: rgba(45, 212, 191, 0.15); animation: popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  background: rgba(45, 212, 191, 0.2); 
+  box-shadow: inset 0 2px 4px rgba(255,255,255,0.2);
+  animation: popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
 @keyframes popIn { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
 
+/* Всплывающие сообщения */
 .toast {
   position: absolute; 
   top: 80px; 
   left: 50%; 
   transform: translateX(-50%) translateY(-20px);
   padding: 10px 20px; border-radius: 30px; font-size: 13px; font-weight: 600;
-  background: #fff; color: #000; opacity: 0; transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-  pointer-events: none; z-index: 100; box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+  background: rgba(255, 255, 255, 0.9); color: #000; opacity: 0; transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  pointer-events: none; z-index: 100; 
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,1);
+  backdrop-filter: blur(10px);
   white-space: nowrap; 
 }
 .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
@@ -119,30 +135,33 @@
 .jackpot-card {
   padding: 16px;
   text-align: center;
-  position: relative;
-  overflow: hidden;
-  border-color: rgba(45, 212, 191, 0.15);
+  border-radius: 20px;
   cursor: pointer;
+  transition: transform 0.2s;
 }
+.jackpot-card:active { transform: scale(0.97); }
 .jackpot-label {
   font-size: 11px;
-  color: var(--text-dim);
+  color: rgba(255,255,255,0.7);
   text-transform: uppercase;
   letter-spacing: 1px;
   margin-bottom: 4px;
   font-weight: 600;
+  position: relative; z-index: 1;
 }
 .jackpot-amount {
   display: flex;
   align-items: baseline;
   justify-content: center;
   gap: 4px;
+  position: relative; z-index: 1;
 }
 .jackpot-num {
-  font-size: 24px;
+  font-size: 26px;
   font-weight: 800;
   color: #fff;
   letter-spacing: -1px;
+  text-shadow: 0 2px 10px rgba(0,0,0,0.5);
 }
 .jackpot-currency {
   font-size: 12px;
@@ -151,23 +170,25 @@
 }
 .jackpot-glow {
   position: absolute;
-  bottom: -30px;
+  bottom: -20px;
   left: 50%;
   transform: translateX(-50%);
   width: 120px;
   height: 40px;
   background: var(--turquoise);
-  filter: blur(30px);
-  opacity: 0.4;
+  filter: blur(40px);
+  opacity: 0.6;
   pointer-events: none;
+  z-index: 0;
 }
 
-/* ПРОФИЛЬ */
+/* ПРОФИЛЬ И ОТЗЫВЫ (Стеклянные карточки) */
 .profile-balance {
-  padding: 16px 20px;
+  padding: 20px;
   display: flex;
   flex-direction: column;
   gap: 4px;
+  border-radius: 20px;
 }
 .stats-grid {
   display: grid;
@@ -175,29 +196,28 @@
   gap: 10px;
 }
 .stat-card {
-  padding: 12px 16px;
+  padding: 14px 16px;
   display: flex;
   flex-direction: column;
   gap: 4px;
+  border-radius: 16px;
 }
 .stat-label {
   font-size: 11px;
-  color: var(--text-dim);
+  color: rgba(255,255,255,0.6);
   font-weight: 500;
+  position: relative; z-index: 1;
 }
 .stat-value {
   font-size: 15px;
   font-weight: 700;
+  position: relative; z-index: 1;
 }
-.stat-value.win { color: var(--turquoise); }
+.stat-value.win { color: var(--turquoise); text-shadow: 0 0 10px var(--turquoise-glow); }
 
-/* ОТЗЫВЫ */
 .reviews-wrapper {
   overflow: hidden;
   border-radius: 20px;
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), 0 8px 24px rgba(0,0,0,0.2);
   position: relative;
   width: 100%;
 }
@@ -214,6 +234,7 @@
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
+  position: relative; z-index: 1;
 }
 .review-top {
   display: flex;
@@ -231,13 +252,14 @@
   height: 28px;
   flex-shrink: 0;
   border-radius: 50%;
-  background: rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.15);
   display: flex;
   justify-content: center;
   align-items: center;
   font-weight: 700;
   font-size: 12px;
   color: #fff;
+  box-shadow: inset 0 1px 2px rgba(255,255,255,0.3);
 }
 .review-name {
   font-weight: 600;
@@ -251,29 +273,32 @@
 }
 .review-text {
   font-size: 12px;
-  color: var(--text-dim);
+  color: rgba(255,255,255,0.8);
   line-height: 1.4;
 }
 
 /* АККОРДЕОН */
-.accordion-list { padding: 0 16px; display: flex; flex-direction: column; }
-.accordion-item { border-bottom: 1px solid rgba(255,255,255,0.05); }
+.accordion-list { padding: 0 16px; display: flex; flex-direction: column; border-radius: 20px; }
+.accordion-item { border-bottom: 1px solid rgba(255,255,255,0.08); position: relative; z-index: 1; }
 .accordion-item:last-child { border-bottom: none; }
 .accordion-header { display: flex; justify-content: space-between; align-items: center; padding: 14px 0; color: #fff; font-size: 13px; font-weight: 500; cursor: pointer; transition: color 0.2s; }
 .accordion-header:active { color: var(--turquoise); }
 .accordion-header .chevron { width: 16px; height: 16px; stroke: var(--text-dim); fill: none; stroke-width: 2; transition: transform 0.3s ease; }
 .accordion-item.active .accordion-header .chevron { transform: rotate(90deg); stroke: var(--turquoise); }
 .accordion-content { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; }
-.accordion-content p { font-size: 12px; color: var(--text-dim); line-height: 1.4; padding-bottom: 14px; }
+.accordion-content p { font-size: 12px; color: rgba(255,255,255,0.6); line-height: 1.4; padding-bottom: 14px; }
 
 /* ВИДЖЕТ ИГРЫ */
-.game-widget { padding: 16px; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: all 0.2s; border-color: rgba(45, 212, 191, 0.2); width: 100%; }
-.game-widget:active { transform: scale(0.97); background: rgba(45, 212, 191, 0.1); }
-.game-widget-icon { width: 50px; height: 50px; border-radius: 14px; background: rgba(45, 212, 191, 0.15); display: flex; justify-content: center; align-items: center; font-size: 24px; flex-shrink: 0; }
-.game-widget-info { flex: 1; text-align: left; }
-.game-widget-title { font-size: 16px; font-weight: 800; color: #fff; margin-bottom: 2px; }
-.game-widget-desc { font-size: 12px; color: var(--text-dim); }
-.game-widget-arrow { width: 20px; height: 20px; flex-shrink: 0; display: flex; justify-content: center; align-items: center; }
+.game-widget { 
+  padding: 16px; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: all 0.2s; 
+  border-radius: 20px; width: 100%;
+}
+.game-widget:active { transform: scale(0.97); background: rgba(255, 255, 255, 0.15); }
+.game-widget-icon { width: 50px; height: 50px; border-radius: 14px; background: rgba(45, 212, 191, 0.2); display: flex; justify-content: center; align-items: center; font-size: 24px; flex-shrink: 0; position: relative; z-index: 1; box-shadow: inset 0 1px 3px rgba(255,255,255,0.3); }
+.game-widget-info { flex: 1; text-align: left; position: relative; z-index: 1; }
+.game-widget-title { font-size: 16px; font-weight: 800; color: #fff; margin-bottom: 2px; text-shadow: 0 2px 5px rgba(0,0,0,0.5); }
+.game-widget-desc { font-size: 12px; color: rgba(255,255,255,0.7); }
+.game-widget-arrow { width: 20px; height: 20px; flex-shrink: 0; display: flex; justify-content: center; align-items: center; position: relative; z-index: 1; }
 .game-widget-arrow svg { width: 100%; height: 100%; stroke: var(--turquoise); fill: none; stroke-width: 2; }
 
 /* ЭКРАН ЗАГРУЗКИ ИГРЫ */
@@ -289,25 +314,25 @@
 .loader-text-new { font-size: 12px; color: var(--text-dim); font-weight: 600; letter-spacing: 2px; text-transform: uppercase; animation: textGlow 1.5s infinite alternate; }
 @keyframes textGlow { from { text-shadow: 0 0 5px rgba(45, 212, 191, 0.1); opacity: 0.6; } to { text-shadow: 0 0 15px rgba(45, 212, 191, 0.8); opacity: 1; color: #fff; } }
 
-/* ИГРА EIGHT JET (КОМПАКТНАЯ ВЕРСИЯ) */
+/* ИГРА EIGHT JET */
 .game-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-shrink: 0; }
-.game-back-btn { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; width: 32px; height: 32px; display: flex; justify-content: center; align-items: center; cursor: pointer; color: #fff; }
+.game-back-btn { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 12px; width: 34px; height: 34px; display: flex; justify-content: center; align-items: center; cursor: pointer; color: #fff; backdrop-filter: blur(10px); box-shadow: inset 0 1px 1px rgba(255,255,255,0.3); }
 .game-back-btn svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; }
-.game-balance { font-size: 12px; color: var(--text-dim); font-weight: 500; }
+.game-balance { font-size: 12px; color: rgba(255,255,255,0.7); font-weight: 500; }
 .game-balance span { color: var(--turquoise); font-weight: 700; }
 
+/* КОНТЕЙНЕР ИГРЫ (Стеклянный) */
 .jet-game-container { 
   display: flex; 
   flex-direction: column; 
   flex: 1;
-  padding: 12px; 
-  background: linear-gradient(180deg, rgba(20,20,22,0.8) 0%, rgba(10,10,12,0.95) 100%); 
-  border-color: rgba(45, 212, 191, 0.15); 
+  padding: 15px; 
+  border-radius: 24px;
   position: relative; 
   overflow: hidden; 
-  border-radius: 20px;
 }
 
+/* Внутренняя область графика */
 .jet-visual-area { 
   flex: 1; 
   display: flex; 
@@ -317,9 +342,12 @@
   position: relative; 
   min-height: 140px;
   width: 100%;
+  border-radius: 16px;
+  background: rgba(0, 0, 0, 0.2); /* Темное стекло для контраста */
+  box-shadow: inset 0 2px 10px rgba(0,0,0,0.5), inset 0 1px 1px rgba(255,255,255,0.1);
+  margin-bottom: 10px;
 }
 
-/* НОВЫЙ ГРАФИК */
 .jet-graph {
   position: absolute;
   top: 0;
@@ -337,7 +365,7 @@
   height: 80px; 
   background: var(--turquoise); 
   filter: blur(50px); 
-  opacity: 0.1; 
+  opacity: 0.15; 
   border-radius: 50%; 
   transition: all 0.3s ease; 
   z-index: 0;
@@ -354,12 +382,12 @@
 }
 
 .jet-multiplier { 
-  font-size: 44px;
+  font-size: 46px;
   font-weight: 800; 
   color: #fff; 
   letter-spacing: -2px; 
   font-variant-numeric: tabular-nums; 
-  text-shadow: 0 4px 12px rgba(0,0,0,0.8); /* Тень, чтобы график не перекрывал текст */
+  text-shadow: 0 4px 20px rgba(0,0,0,0.8), 0 0 10px rgba(255,255,255,0.2);
 }
 
 .waiting-timer {
@@ -370,10 +398,10 @@
   animation: popIn 0.4s ease-out;
 }
 .timer-sec {
-  font-size: 40px;
+  font-size: 42px;
   font-weight: 800;
   color: var(--turquoise);
-  text-shadow: 0 0 20px var(--turquoise-glow);
+  text-shadow: 0 0 25px var(--turquoise-glow);
   line-height: 1;
 }
 .timer-lbl {
@@ -381,37 +409,37 @@
   color: #fff;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 1.5px;
   margin-top: 4px;
 }
 
 .jet-crashed-text { 
   position: absolute;
-  font-size: 36px; 
+  font-size: 38px; 
   font-weight: 900; 
   color: #F87171; 
   letter-spacing: 1px; 
-  text-shadow: 0 0 20px rgba(248, 113, 113, 0.5); 
+  text-shadow: 0 0 30px rgba(248, 113, 113, 0.8); 
   white-space: nowrap;
 }
 
 /* Ставки */
 .flight-history { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 6px; margin-bottom: 8px; scrollbar-width: none; flex-shrink: 0; }
 .flight-history::-webkit-scrollbar { display: none; }
-.history-pill { padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; white-space: nowrap; background: rgba(255,255,255,0.05); color: var(--text-dim); }
-.history-pill.win { background: rgba(45, 212, 191, 0.15); color: var(--turquoise); }
-.history-pill.loss { background: rgba(248, 113, 113, 0.15); color: #F87171; }
+.history-pill { padding: 4px 10px; border-radius: 8px; font-size: 11px; font-weight: 700; white-space: nowrap; background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.7); border: 1px solid rgba(255,255,255,0.1); }
+.history-pill.win { background: rgba(45, 212, 191, 0.2); color: var(--turquoise); border-color: rgba(45, 212, 191, 0.3); }
+.history-pill.loss { background: rgba(248, 113, 113, 0.2); color: #F87171; border-color: rgba(248, 113, 113, 0.3); }
 
-.live-bets-container { background: rgba(0,0,0,0.3); border-radius: 12px; padding: 8px; margin-bottom: 10px; height: 70px; display: flex; flex-direction: column; flex-shrink: 0; }
-.live-bets-header { font-size: 11px; color: var(--text-dim); font-weight: 600; margin-bottom: 6px; display: flex; justify-content: space-between; }
+.live-bets-container { background: rgba(0,0,0,0.25); border-radius: 14px; padding: 10px; margin-bottom: 12px; height: 70px; display: flex; flex-direction: column; flex-shrink: 0; box-shadow: inset 0 2px 5px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.05); }
+.live-bets-header { font-size: 11px; color: rgba(255,255,255,0.6); font-weight: 600; margin-bottom: 6px; display: flex; justify-content: space-between; }
 .live-bets-header span { color: var(--turquoise); }
 .live-bets-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 4px; }
 .live-bets-list::-webkit-scrollbar { width: 3px; }
 .live-bets-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 3px; }
-.live-bet-item { display: flex; justify-content: space-between; font-size: 11px; padding: 2px 6px; background: rgba(255,255,255,0.03); border-radius: 4px; animation: slideIn 0.3s ease-out; }
+.live-bet-item { display: flex; justify-content: space-between; font-size: 11px; padding: 3px 6px; background: rgba(255,255,255,0.05); border-radius: 4px; animation: slideIn 0.3s ease-out; }
 @keyframes slideIn { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
 .live-bet-user { color: #fff; font-weight: 500; display: flex; align-items: center; gap: 4px; }
-.live-bet-amount { color: var(--text-dim); }
+.live-bet-amount { color: rgba(255,255,255,0.6); }
 .live-bet-cashout { color: var(--turquoise); font-weight: 700; }
 
 /* Контролы */
@@ -420,21 +448,34 @@
 .jet-inputs-row .jet-input-group { flex: 1; }
 .auto-cashout-group { max-width: 80px; }
 .auto-cashout-group input { text-align: center; }
-.jet-input-group { display: flex; align-items: center; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 8px 12px; position: relative; transition: all 0.3s; }
-.jet-input-group.disabled { opacity: 0.5; pointer-events: none; }
+
+/* Поля ввода (Эффект углубленного стекла) */
+.jet-input-group { 
+  display: flex; 
+  align-items: center; 
+  background: rgba(0,0,0,0.3); 
+  border: 1px solid rgba(255,255,255,0.1); 
+  border-radius: 14px; 
+  padding: 8px 12px; 
+  position: relative; 
+  transition: all 0.3s; 
+  box-shadow: inset 0 2px 5px rgba(0,0,0,0.4);
+}
+.jet-input-group.disabled { opacity: 0.4; pointer-events: none; }
 .jet-currency { font-size: 12px; color: var(--turquoise); font-weight: 700; margin-right: 8px; }
 .jet-input-group input { background: transparent !important; border: none !important; color: #fff !important; font-size: 16px !important; font-weight: 700 !important; width: 100%; outline: none !important; font-family: inherit !important; box-shadow: none !important; }
 .jet-input-group input:disabled { opacity: 0.5; cursor: not-allowed; }
 .jet-input-group input::-webkit-outer-spin-button, .jet-input-group input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
 .jet-quick-btns { display: flex; gap: 4px; position: absolute; right: 8px; }
-.jet-quick-btns button { background: rgba(255,255,255,0.1) !important; border: 1px solid rgba(255,255,255,0.1) !important; color: #fff !important; font-size: 10px !important; font-weight: 600 !important; padding: 3px 6px !important; border-radius: 4px !important; cursor: pointer; transition: 0.2s; }
+.jet-quick-btns button { background: rgba(255,255,255,0.1) !important; border: 1px solid rgba(255,255,255,0.1) !important; color: #fff !important; font-size: 10px !important; font-weight: 600 !important; padding: 3px 6px !important; border-radius: 6px !important; cursor: pointer; transition: 0.2s; }
 .jet-quick-btns button:hover { background: rgba(255,255,255,0.2) !important; }
 
+/* Главные кнопки (Стеклянные капли) */
 .jet-action-btn { 
   width: 100%; 
-  height: 46px; 
-  border-radius: 14px; 
-  border: none; 
+  height: 50px; 
+  border-radius: 16px; 
+  border: 1px solid rgba(255,255,255,0.3); 
   font-size: 15px; 
   font-weight: 800; 
   cursor: pointer; 
@@ -444,62 +485,80 @@
   justify-content: center; 
   align-items: center; 
   line-height: 1.1; 
+  position: relative;
+  overflow: hidden;
+}
+/* Блик внутри кнопки */
+.jet-action-btn::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 50%;
+  background: linear-gradient(180deg, rgba(255,255,255,0.4), transparent);
+  border-radius: 15px 15px 0 0;
 }
 .jet-action-btn:active { transform: scale(0.97); }
 
-.jet-action-btn.waiting { background: var(--turquoise); color: #000; box-shadow: 0 0 20px rgba(45, 212, 191, 0.5); }
-.jet-action-btn.cashout { background: #FBBF24; color: #000; box-shadow: 0 0 20px rgba(251, 191, 36, 0.5); }
-.jet-action-btn.crashed { background: #F87171; color: #fff; box-shadow: none; pointer-events: none; }
-.jet-action-btn.cashed-out { background: rgba(255,255,255,0.1); color: var(--text-dim); box-shadow: none; pointer-events: none; }
+.jet-action-btn.waiting { background: linear-gradient(180deg, #2DD4BF, #14b8a6); color: #000; box-shadow: 0 8px 20px rgba(45, 212, 191, 0.4); }
+.jet-action-btn.cashout { background: linear-gradient(180deg, #FBBF24, #F59E0B); color: #000; box-shadow: 0 8px 20px rgba(251, 191, 36, 0.4); }
+.jet-action-btn.crashed { background: linear-gradient(180deg, #F87171, #EF4444); color: #fff; box-shadow: none; pointer-events: none; }
+.jet-action-btn.cashed-out { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.5); box-shadow: none; pointer-events: none; border-color: transparent; }
+.jet-action-btn.cashed-out::before { display: none; }
 
-.jet-action-sub { font-size: 11px; font-weight: 600; opacity: 0.8; }
+.jet-action-sub { font-size: 11px; font-weight: 600; opacity: 0.8; position: relative; z-index: 1; }
+.jet-action-btn > * { position: relative; z-index: 1; }
 
 /* =========================================
-   АДМИН ПАНЕЛЬ
+   АДМИН ПАНЕЛЬ (Стеклянная)
    ========================================= */
-.admin-login-btn { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: var(--text-dim); padding: 6px 12px; border-radius: 10px; font-size: 12px; font-weight: 600; cursor: pointer; transition: 0.2s; }
+.admin-login-btn { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: #fff; padding: 6px 12px; border-radius: 10px; font-size: 12px; font-weight: 600; cursor: pointer; transition: 0.2s; box-shadow: inset 0 1px 1px rgba(255,255,255,0.3); }
 .admin-login-btn:active { transform: scale(0.95); }
 
-.admin-panel { position: absolute; top: 0; left: 0; right: 0; bottom: 0; width: 100%; height: 100%; z-index: 99999; background: #09090b; display: flex; justify-content: center; align-items: center; opacity: 0; visibility: hidden; transition: all 0.3s ease; }
+.admin-panel { position: absolute; top: 0; left: 0; right: 0; bottom: 0; width: 100%; height: 100%; z-index: 99999; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(10px); display: flex; justify-content: center; align-items: center; opacity: 0; visibility: hidden; transition: all 0.3s ease; }
 .admin-panel.active { opacity: 1; visibility: visible; }
 
-.admin-content { width: 90%; max-height: 85%; padding: 16px; background: #121214; border-radius: 20px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.9); border: 1px solid rgba(255,255,255,0.1); }
+.admin-content { 
+  width: 90%; 
+  max-height: 85%; 
+  padding: 20px; 
+  border-radius: 24px; 
+  display: flex; 
+  flex-direction: column; 
+  overflow: hidden; 
+}
 
-.admin-login-view { display: flex; flex-direction: column; padding: 10px; }
-.admin-login-view h2 { color: #fff; font-size: 18px; margin-bottom: 16px; text-align: center; }
-.close-btn-text { background: none; border: none; color: var(--text-dim); margin-top: 12px; cursor: pointer; font-size: 13px; text-align: center; }
+.admin-login-view { display: flex; flex-direction: column; padding: 10px; position: relative; z-index: 1; }
+.admin-login-view h2 { color: #fff; font-size: 18px; margin-bottom: 16px; text-align: center; text-shadow: 0 2px 5px rgba(0,0,0,0.5); }
+.close-btn-text { background: none; border: none; color: rgba(255,255,255,0.6); margin-top: 12px; cursor: pointer; font-size: 13px; text-align: center; }
 
-.admin-main-view { display: flex; flex-direction: column; height: 100%; }
+.admin-main-view { display: flex; flex-direction: column; height: 100%; position: relative; z-index: 1; }
 .admin-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-shrink: 0; }
 .admin-header h2 { font-size: 18px; color: #fff; }
-.close-btn { background: rgba(255,255,255,0.1); border: none; color: #fff; width: 28px; height: 28px; border-radius: 50%; cursor: pointer; display: flex; justify-content: center; align-items: center; font-size: 12px; }
+.close-btn { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: #fff; width: 28px; height: 28px; border-radius: 50%; cursor: pointer; display: flex; justify-content: center; align-items: center; font-size: 12px; box-shadow: inset 0 1px 1px rgba(255,255,255,0.3); }
 
-.admin-tabs { display: flex; gap: 6px; margin-bottom: 12px; flex-shrink: 0; }
-.admin-tab { flex: 1; padding: 8px 4px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; color: var(--text-dim); font-weight: 600; font-size: 12px; cursor: pointer; transition: 0.2s; }
-.admin-tab.active { background: var(--turquoise); color: #000; border-color: var(--turquoise); }
+.admin-tabs { display: flex; gap: 6px; margin-bottom: 12px; flex-shrink: 0; background: rgba(0,0,0,0.3); padding: 4px; border-radius: 12px; }
+.admin-tab { flex: 1; padding: 8px 4px; background: transparent; border: none; border-radius: 8px; color: rgba(255,255,255,0.6); font-weight: 600; font-size: 12px; cursor: pointer; transition: 0.2s; }
+.admin-tab.active { background: rgba(255,255,255,0.15); color: #fff; box-shadow: inset 0 1px 1px rgba(255,255,255,0.3); }
 
 .admin-scroll-area { flex: 1; overflow-y: auto; padding-right: 4px; }
 .admin-scroll-area::-webkit-scrollbar { width: 4px; }
 .admin-scroll-area::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 4px; }
 
-.admin-section { display: none; flex-direction: column; gap: 8px; }
+.admin-section { display: none; flex-direction: column; gap: 10px; }
 .admin-section.active { display: flex; }
 
-.admin-section label { font-size: 11px; color: var(--text-dim); font-weight: 600; margin-top: 4px; }
+.admin-section label { font-size: 11px; color: rgba(255,255,255,0.7); font-weight: 600; margin-top: 4px; }
 .admin-section input, .admin-section textarea {
-  width: 100% !important; background: #1e1e21 !important; border: 1px solid #333 !important;
-  border-radius: 10px !important; padding: 10px !important; color: #fff !important;
+  width: 100% !important; background: rgba(0,0,0,0.3) !important; border: 1px solid rgba(255,255,255,0.1) !important;
+  border-radius: 10px !important; padding: 12px !important; color: #fff !important;
   font-family: inherit !important; font-size: 13px !important; outline: none !important;
-  -webkit-appearance: none !important; appearance: none !important; box-shadow: none !important;
+  -webkit-appearance: none !important; appearance: none !important; box-shadow: inset 0 2px 5px rgba(0,0,0,0.3) !important;
 }
-.admin-section input:focus, .admin-section textarea:focus { border-color: var(--turquoise) !important; background: #25252a !important; }
+.admin-section input:focus, .admin-section textarea:focus { border-color: var(--turquoise) !important; background: rgba(0,0,0,0.5) !important; }
 .admin-section textarea { resize: none; }
 
-.admin-save-btn { background: #fff; color: #000; border: none; padding: 12px; border-radius: 10px; font-weight: 700; font-size: 13px; margin-top: 8px; cursor: pointer; flex-shrink: 0; }
+.admin-save-btn { background: linear-gradient(180deg, #fff, #e0e0e0); color: #000; border: none; padding: 14px; border-radius: 12px; font-weight: 700; font-size: 13px; margin-top: 8px; cursor: pointer; flex-shrink: 0; box-shadow: 0 4px 10px rgba(255,255,255,0.1); }
 
-.admin-reviews-list { display: flex; flex-direction: column; gap: 6px; }
-.admin-review-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 10px; background: rgba(255,255,255,0.05); border-radius: 8px; color: #fff; font-size: 12px; }
+.admin-reviews-list { display: flex; flex-direction: column; gap: 8px; }
+.admin-review-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; background: rgba(255,255,255,0.05); border-radius: 10px; color: #fff; font-size: 12px; border: 1px solid rgba(255,255,255,0.05); }
 .admin-review-item span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 60%; }
-.admin-review-item button { background: rgba(255, 100, 100, 0.2); color: #ff6b6b; border: none; padding: 4px 8px; border-radius: 6px; font-weight: 600; font-size: 11px; cursor: pointer; }
+.admin-review-item button { background: rgba(255, 100, 100, 0.2); color: #ff6b6b; border: 1px solid rgba(255,100,100,0.2); padding: 4px 8px; border-radius: 6px; font-weight: 600; font-size: 11px; cursor: pointer; }
 
-.logout-btn { background: transparent; color: #ff6b6b; border: 1px solid rgba(255,100,100,0.3); padding: 10px; border-radius: 10px; font-weight: 600; font-size: 13px; margin-top: 12px; cursor: pointer; flex-shrink: 0; }
+.logout-btn { background: transparent; color: #ff6b6b; border: 1px solid rgba(255,100,100,0.3); padding: 12px; border-radius: 12px; font-weight: 600; font-size: 13px; margin-top: 15px; cursor: pointer; flex-shrink: 0; }
