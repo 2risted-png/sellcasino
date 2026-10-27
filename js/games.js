@@ -11,6 +11,7 @@ async function fetchUserBalance() {
     }
 
     try {
+        console.log('Отправка запроса на сервер...');
         const response = await fetch(`${API_URL}/api/auth`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -18,16 +19,16 @@ async function fetchUserBalance() {
         });
         const data = await response.json();
         
+        console.log('Ответ сервера:', data); // <-- Смотрим, что пришло
+
         if (data.success) {
             currentBalance = data.balance;
-            updateBalanceUI(); // Обновляем все элементы на странице
-            console.log('Баланс загружен с сервера:', currentBalance);
+            updateBalanceUI(); 
+            showToast(`Баланс загружен: ${currentBalance} TON`);
         }
     } catch (err) {
         console.error('Ошибка загрузки баланса:', err);
-        // Показываем старый баланс из localStorage как временную заглушку
-        currentBalance = parseFloat(localStorage.getItem('cachedBalance') || '0');
-        updateBalanceUI();
+        showToast('Ошибка связи с сервером');
     }
 }
 
