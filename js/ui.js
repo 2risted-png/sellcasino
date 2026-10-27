@@ -61,7 +61,6 @@ document.querySelectorAll('.accordion-header').forEach(header => {
     const item = header.parentElement;
     const content = header.nextElementSibling;
     
-    // Закрываем остальные
     document.querySelectorAll('.accordion-item').forEach(otherItem => {
       if (otherItem !== item && otherItem.classList.contains('active')) {
         otherItem.classList.remove('active');
@@ -93,3 +92,14 @@ if (track) {
     track.style.transform = `translateX(-${currentIndex * 100}%)`;
   }, 4000);
 }
+
+// СКРЫТИЕ ЭКРАНА ЗАГРУЗКИ
+window.addEventListener('load', () => {
+  const loader = document.getElementById('loader');
+  if (loader) {
+    // Ждем 2 секунды для красоты, затем скрываем
+    setTimeout(() => {
+      loader.classList.add('hidden');
+    }, 2000);
+  }
+});
