@@ -125,14 +125,19 @@
           <div class="jet-game-container glass">
             
             <div class="game-overlay" id="game-overlay">
-              <div class="countdown-text" id="countdown-text">Ждем игроков...</div>
+              <div class="countdown-text" id="countdown-text">5.0s</div>
+              <div class="countdown-sub">ПРИЕМ СТАВОК</div>
             </div>
 
             <div class="jet-visual-area">
               <div class="jet-glow" id="jet-glow"></div>
-              <div class="jet-multiplier" id="game-multiplier">1.00x</div>
+              
+              <div class="multiplier-container">
+                <div class="jet-multiplier" id="game-multiplier">1.00x</div>
+                <div class="jet-crashed-text" id="jet-crashed-text" style="display:none;">УЛЕТЕЛ!</div>
+              </div>
+
               <div class="jet-icon" id="jet-icon">✈️</div>
-              <div class="jet-crashed-text" id="jet-crashed-text">УЛЕТЕЛ!</div>
             </div>
 
             <div class="live-bets-container">
@@ -225,7 +230,7 @@
 
     <div class="toast" id="toast"></div>
 
-    <!-- АДМИН ПАНЕЛЬ (без изменений) -->
+    <!-- АДМИН ПАНЕЛЬ -->
     <div class="admin-panel" id="adminPanel">
       <div class="admin-content glass">
         <div class="admin-login-view" id="adminLoginView">
