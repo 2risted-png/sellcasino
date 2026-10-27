@@ -28,7 +28,7 @@ function renderHistory() {
 // ==========================================
 // ДВИЖОК ИГРЫ (БЕСКОНЕЧНЫЙ ЦИКЛ)
 // ==========================================
-let gameState = 'offline'; // offline, waiting, flying, crashed
+let gameState = 'offline'; 
 let crashPoint = 1.00;
 let currentMultiplier = 1.00;
 let roundStartTime = 0;
@@ -36,15 +36,8 @@ let waitStartTime = 0;
 let animationFrameId = null;
 let waitIntervalId = null;
 
-// Состояние ставки игрока
-let playerBet = {
-  active: false,
-  amount: 0,
-  cashedOut: false,
-  autoCashout: 0
-};
+let playerBet = { active: false, amount: 0, cashedOut: false, autoCashout: 0 };
 
-// Боты
 let fakePlayers = [];
 let playerInterval = null;
 const fakeNames = ["Alex", "Max", "Satoshi", "CryptoKing", "Lucky7", "Whale", "N00b", "Gambler", "MoonBoy"];
@@ -52,7 +45,6 @@ const fakeNames = ["Alex", "Max", "Satoshi", "CryptoKing", "Lucky7", "Whale", "N
 // --- ГЕНЕРАТОР КРАША ---
 function generateCrashPoint() {
   const r = Math.random();
-  // Вероятностное распределение: чаще падает рано, реже — высоко
   const point = Math.max(1.00, 0.97 / (1 - r));
   return point > 100 ? 100 : point;
 }
@@ -70,8 +62,10 @@ function startWaitingPhase() {
   const overlay = document.getElementById('game-overlay');
   const actionBtn = document.getElementById('jet-action-btn');
   const inputGroup = document.getElementById('jet-input-group');
+  const multiplierDisplay = document.getElementById('game-multiplier');
+  const crashedText = document.getElementById('jet-crashed-text');
   
-  overlay.innerHTML = `<div class="countdown-text" id="countdown-text">5.0s</div><div class="countdown-sub">Прием ставок</div>`;
+  overlay.innerHTML = `<div class="countdown-text" id="countdown-text">5.0s</div><div class="countdown-sub">ПРИЕМ СТАВОК</div>`;
   overlay.classList.add('active');
   
   actionBtn.className = 'jet-action-btn waiting';
@@ -81,9 +75,14 @@ function startWaitingPhase() {
   document.getElementById('jet-icon').style.opacity = '1';
   document.getElementById('jet-icon').style.left = '10%';
   document.getElementById('jet-icon').style.transform = 'translateY(0) scale(1) rotate(0deg)';
-  document.getElementById('jet-crashed-text').classList.remove('show');
-  document.getElementById('game-multiplier').style.color = '#fff';
-  document.getElementById('game-multiplier').innerText = '1.00x';
+  
+  multiplierDisplay.style.display = 'block';
+  multiplierDisplay.style.opacity = '1';
+  multiplierDisplay.style.color = '#fff';
+  multiplierDisplay.innerText = '1.00x';
+  
+  crashedText.style.display = 'none';
+  
   document.getElementById('jet-glow').style.opacity = '0.1';
   document.getElementById('jet-glow').style.background = 'var(--turquoise)';
 
@@ -130,17 +129,14 @@ function loop() {
 
   const elapsed = (performance.now() - roundStartTime) / 1000;
   
-  // --- НОВАЯ ПРИЯТНАЯ МАТЕМАТИКА ---
-  // 1.50x достигается за ~5 сек, 2.00x за ~8.6 сек, 10x за ~28 сек.
+  // Плавная математика (1.5x за ~5 сек, 2x за ~8.6 сек)
   currentMultiplier = Math.exp(0.08 * elapsed);
 
-  // Проверка на краш
   if (currentMultiplier >= crashPoint) {
     endRoundCrash();
     return;
   }
 
-  // Обновление множителя на экране
   const multiplierDisplay = document.getElementById('game-multiplier');
   const jetGlow = document.getElementById('jet-glow');
   const jetIcon = document.getElementById('jet-icon');
@@ -159,14 +155,11 @@ function loop() {
   jetGlow.style.opacity = 0.1 + (currentMultiplier * 0.05);
   jetGlow.style.transform = `scale(${1 + currentMultiplier * 0.1})`;
   
-  // --- УСКОРЕНИЕ САМОЛЕТА ---
-  // Сначала летит медленно, но с ростом времени скорость растет квадратично
+  // Ускорение самолета
   const planeLeft = 10 + (elapsed * 2) + Math.pow(elapsed, 1.8) * 2;
-  
   if (planeLeft < 90) {
     jetIcon.style.left = planeLeft + '%';
   }
-  // Вращение и вибрация тоже усиливаются
   jetIcon.style.transform = `translateY(${Math.sin(elapsed * 5) * 10}px) scale(${1 + currentMultiplier * 0.01}) rotate(${currentMultiplier * 1.5}deg)`;
 
   // Проверка авто-вывода
@@ -197,9 +190,12 @@ function endRoundCrash() {
   const crashedText = document.getElementById('jet-crashed-text');
   const actionBtn = document.getElementById('jet-action-btn');
   
-  multiplierDisplay.innerText = crashPoint.toFixed(2) + 'x';
-  multiplierDisplay.style.color = '#F87171';
-  crashedText.classList.add('show');
+  // СКРЫВАЕМ МНОЖИТЕЛЬ И ПОКАЗЫВАЕМ ТЕКСТ КРАША (чтобы не накладывались)
+  multiplierDisplay.style.display = 'none';
+  
+  crashedText.style.display = 'block';
+  crashedText.innerText = `УЛЕТЕЛ!`;
+  
   document.getElementById('jet-icon').style.opacity = '0';
   document.getElementById('jet-glow').style.opacity = '0';
   
