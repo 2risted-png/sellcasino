@@ -368,7 +368,7 @@
 }
 
 /* =========================================
-   АДМИН ПАНЕЛЬ (ПОЛНОСТЬЮ ИСПРАВЛЕНА)
+   АДМИН ПАНЕЛЬ (ПОЛНАЯ ЗАЩИТА ОТ БАГОВ)
    ========================================= */
 .admin-login-btn {
   background: rgba(255,255,255,0.05);
@@ -384,12 +384,11 @@
 .admin-login-btn:active { transform: scale(0.95); }
 
 .admin-panel {
-  position: absolute;
-  inset: 0;
-  z-index: 9999; /* Подняли выше нижнего меню */
-  background: rgba(0,0,0,0.8);
-  backdrop-filter: blur(15px);
-  -webkit-backdrop-filter: blur(15px);
+  position: fixed; /* Жестко фиксируем на экране */
+  top: 0; left: 0; right: 0; bottom: 0;
+  width: 100vw; height: 100vh;
+  z-index: 999999; /* Максимальный приоритет */
+  background: #09090b; /* Плотный фон, никакой прозрачности */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -406,12 +405,12 @@
   width: 90%;
   max-height: 85%;
   padding: 20px;
-  background: rgba(20, 20, 22, 0.98);
+  background: #121214; /* Темный фон */
   border-radius: 24px;
   display: flex;
   flex-direction: column;
-  overflow: hidden; /* Чтобы скроллилось только внутреннее содержимое */
-  box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+  overflow: hidden; 
+  box-shadow: 0 20px 50px rgba(0,0,0,0.9);
   border: 1px solid rgba(255,255,255,0.1);
 }
 
@@ -490,7 +489,7 @@
 }
 .admin-section.active { display: flex; }
 
-/* Стили полей ввода (исправлено) */
+/* ЖЕСТКИЙ ФИКС ИНПУТОВ */
 .admin-section label {
   font-size: 12px;
   color: var(--text-dim);
@@ -498,20 +497,22 @@
   margin-top: 5px;
 }
 .admin-section input, .admin-section textarea {
-  width: 100%;
-  background: rgba(255,255,255,0.08); /* Темный фон */
-  border: 1px solid rgba(255,255,255,0.15);
-  border-radius: 12px;
-  padding: 12px;
-  color: #fff;
-  font-family: inherit;
-  font-size: 14px;
-  outline: none;
-  -webkit-appearance: none;
+  width: 100% !important;
+  background: #1e1e21 !important; /* Темный фон */
+  border: 1px solid #333 !important;
+  border-radius: 12px !important;
+  padding: 12px !important;
+  color: #fff !important; /* Белый текст */
+  font-family: inherit !important;
+  font-size: 14px !important;
+  outline: none !important;
+  -webkit-appearance: none !important; /* Убираем стили Safari */
+  appearance: none !important;
+  box-shadow: none !important;
 }
 .admin-section input:focus, .admin-section textarea:focus {
-  border-color: var(--turquoise);
-  background: rgba(255,255,255,0.12);
+  border-color: var(--turquoise) !important;
+  background: #25252a !important;
 }
 .admin-section textarea {
   resize: none;
