@@ -1,4 +1,4 @@
-// --- ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ---
+// --- ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ИГРЫ ---
 let currentBalance = 1250.50;
 let isPlaying = false;
 let isCrashed = false;
@@ -6,7 +6,7 @@ let currentMultiplier = 1.00;
 let crashPoint = 1.00;
 let betAmount = 10;
 let animationFrameId = null;
-let startTime = 0;
+let gameStartTime = 0; // Переименовано во избежание конфликта
 let playerInterval = null;
 let fakePlayers = [];
 
@@ -96,8 +96,8 @@ function stopLiveBetsSimulation() {
 // ПЕРЕХОДЫ МЕЖДУ ЭКРАНАМИ (ВЫЗЫВАЮТСЯ ИЗ HTML)
 // ==========================================
 function startGameLoading() {
-  console.log("Клик по игре сработал!"); // Для отладки
-  if (window.Telegram?.WebApp) window.Telegram.WebApp.HapticFeedback.impactOccurred('medium');
+  console.log("Клик по EIGHT JET сработал!"); 
+  haptic('medium');
   
   document.getElementById('games-list-view').style.display = 'none';
   document.getElementById('games-loading-view').style.display = 'flex';
@@ -111,7 +111,7 @@ function startGameLoading() {
 }
 
 function closeGame() {
-  if (window.Telegram?.WebApp) window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
+  haptic('light');
   
   if (isPlaying) {
     currentBalance += betAmount;
@@ -128,11 +128,11 @@ function closeGame() {
 }
 
 // ==========================================
-// ЛОГИКА ИГРЫ (ВЫЗЫВАЕТСЯ ИЗ HTML)
+// ЛОГИКА ИГРЫ
 // ==========================================
 function setBet(amount) {
   if (isPlaying) return;
-  if (window.Telegram?.WebApp) window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
+  haptic('light');
   
   if (amount === 'max') {
     betAmount = Math.floor(currentBalance);
@@ -172,7 +172,7 @@ function startGame() {
     return;
   }
 
-  if (window.Telegram?.WebApp) window.Telegram.WebApp.HapticFeedback.impactOccurred('medium');
+  haptic('medium');
   
   currentBalance -= betAmount;
   updateBalanceUI();
@@ -180,7 +180,7 @@ function startGame() {
   isPlaying = true;
   isCrashed = false;
   currentMultiplier = 1.00;
-  startTime = performance.now();
+  gameStartTime = performance.now(); // Используем переименованную переменную
   
   const r = Math.random();
   crashPoint = 1 + (Math.pow(1 / (1 - r), 1.5) - 1);
@@ -207,7 +207,7 @@ function startGame() {
 function loop() {
   if (!isPlaying) return;
 
-  const elapsed = (performance.now() - startTime) / 1000;
+  const elapsed = (performance.now() - gameStartTime) / 1000;
   currentMultiplier = Math.pow(1.001, elapsed * 1000);
   if (currentMultiplier > 2) currentMultiplier = 2 * Math.pow(1.002, (elapsed - 0.69) * 1000);
 
@@ -248,7 +248,7 @@ function cashOut() {
   isPlaying = false;
   cancelAnimationFrame(animationFrameId);
   stopLiveBetsSimulation();
-  if (window.Telegram?.WebApp) window.Telegram.WebApp.HapticFeedback.impactOccurred('heavy');
+  haptic('heavy');
 
   const winAmount = betAmount * currentMultiplier;
   currentBalance += winAmount;
@@ -275,7 +275,7 @@ function crash() {
   isCrashed = true;
   cancelAnimationFrame(animationFrameId);
   stopLiveBetsSimulation();
-  if (window.Telegram?.WebApp) window.Telegram.WebApp.HapticFeedback.impactOccurred('heavy');
+  haptic('heavy');
 
   const multiplierDisplay = document.getElementById('game-multiplier');
   const crashedText = document.getElementById('jet-crashed-text');
@@ -331,7 +331,6 @@ function resetGame() {
   if (count) count.innerText = '0';
 }
 
-// ИНИЦИАЛИЗАЦИЯ БАЛАНСА
 document.addEventListener('DOMContentLoaded', () => {
   updateBalanceUI();
 });
