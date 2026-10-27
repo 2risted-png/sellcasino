@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Liquid Casino</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    :root {
+      --bg: #050507;
+      --turquoise: #2DD4BF;
+      --turquoise-light: #5EEAD4;
+      --turquoise-soft: rgba(45, 212, 191, 0.15);
+      --text: #ffffff;
+      --text-dim: rgba(255, 255, 255, 0.55);
+      --glass-border: rgba(255, 255, 255, 0.12);
+      --safe-top: env(safe-area-inset-top, 0px);
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    html, body { height: 100%; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+      min-height: 100vh;
+      position: relative;
+      padding-top: var(--safe-top);
+      padding-bottom: var(--safe-bottom);
+    }
+
+    /* === Жидкий фон === */
+    .liquid-bg { position: fixed; inset: -20%; z-index: -1; pointer-events: none; overflow: hidden; }
+    .liquid-blob {
+      position: absolute; border-radius: 50%;
+      filter: blur(80px); opacity: 0.5;
+      animation: float 20s ease-in-out infinite;
+    }
+    .blob-1 { width: 400px; height: 400px; background: radial-gradient(circle, var(--turquoise), transparent 70%); top: 10%; left: -10%; }
+    .blob-2 { width: 350px; height: 350px; background: radial-gradient(circle, #14b8a6, transparent 70%); bottom: 5%; right: -10%; animation-delay: -7s; }
+    .blob-3 { width: 300px; height: 300px; background: radial-gradient(circle, #0d9488, transparent 70%); top: 40%; left: 30%; animation-delay: -14s; opacity: 0.3; }
+
+    @keyframes float {
+      0%, 100% { transform: translate(0,0) scale(1); }
+      33% { transform: translate(40px,-30px) scale(1.1); }
+      66% { transform: translate(-30px,30px) scale(0.95); }
+    }
+
+    /* === Liquid Glass база === */
+    .glass {
+      position: relative;
+      background: linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
+      backdrop-filter: blur(24px) saturate(180%);
+      -webkit-backdrop-filter: blur(24px) saturate(180%);
+      border-radius: 24px;
+      border: 1px solid var(--glass-border);
+      box-shadow:
+        inset 0 1px 0 0 rgba(255,255,255,0.18),
+        inset 0 -1px 0 0 rgba(255,255,255,0.04),
+        0 8px 32px rgba(0,0,0,0.6);
+    }
+
+    /* Блик-градиент по краю (эффект "жидкого стекла") */
+    .glass::after {
+      content: '';
+      position: absolute; inset: 0;
+      border-radius: inherit;
+      padding: 1px;
+      background: linear-gradient(135deg,
+        rgba(255,255,255,0.3) 0%,
+        transparent 30%,
+        transparent 70%,
+        rgba(45,212,191,0.3) 100%);
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor;
+              mask-composite: exclude;
+      pointer-events: none;
+    }
+
+    .app { max-width: 480px; margin: 0 auto; padding: 16px 16px 120px; }
+
+    /* === Header === */
+    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding: 8px 4px; }
+    .logo { display: flex; align-items: center; gap: 10px; font-size: 20px; font-weight: 700; letter-spacing: -0.5px; }
+    .logo-mark {
+      width: 36px; height: 36px; border-radius: 12px;
+      background: linear-gradient(135deg, var(--turquoise), #14b8a6);
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 20px var(--turquoise-soft); font-size: 18px;
+    }
+    .logo-text {
+      background: linear-gradient(135deg, #fff, var(--turquoise-light));
+      -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+    }
+
+    /* === Баланс === */
+    .balance-card { padding: 20px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; overflow: hidden; position: relative; }
+    .balance-card::before {
+      content: ''; position: absolute; width: 200px; height: 200px;
+      background: radial-gradient(circle, var(--turquoise-soft), transparent 70%);
+      top: -80px; right: -60px; pointer-events: none;
+    }
+    .balance-label { font-size: 12px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; font-weight: 500; }
+    .balance-value { font-size: 32px; font-weight: 700; letter-spacing: -1px; display: flex; align-items: baseline; gap: 6px; }
+    .balance-value .currency { font-size: 16px; color: var(--turquoise-light); font-weight: 600; }
+    .topup-btn {
+      padding: 10px 18px; border-radius: 14px;
+      background: linear-gradient(135deg, var(--turquoise), #14b8a6);
+      color: #00201c; border: none; font-weight: 700; font-size: 13px; cursor: pointer;
+      box-shadow: 0 4px 20px var(--turquoise-soft), inset 0 1px 0 rgba(255,255,255,0.3);
+      transition: transform 0.15s ease;
+    }
+    .topup-btn:active { transform: scale(0.96); }
+
+    /* === Featured баннер === */
+    .featured {
+      padding: 24px; margin-bottom: 20px; position: relative; overflow: hidden;
+      min-height: 160px; display: flex; flex-direction: column; justify-content: flex-end;
+    }
+    .featured::before {
+      content: ''; position: absolute; inset: 0;
+      background:
+        radial-gradient(circle at 90% 10%, rgba(45,212,191,0.4), transparent 50%),
+        radial-gradient(circle at 10% 90%, rgba(94,234,212,0.2), transparent 50%);
+      pointer-events: none;
+    }
+    .featured-tag {
+      display: inline-block; padding: 4px 10px; border-radius: 8px;
+      background: rgba(45,212,191,0.2); color: var(--turquoise-light);
+      font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;
+      margin-bottom: 10px; align-self: flex-start;
+      border: 1px solid rgba(45,212,191,0.3);
+    }
+    .featured-title { font-size: 22px; font-weight: 700; margin-bottom: 6px; letter-spacing: -0.5px; }
+    .featured-desc { font-size: 13px; color: var(--text-dim); margin-bottom: 16px; }
+    .featured-play {
+      align-self: flex-start; padding: 10px 20px; border-radius: 14px;
+      background: #fff; color: #000; border: none; font-weight: 700; font-size: 13px;
+      cursor: pointer; transition: transform 0.15s ease;
+    }
+    .featured-play:active { transform: scale(0.96); }
+
+    /* === Игры === */
+    .section-title { font-size: 15px; font-weight: 600; margin: 4px 4px 12px; letter-spacing: -0.2px; }
+    .games-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 20px; }
+    .game-card {
+      padding: 16px; cursor: pointer; transition: transform 0.15s ease;
+      display: flex; flex-direction: column; min-height: 140px;
+      justify-content: space-between; overflow: hidden; position: relative;
+    }
+    .game-card:active { transform: scale(0.97); }
+    .game-icon {
+      width: 44px; height: 44px; border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px; background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.08); margin-bottom: 12px;
+    }
+    .game-icon.turquoise {
+      background: linear-gradient(135deg, rgba(45,212,191,0.2), rgba(20,184,166,0.1));
+      border-color: rgba(45,212,191,0.3);
+    }
+    .game-name { font-size: 14px; font-weight: 600; margin-bottom: 2px; }
+    .game-sub { font-size: 11px; color: var(--text-dim); }
+    .game-glow {
+      position: absolute; width: 100px; height: 100px; border-radius: 50%;
+      background: radial-gradient(circle, var(--turquoise-soft), transparent 70%);
+      bottom: -40px; right: -40px; pointer-events: none;
+    }
+
+    /* === Нижняя навигация === */
+    .bottom-nav {
+      position: fixed; bottom: calc(16px + var(--safe-bottom)); left: 50%;
+      transform: translateX(-50%); width: calc(100% - 32px); max-width: 448px;
+      padding: 10px; display: flex; justify-content: space-around; align-items: center;
+      z-index: 10; border-radius: 28px;
+    }
+    .nav-item {
+      flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px;
+      padding: 8px; border-radius: 16px; cursor: pointer;
+      transition: all 0.2s ease; color: var(--text-dim);
+      font-size: 10px; font-weight: 500;
+    }
+    .nav-item svg { width: 22px; height: 22px; }
+    .nav-item.active { color: var(--turquoise-light); background: rgba(45,212,191,0.1); }
+    .nav-item.active svg { filter: drop-shadow(0 0 8px var(--turquoise-soft)); }
+
+    /* === Toast === */
+    .toast {
+      position: fixed; top: calc(20px + var(--safe-top)); left: 50%;
+      transform: translateX(-50%) translateY(-100px);
+      padding: 12px 20px; border-radius: 16px; font-size: 13px; font-weight: 500;
+      z-index: 100; opacity: 0; pointer-events: none;
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+  </style>
+</head>
+<body>
+  <div class="liquid-bg">
+    <div class="liquid-blob blob-1"></div>
+    <div class="liquid-blob blob-2"></div>
+    <div class="liquid-blob blob-3"></div>
+  </div>
+
+  <div class="app">
+    <header class="header">
+      <div class="logo">
+        <div class="logo-mark">💎</div>
+        <span class="logo-text">Liquid Casino</span>
+      </div>
+    </header>
+
+    <div class="balance-card glass">
+      <div>
+        <div class="balance-label">Баланс</div>
+        <div class="balance-value">
+          <span id="balance">0</span>
+          <span class="currency">TON</span>
+        </div>
+      </div>
+      <button class="topup-btn" onclick="topup()">+ Пополнить</button>
+    </div>
+
+    <div class="featured glass">
+      <span class="featured-tag">🔥 Хит</span>
+      <h2 class="featured-title">Lucky Spin</h2>
+      <p class="featured-desc">Крути и выигрывай до x1000</p>
+      <button class="featured-play" onclick="play('Lucky Spin')">Играть</button>
+    </div>
+
+    <div class="section-title">Игры</div>
+    <div class="games-grid">
+      <div class="game-card glass" onclick="play('Slots')">
+        <div>
+          <div class="game-icon turquoise">🎰</div>
+          <div class="game-name">Slots</div>
+          <div class="game-sub">x1000 множитель</div>
+        </div>
+        <div class="game-glow"></div>
+      </div>
+      <div class="game-card glass" onclick="play('Roulette')">
+        <div>
+          <div class="game-icon">🎡</div>
+          <div class="game-name">Roulette</div>
+          <div class="game-sub">Классика</div>
+        </div>
+        <div class="game-glow"></div>
+      </div>
+      <div class="game-card glass" onclick="play('Blackjack')">
+        <div>
+          <div class="game-icon">🃏</div>
+          <div class="game-name">Blackjack</div>
+          <div class="game-sub">21 очко</div>
+        </div>
+        <div class="game-glow"></div>
+      </div>
+      <div class="game-card glass" onclick="play('Dice')">
+        <div>
+          <div class="game-icon turquoise">🎲</div>
+          <div class="game-name">Dice</div>
+          <div class="game-sub">Угадай число</div>
+        </div>
+        <div class="game-glow"></div>
+      </div>
+    </div>
+  </div>
+
+  <nav class="bottom-nav glass">
+    <div class="nav-item active">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/>
+        <rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>
+      </svg>
+      <span>Игры</span>
+    </div>
+    <div class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2l2.5 6.5L21 9l-5 4.5L17.5 20 12 16.5 6.5 20 8 13.5 3 9l6.5-.5z"/>
+      </svg>
+      <span>Бонусы</span>
+    </div>
+    <div class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/>
+      </svg>
+      <span>Профиль</span>
+    </div>
+  </nav>
+
+  <div class="toast glass" id="toast"></div>
+
+  <script>
+    const tg = window.Telegram?.WebApp;
+    if (tg) { tg.ready(); tg.expand(); }
+
+    function haptic(type = 'light') {
+      try { tg?.HapticFeedback?.impactOccurred(type); } catch (e) {}
+    }
+
+    let toastTimer;
+    function showToast(text) {
+      const el = document.getElementById('toast');
+      el.textContent = text;
+      el.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => el.classList.remove('show'), 2000);
+    }
+
+    function topup() { haptic('medium'); showToast('🪙 Пополнение баланса'); }
+    function play(game) { haptic('medium'); showToast('🎮 Запуск: ' + game); }
+
+    document.querySelectorAll('.nav-item').forEach(item => {
+      item.addEventListener('click', () => {
+        haptic('light');
+        document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+        item.classList.add('active');
+      });
+    });
+
+    // Анимация счётчика баланса
+    (function () {
+      const el = document.getElementById('balance');
+      const target = 1250;
+      let cur = 0;
+      const timer = setInterval(() => {
+        cur += target / 40;
+        if (cur >= target) { cur = target; clearInterval(timer); }
+        el.textContent = Math.floor(cur).toLocaleString('ru-RU');
+      }, 20);
+    })();
+  </script>
+</body>
+</html>
