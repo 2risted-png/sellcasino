@@ -300,7 +300,6 @@
 .game-back-btn { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; width: 34px; height: 34px; display: flex; justify-content: center; align-items: center; cursor: pointer; color: #fff; backdrop-filter: blur(10px); box-shadow: inset 0 1px 1px rgba(255,255,255,0.1); flex-shrink: 0; }
 .game-back-btn svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; }
 
-/* Кнопка правил */
 .game-rules-btn {
   background: rgba(255,255,255,0.08); 
   border: 1px solid rgba(255,255,255,0.1); 
@@ -428,18 +427,6 @@
 .history-pill.win { background: rgba(45, 212, 191, 0.15); color: var(--turquoise); border-color: rgba(45, 212, 191, 0.3); }
 .history-pill.loss { background: rgba(248, 113, 113, 0.15); color: #F87171; border-color: rgba(248, 113, 113, 0.3); }
 
-.live-bets-container { background: rgba(0,0,0,0.2); border-radius: 14px; padding: 10px; margin-bottom: 12px; height: 70px; display: flex; flex-direction: column; flex-shrink: 0; box-shadow: inset 0 3px 8px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.03); }
-.live-bets-header { font-size: 11px; color: var(--text-dim); font-weight: 600; margin-bottom: 6px; display: flex; justify-content: space-between; }
-.live-bets-header span { color: var(--turquoise); }
-.live-bets-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 4px; }
-.live-bets-list::-webkit-scrollbar { width: 3px; }
-.live-bets-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 3px; }
-.live-bet-item { display: flex; justify-content: space-between; font-size: 11px; padding: 3px 6px; background: rgba(255,255,255,0.03); border-radius: 4px; animation: slideIn 0.3s ease-out; }
-@keyframes slideIn { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
-.live-bet-user { color: #fff; font-weight: 500; display: flex; align-items: center; gap: 4px; }
-.live-bet-amount { color: var(--text-dim); }
-.live-bet-cashout { color: var(--turquoise); font-weight: 700; }
-
 /* Контролы */
 .jet-controls { display: flex; flex-direction: column; gap: 8px; z-index: 2; flex-shrink: 0; }
 .jet-inputs-row { display: flex; gap: 8px; }
@@ -447,7 +434,7 @@
 .auto-cashout-group { max-width: 80px; }
 .auto-cashout-group input { text-align: center; }
 
-/* ИСПРАВЛЕННЫЕ ПОЛЯ ВВОДА */
+/* Поля ввода */
 .jet-input-group { 
   display: flex; 
   align-items: center; 
@@ -458,12 +445,10 @@
   position: relative; 
   transition: all 0.3s; 
   box-shadow: inset 0 3px 6px rgba(0,0,0,0.4);
-  overflow: hidden; /* Скрываем вылезающий текст */
+  overflow: hidden;
 }
 .jet-input-group.disabled { opacity: 0.4; pointer-events: none; }
 .jet-currency { font-size: 12px; color: var(--turquoise); font-weight: 700; margin-right: 8px; z-index: 2; }
-
-/* Жесткий фикс для инпута: добавляем padding-right, чтобы текст не залезал под кнопки */
 .jet-input-group input { 
   background: transparent !important; 
   border: none !important; 
@@ -474,17 +459,12 @@
   outline: none !important; 
   font-family: inherit !important; 
   box-shadow: none !important; 
-  padding-right: 80px !important; /* Место под кнопки быстрых ставок */
+  padding-right: 80px !important;
   padding-left: 0 !important;
 }
-/* Для авто-вывода отступ не нужен */
-.auto-cashout-group input {
-  padding-right: 0 !important;
-}
-
+.auto-cashout-group input { padding-right: 0 !important; }
 .jet-input-group input:disabled { opacity: 0.5; cursor: not-allowed; }
 .jet-input-group input::-webkit-outer-spin-button, .jet-input-group input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-
 .jet-quick-btns { display: flex; gap: 4px; position: absolute; right: 6px; z-index: 2; }
 .jet-quick-btns button { background: rgba(255,255,255,0.1) !important; border: none !important; color: #fff !important; font-size: 10px !important; font-weight: 600 !important; padding: 4px 6px !important; border-radius: 6px !important; cursor: pointer; transition: 0.2s; }
 .jet-quick-btns button:hover { background: rgba(255,255,255,0.2) !important; }
@@ -523,8 +503,47 @@
 .jet-action-sub { font-size: 11px; font-weight: 600; opacity: 0.8; position: relative; z-index: 1; }
 .jet-action-btn > * { position: relative; z-index: 1; }
 
+/* ИСПРАВЛЕННЫЙ БЛОК ОНЛАЙН СТАВОК (ПОД КНОПКОЙ) */
+.live-bets-container { 
+  background: rgba(0,0,0,0.2); 
+  border-radius: 14px; 
+  padding: 10px; 
+  margin-top: 4px; 
+  height: 60px; 
+  display: flex; 
+  flex-direction: column; 
+  flex-shrink: 0; 
+  box-shadow: inset 0 3px 8px rgba(0,0,0,0.3); 
+  border: 1px solid rgba(255,255,255,0.03); 
+}
+.live-bets-header { font-size: 11px; color: var(--text-dim); font-weight: 600; margin-bottom: 6px; display: flex; justify-content: space-between; }
+.live-bets-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 4px; }
+.live-bets-list::-webkit-scrollbar { width: 3px; }
+.live-bets-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 3px; }
+
+.live-bet-item { 
+  display: flex; 
+  justify-content: space-between; 
+  align-items: center;
+  font-size: 12px; 
+  padding: 6px 8px; 
+  background: rgba(255,255,255,0.05); 
+  border-radius: 6px; 
+  animation: slideIn 0.3s ease-out; 
+}
+@keyframes slideIn { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
+.live-bet-user { color: #fff; font-weight: 500; }
+.live-bet-data { display: flex; gap: 6px; font-variant-numeric: tabular-nums; }
+.live-bet-bet { color: var(--text-dim); }
+.live-bet-sep { color: rgba(255,255,255,0.2); }
+.live-bet-win { color: var(--turquoise); font-weight: 700; }
+.live-bet-mult { color: var(--text-dim); font-size: 11px; width: 40px; text-align: right; }
+
+.live-bet-item.cashed-out .live-bet-bet { color: var(--text-dim); }
+.live-bet-item.cashed-out .live-bet-mult { color: var(--turquoise); }
+
 /* =========================================
-   МОДАЛЬНОЕ ОКНО ПРАВИЛ (НОВОЕ)
+   МОДАЛЬНОЕ ОКНО ПРАВИЛ
    ========================================= */
 .rules-modal {
   position: absolute;
@@ -550,7 +569,7 @@
   border-radius: 24px;
   display: flex;
   flex-direction: column;
-  background: #121215; /* Плотный фон для читаемости */
+  background: #121215;
 }
 .rules-header {
   display: flex;
@@ -558,10 +577,7 @@
   align-items: center;
   margin-bottom: 15px;
 }
-.rules-header h2 {
-  font-size: 18px;
-  color: #fff;
-}
+.rules-header h2 { font-size: 18px; color: #fff; }
 .rules-header .close-btn {
   background: rgba(255,255,255,0.1);
   border: none;
@@ -577,12 +593,8 @@
   line-height: 1.5;
   margin-bottom: 12px;
 }
-.rules-body p:last-child {
-  margin-bottom: 0;
-}
-.rules-body strong {
-  color: var(--turquoise);
-}
+.rules-body p:last-child { margin-bottom: 0; }
+.rules-body strong { color: var(--turquoise); }
 
 /* =========================================
    АДМИН ПАНЕЛЬ
@@ -593,16 +605,7 @@
 .admin-panel { position: absolute; top: 0; left: 0; right: 0; bottom: 0; width: 100%; height: 100%; z-index: 99999; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(15px); display: flex; justify-content: center; align-items: center; opacity: 0; visibility: hidden; transition: all 0.3s ease; }
 .admin-panel.active { opacity: 1; visibility: visible; }
 
-.admin-content { 
-  width: 90%; 
-  max-height: 85%; 
-  padding: 20px; 
-  border-radius: 24px; 
-  display: flex; 
-  flex-direction: column; 
-  overflow: hidden; 
-}
-
+.admin-content { width: 90%; max-height: 85%; padding: 20px; border-radius: 24px; display: flex; flex-direction: column; overflow: hidden; }
 .admin-login-view { display: flex; flex-direction: column; padding: 10px; position: relative; z-index: 1; }
 .admin-login-view h2 { color: #fff; font-size: 18px; margin-bottom: 16px; text-align: center; text-shadow: 0 2px 5px rgba(0,0,0,0.5); }
 .close-btn-text { background: none; border: none; color: var(--text-dim); margin-top: 12px; cursor: pointer; font-size: 13px; text-align: center; }
