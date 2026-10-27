@@ -29,12 +29,16 @@
       <div class="blob blob-2"></div>
     </div>
 
+    <!-- НИЖНЕЕ МЕНЮ (4 КНОПКИ) -->
     <nav class="bottom-nav">
       <button class="nav-item active" data-tab="home">
         <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
       </button>
       <button class="nav-item" data-tab="games">
         <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+      </button>
+      <button class="nav-item" data-tab="top">
+        <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
       </button>
       <button class="nav-item" data-tab="profile">
         <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
@@ -76,6 +80,24 @@
             </button>
           </div>
         </section>
+
+        <!-- НОВЫЕ КАРТОЧКИ: БОНУСЫ И ПРОМОКОДЫ -->
+        <div class="promo-grid">
+          <div class="promo-card glass" onclick="showToast('🎁 Бонусы скоро появятся!')">
+            <div class="promo-icon" style="color: #FBBF24;">🎁</div>
+            <div class="promo-info">
+              <div class="promo-title">Бонусы</div>
+              <div class="promo-desc">Забирай награды</div>
+            </div>
+          </div>
+          <div class="promo-card glass" onclick="showToast('🎟️ Введите промокод в следующем обновлении!')">
+            <div class="promo-icon" style="color: #2DD4BF;">🎟️</div>
+            <div class="promo-info">
+              <div class="promo-title">Промокод</div>
+              <div class="promo-desc">Активируй код</div>
+            </div>
+          </div>
+        </div>
 
         <div class="section-header" style="margin-top: 10px;">
           <h2 class="section-title">Отзывы</h2>
@@ -146,10 +168,8 @@
           <div class="flight-history" id="flight-history"></div>
 
           <div class="jet-game-container glass">
-            
             <div class="jet-visual-area">
               <div class="jet-glow" id="jet-glow"></div>
-              
               <svg class="jet-graph" id="jet-graph" viewBox="0 0 300 150" preserveAspectRatio="none">
                 <defs>
                   <linearGradient id="graph-gradient" x1="0%" y1="100%" x2="100%" y2="0%">
@@ -165,7 +185,6 @@
                 <path id="graph-line" d="" fill="none" stroke="url(#line-gradient)" stroke-width="3" stroke-linecap="round" />
                 <circle id="graph-dot" cx="0" cy="150" r="4" fill="#fff" filter="drop-shadow(0 0 6px #2DD4BF)" />
               </svg>
-
               <div class="multiplier-container">
                 <div class="jet-multiplier" id="game-multiplier">1.00x</div>
                 <div class="waiting-timer" id="waiting-timer" style="display: none;">
@@ -181,7 +200,6 @@
                 <div class="live-bets-header">Ваша ставка в игре</div>
                 <div class="live-bets-list" id="live-bets-list"></div>
               </div>
-
               <div class="jet-inputs-row">
                 <div class="jet-input-group" id="jet-input-group">
                   <span class="jet-currency">TON</span>
@@ -198,16 +216,13 @@
                   <input type="number" id="auto-cashout" placeholder="Авто" min="1.1" step="0.1">
                 </div>
               </div>
-              
               <button class="jet-action-btn" id="jet-action-btn" onclick="handleGameAction()">СДЕЛАТЬ СТАВКУ</button>
             </div>
           </div>
-
         </div>
 
         <!-- ЭКРАН ИГРЫ DICE -->
         <div id="dice-play-view" style="display: none; flex: 1; flex-direction: column;">
-          
           <div class="game-header">
             <button class="game-back-btn" onclick="closeDiceGame()">
               <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
@@ -217,7 +232,6 @@
           </div>
 
           <div class="dice-game-container glass">
-            
             <div class="dice-visual-area">
               <div class="dice-glow" id="dice-glow"></div>
               <div class="dice-cube" id="dice-cube">🎲</div>
@@ -235,7 +249,6 @@
                   <button onclick="setDiceBet('max')">MAX</button>
                 </div>
               </div>
-
               <div class="dice-action-buttons">
                 <button class="dice-btn under" id="btn-under" onclick="playDice('under')">
                   <span class="dice-btn-title">Меньше 3</span>
@@ -252,6 +265,52 @@
 
       </div>
 
+      <!-- ВКЛАДКА 4: ТОП ИГРОКОВ -->
+      <div id="tab-top" class="tab-content">
+        <header class="header" style="margin-bottom: 16px;">
+          <div class="username">Топ игроков</div>
+        </header>
+
+        <div class="top-list glass">
+          <!-- 1 место -->
+          <div class="top-item">
+            <div class="top-rank rank-1">1</div>
+            <div class="top-user">
+              <div class="top-avatar" style="background: #FBBF24; color: #000;">A</div>
+              <div class="top-name">Alex_99</div>
+            </div>
+            <div class="top-win">+ 12,500 TON</div>
+          </div>
+          <!-- 2 место -->
+          <div class="top-item">
+            <div class="top-rank rank-2">2</div>
+            <div class="top-user">
+              <div class="top-avatar" style="background: #9CA3AF; color: #000;">M</div>
+              <div class="top-name">MaxCrypto</div>
+            </div>
+            <div class="top-win">+ 8,200 TON</div>
+          </div>
+          <!-- 3 место -->
+          <div class="top-item">
+            <div class="top-rank rank-3">3</div>
+            <div class="top-user">
+              <div class="top-avatar" style="background: #B45309; color: #fff;">S</div>
+              <div class="top-name">Satoshi</div>
+            </div>
+            <div class="top-win">+ 5,500 TON</div>
+          </div>
+          <!-- 4 место -->
+          <div class="top-item">
+            <div class="top-rank">4</div>
+            <div class="top-user">
+              <div class="top-avatar" style="background: #2DD4BF; color: #000;">L</div>
+              <div class="top-name">Lucky7</div>
+            </div>
+            <div class="top-win">+ 3,100 TON</div>
+          </div>
+        </div>
+      </div>
+
       <!-- ВКЛАДКА 3: ПРОФИЛЬ -->
       <div id="tab-profile" class="tab-content">
         <header class="header" style="margin-bottom: 8px;">
@@ -266,7 +325,7 @@
           </div>
         </div>
 
-        <button class="profile-menu-btn glass" onclick="document.getElementById('historyModal').classList.add('active')">
+        <button class="profile-menu-btn glass" onclick="document.getElementById('historyModal').style.display='flex'">
           <span>История выводов</span>
           <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
         </button>
@@ -316,12 +375,12 @@
 
     <div class="toast" id="toast"></div>
 
-    <!-- МОДАЛЬНОЕ ОКНО: ИСТОРИЯ ВЫВОДОВ -->
-    <div class="rules-modal" id="historyModal">
+    <!-- МОДАЛЬНОЕ ОКНО: ИСТОРИЯ ВЫВОДОВ (исправлено display none) -->
+    <div class="rules-modal" id="historyModal" style="display: none;">
       <div class="rules-content glass">
         <div class="rules-header">
           <h2>История выводов</h2>
-          <button class="close-btn" onclick="document.getElementById('historyModal').classList.remove('active')">✕</button>
+          <button class="close-btn" onclick="document.getElementById('historyModal').style.display='none'">✕</button>
         </div>
         <div class="rules-body" style="text-align: center; padding: 20px 0;">
           <p style="color: var(--text-dim); margin-bottom: 0;">У вас пока нет истории выводов.</p>
@@ -329,8 +388,8 @@
       </div>
     </div>
 
-    <!-- МОДАЛЬНОЕ ОКНО: ПРАВИЛА ИГРЫ -->
-    <div class="rules-modal" id="rulesModal">
+    <!-- МОДАЛЬНОЕ ОКНО: ПРАВИЛА ИГРЫ (исправлено display none) -->
+    <div class="rules-modal" id="rulesModal" style="display: none;">
       <div class="rules-content glass">
         <div class="rules-header">
           <h2>Как играть в EIGHT JET</h2>
@@ -338,15 +397,15 @@
         </div>
         <div class="rules-body">
           <p><strong>Суть игры:</strong> Это игра на умножение ставки (Crash). Самолет летит, а коэффициент (множитель) растет.</p>
-          <p><strong>Ваша задача:</strong> Успеть нажать кнопку <strong>«ЗАБРАТЬ»</strong>, пока самолет не улетел.</p>
+          <p><strong>Ваша задача:</strong> Успеть нажать кнопку <strong>«ЗАБРАТЬ»</strong>, пока самолет не улетел. Если вы заберете вовремя — ваш выигрыш составит: <em>Ставка × Текущий коэффициент</em>.</p>
           <p><strong>Смысл:</strong> Чем дольше летит самолет, тем больше ваш потенциальный выигрыш. Но если вы не успеете забрать деньги до «краша», ваша ставка сгорает.</p>
-          <p><strong>Авто-вывод:</strong> В поле «Авто» можно указать коэффициент (например, 2.0), и игра сама заберет выигрыш.</p>
+          <p><strong>Авто-вывод:</strong> В поле «Авто» можно указать коэффициент (например, 2.0), и игра сама заберет выигрыш, когда самолет достигнет этой отметки.</p>
         </div>
       </div>
     </div>
 
-    <!-- АДМИН ПАНЕЛЬ -->
-    <div class="admin-panel" id="adminPanel">
+    <!-- АДМИН ПАНЕЛЬ (исправлено display none) -->
+    <div class="admin-panel" id="adminPanel" style="display: none;">
       <div class="admin-content glass">
         <div class="admin-login-view" id="adminLoginView">
           <h2 style="margin-bottom: 20px; text-align: center;">Вход в админку</h2>
