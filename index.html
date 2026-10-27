@@ -17,20 +17,22 @@
   <div class="phone-mockup">
     
     <div class="loader" id="loader">
-      <div class="loader-emoji">👋</div>
+      <div class="loader-emoji">💎</div>
       <div class="loader-text">
-        <span>Добро пожаловать</span>
-        <span>в Casino Sell</span>
+        <span>Добро пожаловать в</span>
+        <span>CASINO SELL</span>
       </div>
     </div>
 
+    <!-- ЖИДКИЙ ФОН С НЕОНОМ -->
     <div class="liquid-bg">
       <div class="blob blob-1"></div>
       <div class="blob blob-2"></div>
+      <div class="blob blob-3"></div>
     </div>
 
-    <!-- НИЖНЕЕ МЕНЮ (4 КНОПКИ) -->
-    <nav class="bottom-nav">
+    <!-- НИЖНЕЕ МЕНЮ -->
+    <nav class="bottom-nav glass">
       <button class="nav-item active" data-tab="home">
         <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
       </button>
@@ -51,7 +53,7 @@
       <div id="tab-home" class="tab-content active">
         <header class="header">
           <div>
-            <div class="greeting" id="greeting-text">Добро пожаловать в Casino Sell</div>
+            <div class="greeting" id="greeting-text">Добро пожаловать</div>
             <div class="username" id="username">Игрок</div>
           </div>
           <div class="avatar">
@@ -59,39 +61,45 @@
           </div>
         </header>
 
+        <!-- ПРЕМИАЛЬНАЯ КАРТА БАЛАНСА -->
         <section class="balance-card">
           <div class="card-top">
-            <div class="card-label">Баланс</div>
-            <div class="card-chip"></div>
+            <div class="card-label">Общий баланс</div>
+            <div class="card-chip">
+              <div class="chip-line"></div>
+            </div>
           </div>
           <div class="balance-amount">
             <span id="balance-display">1250.50</span>
             <span class="currency">TON</span>
           </div>
           <div class="balance-actions">
-            <button class="topup-btn" onclick="showToast('🪙 Переход к пополнению...')">Пополнить</button>
-            <button class="withdraw-btn glass" onclick="showToast('💸 Запрос на вывод создан')">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M21 12V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-5z"/>
-                <path d="M16 12h5"/>
-                <path d="M16 12a2 2 0 1 1-4 0 2 2 0 0 1 4 0z"/>
-              </svg>
+            <button class="topup-btn" onclick="showToast('🪙 Переход к пополнению...')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+              Пополнить
+            </button>
+            <button class="withdraw-btn" onclick="showToast('💸 Запрос на вывод создан')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
               Вывести
             </button>
           </div>
         </section>
 
-        <!-- НОВЫЕ КАРТОЧКИ: БОНУСЫ И ПРОМОКОДЫ -->
+        <!-- ПРОМО КАРТОЧКИ -->
         <div class="promo-grid">
           <div class="promo-card glass" onclick="showToast('🎁 Бонусы скоро появятся!')">
-            <div class="promo-icon" style="color: #FBBF24;">🎁</div>
+            <div class="promo-icon-bg" style="color: #FBBF24;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 12v10H4V12M2 7h20v5H2zM12 22V7M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7zM12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>
+            </div>
             <div class="promo-info">
               <div class="promo-title">Бонусы</div>
               <div class="promo-desc">Забирай награды</div>
             </div>
           </div>
-          <div class="promo-card glass" onclick="showToast('🎟️ Введите промокод в следующем обновлении!')">
-            <div class="promo-icon" style="color: #2DD4BF;">🎟️</div>
+          <div class="promo-card glass" onclick="showToast('🎟️ Введите промокод!')">
+            <div class="promo-icon-bg" style="color: #00E5FF;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v2z"/><path d="M13 5v2M13 17v2M13 11v2"/></svg>
+            </div>
             <div class="promo-info">
               <div class="promo-title">Промокод</div>
               <div class="promo-desc">Активируй код</div>
@@ -102,7 +110,7 @@
         <div class="section-header" style="margin-top: 10px;">
           <h2 class="section-title">Отзывы</h2>
         </div>
-        <div class="reviews-wrapper">
+        <div class="reviews-wrapper glass">
           <div class="reviews-track" id="reviewsTrack"></div>
         </div>
       </div>
@@ -115,8 +123,19 @@
             <div class="username">Выбор игры</div>
           </header>
           
+          <!-- КАРТОЧКА EIGHT JET -->
           <div class="game-widget glass" onclick="startGameLoading()">
-            <div class="game-widget-icon">✈️</div>
+            <div class="game-widget-logo jet-logo">
+              <svg viewBox="0 0 24 24" fill="none" stroke="url(#jet-grad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <defs>
+                  <linearGradient id="jet-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#00E5FF" />
+                    <stop offset="100%" stop-color="#7000FF" />
+                  </linearGradient>
+                </defs>
+                <path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/>
+              </svg>
+            </div>
             <div class="game-widget-info">
               <div class="game-widget-title">EIGHT JET</div>
               <div class="game-widget-desc">Успей забрать до краша</div>
@@ -126,8 +145,24 @@
             </div>
           </div>
 
+          <!-- КАРТОЧКА DICE -->
           <div class="game-widget glass" onclick="startDiceLoading()">
-            <div class="game-widget-icon" style="background: rgba(251, 191, 36, 0.15);">🎲</div>
+            <div class="game-widget-logo dice-logo">
+              <svg viewBox="0 0 24 24" fill="none" stroke="url(#dice-grad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <defs>
+                  <linearGradient id="dice-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#FBBF24" />
+                    <stop offset="100%" stop-color="#F59E0B" />
+                  </linearGradient>
+                </defs>
+                <rect x="3" y="3" width="18" height="18" rx="4" ry="4"/>
+                <circle cx="8.5" cy="8.5" r="1.5" fill="#FBBF24"/>
+                <circle cx="15.5" cy="8.5" r="1.5" fill="#FBBF24"/>
+                <circle cx="12" cy="12" r="1.5" fill="#FBBF24"/>
+                <circle cx="8.5" cy="15.5" r="1.5" fill="#FBBF24"/>
+                <circle cx="15.5" cy="15.5" r="1.5" fill="#FBBF24"/>
+              </svg>
+            </div>
             <div class="game-widget-info">
               <div class="game-widget-title">DICE</div>
               <div class="game-widget-desc">Больше или Меньше</div>
@@ -145,24 +180,23 @@
               <div class="ring"></div>
               <div class="ring"></div>
               <div class="ring"></div>
-              <svg class="loader-jet-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <svg class="loader-jet-svg" viewBox="0 0 24 24" fill="none" stroke="#00E5FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/>
               </svg>
             </div>
-            <div class="loader-text-new">Подключение...</div>
+            <div class="loader-text-new">Загрузка игры...</div>
           </div>
         </div>
 
         <!-- ЭКРАН ИГРЫ EIGHT JET -->
         <div id="games-play-view" style="display: none; flex: 1; flex-direction: column;">
-          
           <div class="game-header">
-            <button class="game-back-btn" onclick="closeGame()">
+            <button class="game-back-btn glass" onclick="closeGame()">
               <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
             </button>
             <div class="username">EIGHT JET</div>
-            <button class="game-rules-btn" onclick="toggleRules()">?</button>
-            <div class="game-balance"><span id="game-balance-display">1250.50</span> TON</div>
+            <button class="game-rules-btn glass" onclick="toggleRules()">?</button>
+            <div class="game-balance glass"><span id="game-balance-display">1250.50</span> TON</div>
           </div>
 
           <div class="flight-history" id="flight-history"></div>
@@ -173,17 +207,17 @@
               <svg class="jet-graph" id="jet-graph" viewBox="0 0 300 150" preserveAspectRatio="none">
                 <defs>
                   <linearGradient id="graph-gradient" x1="0%" y1="100%" x2="100%" y2="0%">
-                    <stop offset="0%" stop-color="rgba(45, 212, 191, 0)" />
-                    <stop offset="100%" stop-color="rgba(45, 212, 191, 0.2)" />
+                    <stop offset="0%" stop-color="rgba(0, 229, 255, 0)" />
+                    <stop offset="100%" stop-color="rgba(0, 229, 255, 0.3)" />
                   </linearGradient>
                   <linearGradient id="line-gradient" x1="0%" y1="100%" x2="100%" y2="0%">
-                    <stop offset="0%" stop-color="#2DD4BF" />
-                    <stop offset="100%" stop-color="#FBBF24" />
+                    <stop offset="0%" stop-color="#00E5FF" />
+                    <stop offset="100%" stop-color="#7000FF" />
                   </linearGradient>
                 </defs>
                 <path id="graph-fill" d="" fill="url(#graph-gradient)" />
-                <path id="graph-line" d="" fill="none" stroke="url(#line-gradient)" stroke-width="3" stroke-linecap="round" />
-                <circle id="graph-dot" cx="0" cy="150" r="4" fill="#fff" filter="drop-shadow(0 0 6px #2DD4BF)" />
+                <path id="graph-line" d="" fill="none" stroke="url(#line-gradient)" stroke-width="4" stroke-linecap="round" />
+                <circle id="graph-dot" cx="0" cy="150" r="5" fill="#fff" filter="drop-shadow(0 0 8px #00E5FF)" />
               </svg>
               <div class="multiplier-container">
                 <div class="jet-multiplier" id="game-multiplier">1.00x</div>
@@ -196,12 +230,12 @@
             </div>
 
             <div class="jet-controls">
-              <div class="live-bets-container">
+              <div class="live-bets-container glass">
                 <div class="live-bets-header">Ваша ставка в игре</div>
                 <div class="live-bets-list" id="live-bets-list"></div>
               </div>
               <div class="jet-inputs-row">
-                <div class="jet-input-group" id="jet-input-group">
+                <div class="jet-input-group glass" id="jet-input-group">
                   <span class="jet-currency">TON</span>
                   <input type="number" id="bet-amount" value="10" min="1" step="1">
                   <div class="jet-quick-btns">
@@ -211,7 +245,7 @@
                     <button onclick="setBet('max')">MAX</button>
                   </div>
                 </div>
-                <div class="jet-input-group auto-cashout-group">
+                <div class="jet-input-group glass auto-cashout-group">
                   <span class="jet-currency">x</span>
                   <input type="number" id="auto-cashout" placeholder="Авто" min="1.1" step="0.1">
                 </div>
@@ -224,22 +258,24 @@
         <!-- ЭКРАН ИГРЫ DICE -->
         <div id="dice-play-view" style="display: none; flex: 1; flex-direction: column;">
           <div class="game-header">
-            <button class="game-back-btn" onclick="closeDiceGame()">
+            <button class="game-back-btn glass" onclick="closeDiceGame()">
               <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
             </button>
             <div class="username">DICE</div>
-            <div class="game-balance"><span id="dice-balance-display">1250.50</span> TON</div>
+            <div class="game-balance glass"><span id="dice-balance-display">1250.50</span> TON</div>
           </div>
 
           <div class="dice-game-container glass">
             <div class="dice-visual-area">
               <div class="dice-glow" id="dice-glow"></div>
-              <div class="dice-cube" id="dice-cube">🎲</div>
+              <div class="dice-cube" id="dice-cube">
+                <div class="dice-face">🎲</div>
+              </div>
               <div class="dice-result-text" id="dice-result-text"></div>
             </div>
 
             <div class="dice-controls">
-              <div class="jet-input-group" id="dice-input-group">
+              <div class="jet-input-group glass" id="dice-input-group">
                 <span class="jet-currency">TON</span>
                 <input type="number" id="dice-bet-amount" value="10" min="1" step="1">
                 <div class="jet-quick-btns">
@@ -265,14 +301,13 @@
 
       </div>
 
-      <!-- ВКЛАДКА 4: ТОП ИГРОКОВ -->
+      <!-- ВКЛАДКА 3: ТОП -->
       <div id="tab-top" class="tab-content">
         <header class="header" style="margin-bottom: 16px;">
           <div class="username">Топ игроков</div>
         </header>
 
         <div class="top-list glass">
-          <!-- 1 место -->
           <div class="top-item">
             <div class="top-rank rank-1">1</div>
             <div class="top-user">
@@ -281,7 +316,6 @@
             </div>
             <div class="top-win">+ 12,500 TON</div>
           </div>
-          <!-- 2 место -->
           <div class="top-item">
             <div class="top-rank rank-2">2</div>
             <div class="top-user">
@@ -290,7 +324,6 @@
             </div>
             <div class="top-win">+ 8,200 TON</div>
           </div>
-          <!-- 3 место -->
           <div class="top-item">
             <div class="top-rank rank-3">3</div>
             <div class="top-user">
@@ -299,11 +332,10 @@
             </div>
             <div class="top-win">+ 5,500 TON</div>
           </div>
-          <!-- 4 место -->
           <div class="top-item">
             <div class="top-rank">4</div>
             <div class="top-user">
-              <div class="top-avatar" style="background: #2DD4BF; color: #000;">L</div>
+              <div class="top-avatar" style="background: #00E5FF; color: #000;">L</div>
               <div class="top-name">Lucky7</div>
             </div>
             <div class="top-win">+ 3,100 TON</div>
@@ -311,11 +343,11 @@
         </div>
       </div>
 
-      <!-- ВКЛАДКА 3: ПРОФИЛЬ -->
+      <!-- ВКЛАДКА 4: ПРОФИЛЬ -->
       <div id="tab-profile" class="tab-content">
         <header class="header" style="margin-bottom: 8px;">
           <div class="username">Личный кабинет</div>
-          <button class="admin-login-btn" onclick="toggleAdminPanel()">Вход</button>
+          <button class="admin-login-btn glass" onclick="toggleAdminPanel()">Вход</button>
         </header>
 
         <div class="profile-balance glass">
@@ -364,18 +396,14 @@
             <div class="accordion-header"><span>Правила проекта</span><svg class="chevron" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
             <div class="accordion-content"><p>Запрещено использование ботов и сторонних программ.</p></div>
           </div>
-          <div class="accordion-item">
-            <div class="accordion-header"><span>Политика оферты</span><svg viewBox="0 0 24 24" class="chevron"><polyline points="9 18 15 12 9 6"/></svg></div>
-            <div class="accordion-content"><p>Пополнение баланса является добровольным действием.</p></div>
-          </div>
         </div>
       </div>
 
     </main>
 
-    <div class="toast" id="toast"></div>
+    <div class="toast glass" id="toast"></div>
 
-    <!-- МОДАЛЬНОЕ ОКНО: ИСТОРИЯ ВЫВОДОВ (исправлено display none) -->
+    <!-- МОДАЛЬНЫЕ ОКНА -->
     <div class="rules-modal" id="historyModal" style="display: none;">
       <div class="rules-content glass">
         <div class="rules-header">
@@ -383,12 +411,11 @@
           <button class="close-btn" onclick="document.getElementById('historyModal').style.display='none'">✕</button>
         </div>
         <div class="rules-body" style="text-align: center; padding: 20px 0;">
-          <p style="color: var(--text-dim); margin-bottom: 0;">У вас пока нет истории выводов.</p>
+          <p style="color: var(--text-muted); margin-bottom: 0;">У вас пока нет истории выводов.</p>
         </div>
       </div>
     </div>
 
-    <!-- МОДАЛЬНОЕ ОКНО: ПРАВИЛА ИГРЫ (исправлено display none) -->
     <div class="rules-modal" id="rulesModal" style="display: none;">
       <div class="rules-content glass">
         <div class="rules-header">
@@ -396,15 +423,14 @@
           <button class="close-btn" onclick="toggleRules()">✕</button>
         </div>
         <div class="rules-body">
-          <p><strong>Суть игры:</strong> Это игра на умножение ставки (Crash). Самолет летит, а коэффициент (множитель) растет.</p>
-          <p><strong>Ваша задача:</strong> Успеть нажать кнопку <strong>«ЗАБРАТЬ»</strong>, пока самолет не улетел. Если вы заберете вовремя — ваш выигрыш составит: <em>Ставка × Текущий коэффициент</em>.</p>
-          <p><strong>Смысл:</strong> Чем дольше летит самолет, тем больше ваш потенциальный выигрыш. Но если вы не успеете забрать деньги до «краша», ваша ставка сгорает.</p>
-          <p><strong>Авто-вывод:</strong> В поле «Авто» можно указать коэффициент (например, 2.0), и игра сама заберет выигрыш, когда самолет достигнет этой отметки.</p>
+          <p><strong>Суть игры:</strong> Это игра на умножение ставки (Crash). Ракета летит, а коэффициент растет.</p>
+          <p><strong>Ваша задача:</strong> Успеть нажать <strong>«ЗАБРАТЬ»</strong>, пока ракета не улетела. Если вы заберете вовремя — ваш выигрыш составит: <em>Ставка × Текущий коэффициент</em>.</p>
+          <p><strong>Смысл:</strong> Чем дольше летит ракета, тем больше ваш потенциальный выигрыш. Но если вы не успеете забрать деньги до «краша», ваша ставка сгорает.</p>
         </div>
       </div>
     </div>
 
-    <!-- АДМИН ПАНЕЛЬ (исправлено display none) -->
+    <!-- АДМИН ПАНЕЛЬ -->
     <div class="admin-panel" id="adminPanel" style="display: none;">
       <div class="admin-content glass">
         <div class="admin-login-view" id="adminLoginView">
