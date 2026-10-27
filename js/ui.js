@@ -31,7 +31,7 @@ document.querySelectorAll('.nav-item').forEach(item => {
   });
 });
 
-// АНИМАЦИЯ БАЛАНСА (используем balanceStartTime вместо startTime)
+// АНИМАЦИЯ БАЛАНСА
 const balanceEl = document.getElementById('balance-display');
 let start = 0;
 const target = 1250.50;
