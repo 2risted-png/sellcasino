@@ -1,6 +1,6 @@
 /* 
-  ОСНОВНОЙ ЭФФЕКТ ЖИДКОГО СТЕКЛА 
-  (Использует полупрозрачность, сильное размытие, внутренние блики и объемные тени)
+  ЭФФЕКТ ТЕМНОГО ЖИДКОГО СТЕКЛА 
+  Меньше белого, больше глубины и объема.
 */
 .glass, 
 .balance-card, 
@@ -8,36 +8,44 @@
 .admin-content,
 .bottom-nav {
   position: relative;
-  /* Многослойный градиент для имитации преломления света */
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.02) 100%);
-  backdrop-filter: blur(40px) saturate(200%);
-  -webkit-backdrop-filter: blur(40px) saturate(200%);
-  /* Светлая рамка сверху и слева, темная снизу и справа (эффект объема) */
-  border-top: 1px solid rgba(255, 255, 255, 0.3);
-  border-left: 1px solid rgba(255, 255, 255, 0.15);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  border-right: 1px solid rgba(255, 255, 255, 0.1);
-  /* Тени: сильная внешняя и мягкая внутренняя */
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%);
+  backdrop-filter: blur(40px) saturate(180%);
+  -webkit-backdrop-filter: blur(40px) saturate(180%);
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  border-left: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+  border-right: 1px solid rgba(255, 255, 255, 0.05);
   box-shadow: 
-    0 20px 40px rgba(0, 0, 0, 0.4), 
-    inset 0 1px 1px rgba(255, 255, 255, 0.4), 
-    inset 0 -1px 1px rgba(0, 0, 0, 0.2);
+    0 24px 48px rgba(0, 0, 0, 0.6), 
+    inset 0 1px 1px rgba(255, 255, 255, 0.15), 
+    inset 0 -1px 1px rgba(0, 0, 0, 0.3);
 }
 
-/* Блик (отражение) на верхней части стекла */
+/* Легкий блик на верхней части стекла */
 .glass::before, 
 .balance-card::before,
 .jet-game-container::before {
   content: '';
   position: absolute;
-  top: 0; left: 0; right: 0; height: 40%;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.15) 0%, transparent 100%);
+  top: 0; left: 0; right: 0; height: 30%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.06) 0%, transparent 100%);
   border-radius: inherit;
   pointer-events: none;
   z-index: 0;
 }
 
-/* Убираем стандартный фон у карточки баланса, так как он теперь стеклянный */
+/* ПАРЯЩИЕ КАРТОЧКИ (ДИНАМИКА) */
+.balance-card, .jackpot-card, .game-widget {
+  animation: floatCard 5s ease-in-out infinite alternate;
+}
+.game-widget { animation-delay: -2s; }
+.jackpot-card { animation-delay: -1s; }
+
+@keyframes floatCard {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-4px); }
+}
+
 .balance-card {
   border-radius: 24px;
   padding: 20px;
@@ -49,29 +57,29 @@
 }
 
 .card-top { display: flex; justify-content: space-between; align-items: flex-start; position: relative; z-index: 1; flex-shrink: 0; }
-.card-label { font-size: 12px; color: rgba(255,255,255,0.7); text-transform: uppercase; letter-spacing: 1px; font-weight: 600; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
+.card-label { font-size: 12px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; font-weight: 600; text-shadow: 0 1px 2px rgba(0,0,0,0.8); }
 .card-chip {
   width: 34px; height: 24px; border-radius: 6px; flex-shrink: 0;
-  background: linear-gradient(135deg, #e0e0e0 0%, #888 50%, #ccc 100%);
-  position: relative; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+  background: linear-gradient(135deg, #555 0%, #222 50%, #444 100%); /* Темный чип */
+  position: relative; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.8);
 }
-.card-chip::after { content: ''; position: absolute; top: 50%; left: 0; right: 0; height: 1px; background: rgba(0,0,0,0.3); }
+.card-chip::after { content: ''; position: absolute; top: 50%; left: 0; right: 0; height: 1px; background: rgba(0,0,0,0.6); }
 
 .balance-amount { 
   font-size: 34px; font-weight: 800; letter-spacing: -1px; 
   display: flex; align-items: baseline; gap: 6px; color: #fff; 
   position: relative; z-index: 1; line-height: 1.1; flex-shrink: 0;
-  text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+  text-shadow: 0 2px 15px rgba(0,0,0,0.6);
 }
-.currency { font-size: 15px; color: var(--turquoise); font-weight: 700; text-shadow: 0 0 10px var(--turquoise-glow); }
+.currency { font-size: 15px; color: var(--turquoise); font-weight: 700; text-shadow: 0 0 15px var(--turquoise-glow); }
 
-/* Стеклянная кнопка */
+/* Кнопка пополнения (динамичная) */
 .topup-btn {
   width: 100%; 
   min-height: 46px;
   padding: 10px 16px; 
   border-radius: 14px;
-  background: rgba(255, 255, 255, 0.9); 
+  background: rgba(255, 255, 255, 0.8); 
   color: #000; 
   border: none; 
   font-size: 14px; 
@@ -84,12 +92,25 @@
   justify-content: center; 
   align-items: center;
   flex-shrink: 0;
-  line-height: 1;
-  box-shadow: 0 4px 15px rgba(255,255,255,0.2), inset 0 -2px 5px rgba(0,0,0,0.1);
+  overflow: hidden;
 }
-.topup-btn:active { transform: scale(0.96); background: #e0e0e0; }
+/* Эффект переливания на кнопке */
+.topup-btn::after {
+  content: '';
+  position: absolute;
+  top: -50%; left: -50%; width: 200%; height: 200%;
+  background: linear-gradient(to right, transparent, rgba(255,255,255,0.4), transparent);
+  transform: rotate(45deg);
+  animation: shineBtn 3s infinite;
+}
+@keyframes shineBtn {
+  0% { transform: translateX(-100%) rotate(45deg); }
+  20% { transform: translateX(100%) rotate(45deg); }
+  100% { transform: translateX(100%) rotate(45deg); }
+}
+.topup-btn:active { transform: scale(0.96); background: #ccc; }
 
-/* Нижнее меню (тоже делаем жидким) */
+/* Нижнее меню */
 .bottom-nav {
   position: absolute; 
   bottom: calc(16px + env(safe-area-inset-bottom, 0px)); 
@@ -103,30 +124,31 @@
 .nav-item {
   width: 50px; height: 50px; border-radius: 50%;
   display: flex; justify-content: center; align-items: center;
-  color: rgba(255,255,255,0.5); transition: all 0.3s; cursor: pointer; position: relative;
+  color: var(--text-dim); transition: all 0.3s; cursor: pointer; position: relative;
   background: none; border: none; z-index: 2;
 }
 .nav-item svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 .nav-item.active { color: var(--turquoise); }
 .nav-item.active::before {
   content: ''; position: absolute; inset: 0; border-radius: 50%;
-  background: rgba(45, 212, 191, 0.2); 
-  box-shadow: inset 0 2px 4px rgba(255,255,255,0.2);
+  background: rgba(45, 212, 191, 0.15); 
+  box-shadow: inset 0 2px 4px rgba(255,255,255,0.1);
   animation: popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
 @keyframes popIn { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
 
-/* Всплывающие сообщения */
+/* Тост */
 .toast {
   position: absolute; 
   top: 80px; 
   left: 50%; 
   transform: translateX(-50%) translateY(-20px);
   padding: 10px 20px; border-radius: 30px; font-size: 13px; font-weight: 600;
-  background: rgba(255, 255, 255, 0.9); color: #000; opacity: 0; transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  background: rgba(30, 30, 35, 0.9); color: #fff; opacity: 0; transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
   pointer-events: none; z-index: 100; 
-  box-shadow: 0 10px 30px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,1);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.8), inset 0 1px 1px rgba(255,255,255,0.2);
   backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.1);
   white-space: nowrap; 
 }
 .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
@@ -137,12 +159,11 @@
   text-align: center;
   border-radius: 20px;
   cursor: pointer;
-  transition: transform 0.2s;
 }
 .jackpot-card:active { transform: scale(0.97); }
 .jackpot-label {
   font-size: 11px;
-  color: rgba(255,255,255,0.7);
+  color: var(--text-dim);
   text-transform: uppercase;
   letter-spacing: 1px;
   margin-bottom: 4px;
@@ -161,7 +182,7 @@
   font-weight: 800;
   color: #fff;
   letter-spacing: -1px;
-  text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+  text-shadow: 0 2px 10px rgba(0,0,0,0.8);
 }
 .jackpot-currency {
   font-size: 12px;
@@ -177,12 +198,17 @@
   height: 40px;
   background: var(--turquoise);
   filter: blur(40px);
-  opacity: 0.6;
+  opacity: 0.3;
   pointer-events: none;
   z-index: 0;
+  animation: pulseGlow 2s infinite alternate;
+}
+@keyframes pulseGlow {
+  0% { opacity: 0.2; transform: translateX(-50%) scale(1); }
+  100% { opacity: 0.5; transform: translateX(-50%) scale(1.2); }
 }
 
-/* ПРОФИЛЬ И ОТЗЫВЫ (Стеклянные карточки) */
+/* ПРОФИЛЬ И ОТЗЫВЫ */
 .profile-balance {
   padding: 20px;
   display: flex;
@@ -204,7 +230,7 @@
 }
 .stat-label {
   font-size: 11px;
-  color: rgba(255,255,255,0.6);
+  color: var(--text-dim);
   font-weight: 500;
   position: relative; z-index: 1;
 }
@@ -213,7 +239,7 @@
   font-weight: 700;
   position: relative; z-index: 1;
 }
-.stat-value.win { color: var(--turquoise); text-shadow: 0 0 10px var(--turquoise-glow); }
+.stat-value.win { color: var(--turquoise); text-shadow: 0 0 15px var(--turquoise-glow); }
 
 .reviews-wrapper {
   overflow: hidden;
@@ -252,14 +278,14 @@
   height: 28px;
   flex-shrink: 0;
   border-radius: 50%;
-  background: rgba(255,255,255,0.15);
+  background: rgba(255,255,255,0.1);
   display: flex;
   justify-content: center;
   align-items: center;
   font-weight: 700;
   font-size: 12px;
   color: #fff;
-  box-shadow: inset 0 1px 2px rgba(255,255,255,0.3);
+  box-shadow: inset 0 1px 2px rgba(255,255,255,0.2);
 }
 .review-name {
   font-weight: 600;
@@ -273,31 +299,31 @@
 }
 .review-text {
   font-size: 12px;
-  color: rgba(255,255,255,0.8);
+  color: var(--text-dim);
   line-height: 1.4;
 }
 
 /* АККОРДЕОН */
 .accordion-list { padding: 0 16px; display: flex; flex-direction: column; border-radius: 20px; }
-.accordion-item { border-bottom: 1px solid rgba(255,255,255,0.08); position: relative; z-index: 1; }
+.accordion-item { border-bottom: 1px solid rgba(255,255,255,0.05); position: relative; z-index: 1; }
 .accordion-item:last-child { border-bottom: none; }
-.accordion-header { display: flex; justify-content: space-between; align-items: center; padding: 14px 0; color: #fff; font-size: 13px; font-weight: 500; cursor: pointer; transition: color 0.2s; }
+.accordion-header { display: flex; justify-content: space-between; align-items: center; padding: 14px 0; color: var(--text-main); font-size: 13px; font-weight: 500; cursor: pointer; transition: color 0.2s; }
 .accordion-header:active { color: var(--turquoise); }
 .accordion-header .chevron { width: 16px; height: 16px; stroke: var(--text-dim); fill: none; stroke-width: 2; transition: transform 0.3s ease; }
 .accordion-item.active .accordion-header .chevron { transform: rotate(90deg); stroke: var(--turquoise); }
 .accordion-content { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; }
-.accordion-content p { font-size: 12px; color: rgba(255,255,255,0.6); line-height: 1.4; padding-bottom: 14px; }
+.accordion-content p { font-size: 12px; color: var(--text-dim); line-height: 1.4; padding-bottom: 14px; }
 
 /* ВИДЖЕТ ИГРЫ */
 .game-widget { 
-  padding: 16px; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: all 0.2s; 
+  padding: 16px; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: background 0.2s; 
   border-radius: 20px; width: 100%;
 }
-.game-widget:active { transform: scale(0.97); background: rgba(255, 255, 255, 0.15); }
-.game-widget-icon { width: 50px; height: 50px; border-radius: 14px; background: rgba(45, 212, 191, 0.2); display: flex; justify-content: center; align-items: center; font-size: 24px; flex-shrink: 0; position: relative; z-index: 1; box-shadow: inset 0 1px 3px rgba(255,255,255,0.3); }
+.game-widget:active { background: rgba(255, 255, 255, 0.08); }
+.game-widget-icon { width: 50px; height: 50px; border-radius: 14px; background: rgba(45, 212, 191, 0.15); display: flex; justify-content: center; align-items: center; font-size: 24px; flex-shrink: 0; position: relative; z-index: 1; box-shadow: inset 0 1px 3px rgba(255,255,255,0.1); }
 .game-widget-info { flex: 1; text-align: left; position: relative; z-index: 1; }
-.game-widget-title { font-size: 16px; font-weight: 800; color: #fff; margin-bottom: 2px; text-shadow: 0 2px 5px rgba(0,0,0,0.5); }
-.game-widget-desc { font-size: 12px; color: rgba(255,255,255,0.7); }
+.game-widget-title { font-size: 16px; font-weight: 800; color: #fff; margin-bottom: 2px; text-shadow: 0 2px 5px rgba(0,0,0,0.8); }
+.game-widget-desc { font-size: 12px; color: var(--text-dim); }
 .game-widget-arrow { width: 20px; height: 20px; flex-shrink: 0; display: flex; justify-content: center; align-items: center; position: relative; z-index: 1; }
 .game-widget-arrow svg { width: 100%; height: 100%; stroke: var(--turquoise); fill: none; stroke-width: 2; }
 
@@ -316,12 +342,12 @@
 
 /* ИГРА EIGHT JET */
 .game-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-shrink: 0; }
-.game-back-btn { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 12px; width: 34px; height: 34px; display: flex; justify-content: center; align-items: center; cursor: pointer; color: #fff; backdrop-filter: blur(10px); box-shadow: inset 0 1px 1px rgba(255,255,255,0.3); }
+.game-back-btn { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; width: 34px; height: 34px; display: flex; justify-content: center; align-items: center; cursor: pointer; color: #fff; backdrop-filter: blur(10px); box-shadow: inset 0 1px 1px rgba(255,255,255,0.1); }
 .game-back-btn svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; }
-.game-balance { font-size: 12px; color: rgba(255,255,255,0.7); font-weight: 500; }
+.game-balance { font-size: 12px; color: var(--text-dim); font-weight: 500; }
 .game-balance span { color: var(--turquoise); font-weight: 700; }
 
-/* КОНТЕЙНЕР ИГРЫ (Стеклянный) */
+/* КОНТЕЙНЕР ИГРЫ */
 .jet-game-container { 
   display: flex; 
   flex-direction: column; 
@@ -343,8 +369,8 @@
   min-height: 140px;
   width: 100%;
   border-radius: 16px;
-  background: rgba(0, 0, 0, 0.2); /* Темное стекло для контраста */
-  box-shadow: inset 0 2px 10px rgba(0,0,0,0.5), inset 0 1px 1px rgba(255,255,255,0.1);
+  background: rgba(0, 0, 0, 0.3); /* Более темное стекло */
+  box-shadow: inset 0 4px 15px rgba(0,0,0,0.6), inset 0 1px 1px rgba(255,255,255,0.05);
   margin-bottom: 10px;
 }
 
@@ -387,7 +413,13 @@
   color: #fff; 
   letter-spacing: -2px; 
   font-variant-numeric: tabular-nums; 
-  text-shadow: 0 4px 20px rgba(0,0,0,0.8), 0 0 10px rgba(255,255,255,0.2);
+  text-shadow: 0 4px 20px rgba(0,0,0,0.9), 0 0 15px rgba(255,255,255,0.1);
+  /* Пульсация текста при полете */
+  animation: textPulse 1s infinite alternate;
+}
+@keyframes textPulse {
+  0% { transform: scale(1); }
+  100% { transform: scale(1.02); }
 }
 
 .waiting-timer {
@@ -426,20 +458,20 @@
 /* Ставки */
 .flight-history { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 6px; margin-bottom: 8px; scrollbar-width: none; flex-shrink: 0; }
 .flight-history::-webkit-scrollbar { display: none; }
-.history-pill { padding: 4px 10px; border-radius: 8px; font-size: 11px; font-weight: 700; white-space: nowrap; background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.7); border: 1px solid rgba(255,255,255,0.1); }
-.history-pill.win { background: rgba(45, 212, 191, 0.2); color: var(--turquoise); border-color: rgba(45, 212, 191, 0.3); }
-.history-pill.loss { background: rgba(248, 113, 113, 0.2); color: #F87171; border-color: rgba(248, 113, 113, 0.3); }
+.history-pill { padding: 4px 10px; border-radius: 8px; font-size: 11px; font-weight: 700; white-space: nowrap; background: rgba(255,255,255,0.05); color: var(--text-dim); border: 1px solid rgba(255,255,255,0.05); }
+.history-pill.win { background: rgba(45, 212, 191, 0.15); color: var(--turquoise); border-color: rgba(45, 212, 191, 0.3); }
+.history-pill.loss { background: rgba(248, 113, 113, 0.15); color: #F87171; border-color: rgba(248, 113, 113, 0.3); }
 
-.live-bets-container { background: rgba(0,0,0,0.25); border-radius: 14px; padding: 10px; margin-bottom: 12px; height: 70px; display: flex; flex-direction: column; flex-shrink: 0; box-shadow: inset 0 2px 5px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.05); }
-.live-bets-header { font-size: 11px; color: rgba(255,255,255,0.6); font-weight: 600; margin-bottom: 6px; display: flex; justify-content: space-between; }
+.live-bets-container { background: rgba(0,0,0,0.3); border-radius: 14px; padding: 10px; margin-bottom: 12px; height: 70px; display: flex; flex-direction: column; flex-shrink: 0; box-shadow: inset 0 3px 8px rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.03); }
+.live-bets-header { font-size: 11px; color: var(--text-dim); font-weight: 600; margin-bottom: 6px; display: flex; justify-content: space-between; }
 .live-bets-header span { color: var(--turquoise); }
 .live-bets-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 4px; }
 .live-bets-list::-webkit-scrollbar { width: 3px; }
-.live-bets-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 3px; }
-.live-bet-item { display: flex; justify-content: space-between; font-size: 11px; padding: 3px 6px; background: rgba(255,255,255,0.05); border-radius: 4px; animation: slideIn 0.3s ease-out; }
+.live-bets-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 3px; }
+.live-bet-item { display: flex; justify-content: space-between; font-size: 11px; padding: 3px 6px; background: rgba(255,255,255,0.03); border-radius: 4px; animation: slideIn 0.3s ease-out; }
 @keyframes slideIn { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
 .live-bet-user { color: #fff; font-weight: 500; display: flex; align-items: center; gap: 4px; }
-.live-bet-amount { color: rgba(255,255,255,0.6); }
+.live-bet-amount { color: var(--text-dim); }
 .live-bet-cashout { color: var(--turquoise); font-weight: 700; }
 
 /* Контролы */
@@ -449,17 +481,17 @@
 .auto-cashout-group { max-width: 80px; }
 .auto-cashout-group input { text-align: center; }
 
-/* Поля ввода (Эффект углубленного стекла) */
+/* Поля ввода */
 .jet-input-group { 
   display: flex; 
   align-items: center; 
-  background: rgba(0,0,0,0.3); 
-  border: 1px solid rgba(255,255,255,0.1); 
+  background: rgba(0,0,0,0.4); 
+  border: 1px solid rgba(255,255,255,0.05); 
   border-radius: 14px; 
   padding: 8px 12px; 
   position: relative; 
   transition: all 0.3s; 
-  box-shadow: inset 0 2px 5px rgba(0,0,0,0.4);
+  box-shadow: inset 0 3px 6px rgba(0,0,0,0.5);
 }
 .jet-input-group.disabled { opacity: 0.4; pointer-events: none; }
 .jet-currency { font-size: 12px; color: var(--turquoise); font-weight: 700; margin-right: 8px; }
@@ -467,15 +499,15 @@
 .jet-input-group input:disabled { opacity: 0.5; cursor: not-allowed; }
 .jet-input-group input::-webkit-outer-spin-button, .jet-input-group input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
 .jet-quick-btns { display: flex; gap: 4px; position: absolute; right: 8px; }
-.jet-quick-btns button { background: rgba(255,255,255,0.1) !important; border: 1px solid rgba(255,255,255,0.1) !important; color: #fff !important; font-size: 10px !important; font-weight: 600 !important; padding: 3px 6px !important; border-radius: 6px !important; cursor: pointer; transition: 0.2s; }
-.jet-quick-btns button:hover { background: rgba(255,255,255,0.2) !important; }
+.jet-quick-btns button { background: rgba(255,255,255,0.08) !important; border: none !important; color: #fff !important; font-size: 10px !important; font-weight: 600 !important; padding: 4px 7px !important; border-radius: 6px !important; cursor: pointer; transition: 0.2s; }
+.jet-quick-btns button:hover { background: rgba(255,255,255,0.15) !important; }
 
-/* Главные кнопки (Стеклянные капли) */
+/* Главные кнопки */
 .jet-action-btn { 
   width: 100%; 
   height: 50px; 
   border-radius: 16px; 
-  border: 1px solid rgba(255,255,255,0.3); 
+  border: none; 
   font-size: 15px; 
   font-weight: 800; 
   cursor: pointer; 
@@ -488,30 +520,30 @@
   position: relative;
   overflow: hidden;
 }
-/* Блик внутри кнопки */
+/* Блик для объема */
 .jet-action-btn::before {
   content: ''; position: absolute; top: 0; left: 0; right: 0; height: 50%;
-  background: linear-gradient(180deg, rgba(255,255,255,0.4), transparent);
+  background: linear-gradient(180deg, rgba(255,255,255,0.2), transparent);
   border-radius: 15px 15px 0 0;
 }
 .jet-action-btn:active { transform: scale(0.97); }
 
-.jet-action-btn.waiting { background: linear-gradient(180deg, #2DD4BF, #14b8a6); color: #000; box-shadow: 0 8px 20px rgba(45, 212, 191, 0.4); }
-.jet-action-btn.cashout { background: linear-gradient(180deg, #FBBF24, #F59E0B); color: #000; box-shadow: 0 8px 20px rgba(251, 191, 36, 0.4); }
+.jet-action-btn.waiting { background: linear-gradient(180deg, #2DD4BF, #14b8a6); color: #000; box-shadow: 0 8px 25px rgba(45, 212, 191, 0.3); }
+.jet-action-btn.cashout { background: linear-gradient(180deg, #FBBF24, #F59E0B); color: #000; box-shadow: 0 8px 25px rgba(251, 191, 36, 0.3); }
 .jet-action-btn.crashed { background: linear-gradient(180deg, #F87171, #EF4444); color: #fff; box-shadow: none; pointer-events: none; }
-.jet-action-btn.cashed-out { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.5); box-shadow: none; pointer-events: none; border-color: transparent; }
+.jet-action-btn.cashed-out { background: rgba(255,255,255,0.08); color: var(--text-dim); box-shadow: none; pointer-events: none; border-color: transparent; }
 .jet-action-btn.cashed-out::before { display: none; }
 
 .jet-action-sub { font-size: 11px; font-weight: 600; opacity: 0.8; position: relative; z-index: 1; }
 .jet-action-btn > * { position: relative; z-index: 1; }
 
 /* =========================================
-   АДМИН ПАНЕЛЬ (Стеклянная)
+   АДМИН ПАНЕЛЬ (Стеклянная, темная)
    ========================================= */
-.admin-login-btn { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: #fff; padding: 6px 12px; border-radius: 10px; font-size: 12px; font-weight: 600; cursor: pointer; transition: 0.2s; box-shadow: inset 0 1px 1px rgba(255,255,255,0.3); }
+.admin-login-btn { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1); color: var(--text-main); padding: 6px 12px; border-radius: 10px; font-size: 12px; font-weight: 600; cursor: pointer; transition: 0.2s; }
 .admin-login-btn:active { transform: scale(0.95); }
 
-.admin-panel { position: absolute; top: 0; left: 0; right: 0; bottom: 0; width: 100%; height: 100%; z-index: 99999; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(10px); display: flex; justify-content: center; align-items: center; opacity: 0; visibility: hidden; transition: all 0.3s ease; }
+.admin-panel { position: absolute; top: 0; left: 0; right: 0; bottom: 0; width: 100%; height: 100%; z-index: 99999; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(15px); display: flex; justify-content: center; align-items: center; opacity: 0; visibility: hidden; transition: all 0.3s ease; }
 .admin-panel.active { opacity: 1; visibility: visible; }
 
 .admin-content { 
@@ -526,39 +558,39 @@
 
 .admin-login-view { display: flex; flex-direction: column; padding: 10px; position: relative; z-index: 1; }
 .admin-login-view h2 { color: #fff; font-size: 18px; margin-bottom: 16px; text-align: center; text-shadow: 0 2px 5px rgba(0,0,0,0.5); }
-.close-btn-text { background: none; border: none; color: rgba(255,255,255,0.6); margin-top: 12px; cursor: pointer; font-size: 13px; text-align: center; }
+.close-btn-text { background: none; border: none; color: var(--text-dim); margin-top: 12px; cursor: pointer; font-size: 13px; text-align: center; }
 
 .admin-main-view { display: flex; flex-direction: column; height: 100%; position: relative; z-index: 1; }
 .admin-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-shrink: 0; }
 .admin-header h2 { font-size: 18px; color: #fff; }
-.close-btn { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: #fff; width: 28px; height: 28px; border-radius: 50%; cursor: pointer; display: flex; justify-content: center; align-items: center; font-size: 12px; box-shadow: inset 0 1px 1px rgba(255,255,255,0.3); }
+.close-btn { background: rgba(255,255,255,0.08); border: none; color: #fff; width: 28px; height: 28px; border-radius: 50%; cursor: pointer; display: flex; justify-content: center; align-items: center; font-size: 12px; }
 
-.admin-tabs { display: flex; gap: 6px; margin-bottom: 12px; flex-shrink: 0; background: rgba(0,0,0,0.3); padding: 4px; border-radius: 12px; }
-.admin-tab { flex: 1; padding: 8px 4px; background: transparent; border: none; border-radius: 8px; color: rgba(255,255,255,0.6); font-weight: 600; font-size: 12px; cursor: pointer; transition: 0.2s; }
-.admin-tab.active { background: rgba(255,255,255,0.15); color: #fff; box-shadow: inset 0 1px 1px rgba(255,255,255,0.3); }
+.admin-tabs { display: flex; gap: 6px; margin-bottom: 12px; flex-shrink: 0; background: rgba(0,0,0,0.4); padding: 4px; border-radius: 12px; }
+.admin-tab { flex: 1; padding: 8px 4px; background: transparent; border: none; border-radius: 8px; color: var(--text-dim); font-weight: 600; font-size: 12px; cursor: pointer; transition: 0.2s; }
+.admin-tab.active { background: rgba(255,255,255,0.1); color: #fff; }
 
 .admin-scroll-area { flex: 1; overflow-y: auto; padding-right: 4px; }
 .admin-scroll-area::-webkit-scrollbar { width: 4px; }
-.admin-scroll-area::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 4px; }
+.admin-scroll-area::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 4px; }
 
 .admin-section { display: none; flex-direction: column; gap: 10px; }
 .admin-section.active { display: flex; }
 
-.admin-section label { font-size: 11px; color: rgba(255,255,255,0.7); font-weight: 600; margin-top: 4px; }
+.admin-section label { font-size: 11px; color: var(--text-dim); font-weight: 600; margin-top: 4px; }
 .admin-section input, .admin-section textarea {
-  width: 100% !important; background: rgba(0,0,0,0.3) !important; border: 1px solid rgba(255,255,255,0.1) !important;
+  width: 100% !important; background: rgba(0,0,0,0.4) !important; border: 1px solid rgba(255,255,255,0.05) !important;
   border-radius: 10px !important; padding: 12px !important; color: #fff !important;
   font-family: inherit !important; font-size: 13px !important; outline: none !important;
-  -webkit-appearance: none !important; appearance: none !important; box-shadow: inset 0 2px 5px rgba(0,0,0,0.3) !important;
+  -webkit-appearance: none !important; appearance: none !important; box-shadow: inset 0 2px 5px rgba(0,0,0,0.5) !important;
 }
-.admin-section input:focus, .admin-section textarea:focus { border-color: var(--turquoise) !important; background: rgba(0,0,0,0.5) !important; }
+.admin-section input:focus, .admin-section textarea:focus { border-color: var(--turquoise) !important; background: rgba(0,0,0,0.6) !important; }
 .admin-section textarea { resize: none; }
 
-.admin-save-btn { background: linear-gradient(180deg, #fff, #e0e0e0); color: #000; border: none; padding: 14px; border-radius: 12px; font-weight: 700; font-size: 13px; margin-top: 8px; cursor: pointer; flex-shrink: 0; box-shadow: 0 4px 10px rgba(255,255,255,0.1); }
+.admin-save-btn { background: linear-gradient(180deg, #E2E2E5, #A1A1AA); color: #000; border: none; padding: 14px; border-radius: 12px; font-weight: 700; font-size: 13px; margin-top: 8px; cursor: pointer; flex-shrink: 0; box-shadow: 0 4px 10px rgba(255,255,255,0.1); }
 
 .admin-reviews-list { display: flex; flex-direction: column; gap: 8px; }
-.admin-review-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; background: rgba(255,255,255,0.05); border-radius: 10px; color: #fff; font-size: 12px; border: 1px solid rgba(255,255,255,0.05); }
+.admin-review-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; background: rgba(255,255,255,0.03); border-radius: 10px; color: #fff; font-size: 12px; border: 1px solid rgba(255,255,255,0.03); }
 .admin-review-item span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 60%; }
-.admin-review-item button { background: rgba(255, 100, 100, 0.2); color: #ff6b6b; border: 1px solid rgba(255,100,100,0.2); padding: 4px 8px; border-radius: 6px; font-weight: 600; font-size: 11px; cursor: pointer; }
+.admin-review-item button { background: rgba(255, 100, 100, 0.15); color: #ff6b6b; border: none; padding: 4px 8px; border-radius: 6px; font-weight: 600; font-size: 11px; cursor: pointer; }
 
-.logout-btn { background: transparent; color: #ff6b6b; border: 1px solid rgba(255,100,100,0.3); padding: 12px; border-radius: 12px; font-weight: 600; font-size: 13px; margin-top: 15px; cursor: pointer; flex-shrink: 0; }
+.logout-btn { background: transparent; color: #ff6b6b; border: 1px solid rgba(255,100,100,0.2); padding: 12px; border-radius: 12px; font-weight: 600; font-size: 13px; margin-top: 15px; cursor: pointer; flex-shrink: 0; }
