@@ -76,24 +76,7 @@
           <div class="jackpot-glow"></div>
         </section>
 
-        <div class="section-header">
-          <h2 class="section-title">Топ Слоты</h2>
-          <button class="see-all" onclick="switchTab('games')">Все</button>
-        </div>
-        <div class="top-slots-scroll">
-          <div class="slot-card glass" onclick="showToast('Запуск слота...')">
-            <div class="slot-icon">🐉</div>
-            <div class="slot-name">Dragon's Fire</div>
-          </div>
-          <div class="slot-card glass" onclick="showToast('Запуск слота...')">
-            <div class="slot-icon">💰</div>
-            <div class="slot-name">Money Mansion</div>
-          </div>
-          <div class="slot-card glass" onclick="showToast('Запуск слота...')">
-            <div class="slot-icon">🍒</div>
-            <div class="slot-name">Fruit Classic</div>
-          </div>
-        </div>
+        <!-- Блок Топ Слоты удален -->
 
         <div class="section-header" style="margin-top: 10px;">
           <h2 class="section-title">Отзывы</h2>
@@ -103,40 +86,70 @@
         </div>
       </div>
 
-      <!-- ВКЛАДКА 2: ИГРА EIGHT JET -->
+      <!-- ВКЛАДКА 2: ИГРЫ (СПИСОК И ЗАГРУЗКА) -->
       <div id="tab-games" class="tab-content">
         
-        <div class="game-header">
-          <div class="username">EIGHT JET</div>
-          <div class="game-balance">Баланс: <span id="game-balance-display">1250.50</span> TON</div>
-        </div>
-
-        <div class="jet-game-container glass">
-          <!-- Зона визуализации -->
-          <div class="jet-visual-area">
-            <div class="jet-glow" id="jet-glow"></div>
-            <div class="jet-multiplier" id="game-multiplier">1.00x</div>
-            <div class="jet-icon" id="jet-icon">✈️</div>
-            <div class="jet-crashed-text" id="jet-crashed-text">УЛЕТЕЛ!</div>
-          </div>
-
-          <!-- Зона управления -->
-          <div class="jet-controls">
-            <div class="jet-input-group" id="jet-input-group">
-              <span class="jet-currency">TON</span>
-              <input type="number" id="bet-amount" value="10" min="1" step="1">
-              <div class="jet-quick-btns">
-                <button onclick="setBet(10)">10</button>
-                <button onclick="setBet(50)">50</button>
-                <button onclick="setBet(100)">100</button>
-                <button onclick="setBet('max')">MAX</button>
-              </div>
+        <!-- Экран 1: Список игр -->
+        <div id="games-list-view">
+          <header class="header" style="margin-bottom: 20px;">
+            <div class="username">Выбор игры</div>
+          </header>
+          
+          <!-- Виджет EIGHT JET -->
+          <div class="game-widget glass" onclick="startGameLoading()">
+            <div class="game-widget-icon">✈️</div>
+            <div class="game-widget-info">
+              <div class="game-widget-title">EIGHT JET</div>
+              <div class="game-widget-desc">Успей забрать до краша</div>
             </div>
-            
-            <button class="jet-action-btn" id="jet-action-btn" onclick="handleGameAction()">СДЕЛАТЬ СТАВКУ</button>
+            <div class="game-widget-arrow">
+              <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
           </div>
         </div>
 
+        <!-- Экран 2: Загрузка игры -->
+        <div id="games-loading-view" style="display: none; height: 100%; flex-direction: column; justify-content: center; align-items: center;">
+          <div class="game-loader-plane">✈️</div>
+          <div class="game-loader-text">Загрузка EIGHT JET...</div>
+        </div>
+
+        <!-- Экран 3: Сама игра -->
+        <div id="games-play-view" style="display: none;">
+          
+          <div class="game-header">
+            <button class="game-back-btn" onclick="closeGame()">
+              <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+            </button>
+            <div class="username">EIGHT JET</div>
+            <div class="game-balance"><span id="game-balance-display">1250.50</span> TON</div>
+          </div>
+
+          <div class="jet-game-container glass">
+            <div class="jet-visual-area">
+              <div class="jet-glow" id="jet-glow"></div>
+              <div class="jet-multiplier" id="game-multiplier">1.00x</div>
+              <div class="jet-icon" id="jet-icon">✈️</div>
+              <div class="jet-crashed-text" id="jet-crashed-text">УЛЕТЕЛ!</div>
+            </div>
+
+            <div class="jet-controls">
+              <div class="jet-input-group" id="jet-input-group">
+                <span class="jet-currency">TON</span>
+                <input type="number" id="bet-amount" value="10" min="1" step="1">
+                <div class="jet-quick-btns">
+                  <button onclick="setBet(10)">10</button>
+                  <button onclick="setBet(50)">50</button>
+                  <button onclick="setBet(100)">100</button>
+                  <button onclick="setBet('max')">MAX</button>
+                </div>
+              </div>
+              
+              <button class="jet-action-btn" id="jet-action-btn" onclick="handleGameAction()">СДЕЛАТЬ СТАВКУ</button>
+            </div>
+          </div>
+
+        </div>
       </div>
 
       <!-- ВКЛАДКА 3: ПРОФИЛЬ -->
