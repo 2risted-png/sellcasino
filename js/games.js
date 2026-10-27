@@ -18,14 +18,12 @@ function updateBalanceUI() {
 
 async function fetchUserBalance() {
     const tg = window.Telegram?.WebApp;
-    console.log("1. Функция fetchUserBalance запущена");
     
     if (!tg || !tg.initData) {
-        console.warn("2. ОШИБКА: Нет данных от Telegram (initData). Открывай строго через кнопку меню!");
+        if (typeof showToast === 'function') showToast('❌ Ошибка: Нет данных от Telegram');
         return;
     }
 
-    console.log("3. Данные от Telegram есть. Отправляем на сервер...");
     try {
         const response = await fetch(`${API_URL}/api/auth`, {
             method: 'POST',
@@ -33,19 +31,21 @@ async function fetchUserBalance() {
             body: JSON.stringify({ initData: tg.initData })
         });
         
-        console.log("4. Сервер ответил, статус:", response.status);
+        if (!response.ok) {
+            if (typeof showToast === 'function') showToast(`❌ Ошибка сервера: ${response.status}`);
+            return;
+        }
+
         const data = await response.json();
-        console.log("5. Ответ сервера:", data);
 
         if (data.success) {
             currentBalance = data.balance;
             updateBalanceUI();
-            console.log("6. Баланс успешно обновлен:", data.balance);
         } else {
-            console.error("6. Сервер вернул ошибку:", data.error);
+            if (typeof showToast === 'function') showToast(`❌ Ошибка: ${data.error}`);
         }
     } catch (err) {
-        console.error("6. Ошибка сети:", err);
+        if (typeof showToast === 'function') showToast(`❌ Сбой сети: ${err.message}`);
     }
 }
 
