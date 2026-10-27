@@ -565,6 +565,86 @@
 }
 .jet-action-sub { font-size: 12px; font-weight: 600; opacity: 0.8; }
 
+/* ... (Весь предыдущий CSS до Админ-панели оставляем без изменений) ... */
+/* Скопируй всё, что было, и добавь в конец: */
+
+/* =========================================
+   ИГРА EIGHT JET (НОВЫЕ СТИЛИ)
+   ========================================= */
+.flight-history {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+  scrollbar-width: none;
+}
+.flight-history::-webkit-scrollbar { display: none; }
+.history-pill {
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+  background: rgba(255,255,255,0.05);
+  color: var(--text-dim);
+}
+.history-pill.win { background: rgba(45, 212, 191, 0.15); color: var(--turquoise); }
+.history-pill.loss { background: rgba(248, 113, 113, 0.15); color: #F87171; }
+
+.live-bets-container {
+  background: rgba(0,0,0,0.3);
+  border-radius: 16px;
+  padding: 10px;
+  margin-bottom: 15px;
+  height: 100px;
+  display: flex;
+  flex-direction: column;
+}
+.live-bets-header {
+  font-size: 12px;
+  color: var(--text-dim);
+  font-weight: 600;
+  margin-bottom: 8px;
+  display: flex;
+  justify-content: space-between;
+}
+.live-bets-header span { color: var(--turquoise); }
+.live-bets-list {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.live-bets-list::-webkit-scrollbar { width: 3px; }
+.live-bets-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 3px; }
+
+.live-bet-item {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  padding: 4px 8px;
+  background: rgba(255,255,255,0.03);
+  border-radius: 6px;
+  animation: slideIn 0.3s ease-out;
+}
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(-10px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+.live-bet-user { color: #fff; font-weight: 500; display: flex; align-items: center; gap: 4px; }
+.live-bet-amount { color: var(--text-dim); }
+.live-bet-cashout { color: var(--turquoise); font-weight: 700; }
+
+/* Чуть уменьшим игровое поле, чтобы влезли новые блоки */
+.jet-game-container {
+  height: 440px; 
+  padding: 15px;
+}
+.jet-multiplier { font-size: 52px; }
+.jet-visual-area { min-height: 120px; }
+
 /* АДМИН ПАНЕЛЬ */
 .admin-login-btn {
   background: rgba(255,255,255,0.05);
