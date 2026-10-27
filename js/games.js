@@ -8,6 +8,7 @@ function updateBalanceUI() {
   if (document.getElementById('balance-display')) document.getElementById('balance-display').innerText = formatted;
   if (document.getElementById('game-balance-display')) document.getElementById('game-balance-display').innerText = formatted;
   if (document.getElementById('dice-balance-display')) document.getElementById('dice-balance-display').innerText = formatted;
+  if (document.getElementById('mines-balance-display')) document.getElementById('mines-balance-display').innerText = formatted;
   if (document.getElementById('profile-balance-display')) document.getElementById('profile-balance-display').innerText = formatted;
 }
 
@@ -47,11 +48,7 @@ const graphDot = document.getElementById('graph-dot');
 function resetGraph() {
   if (graphLine) graphLine.setAttribute('d', '');
   if (graphFill) graphFill.setAttribute('d', '');
-  if (graphDot) {
-    graphDot.setAttribute('cx', 0);
-    graphDot.setAttribute('cy', 150);
-    graphDot.style.opacity = '0';
-  }
+  if (graphDot) { graphDot.setAttribute('cx', 0); graphDot.setAttribute('cy', 150); graphDot.style.opacity = '0'; }
 }
 
 function updateGraph(elapsed) {
@@ -82,7 +79,7 @@ function colorGraphDefault() {
   graphLine.setAttribute('stroke', 'url(#line-gradient)');
   graphFill.setAttribute('fill', 'url(#graph-gradient)');
   graphDot.setAttribute('fill', '#fff');
-  graphDot.setAttribute('filter', 'drop-shadow(0 0 8px #00E5FF)');
+  graphDot.setAttribute('filter', 'drop-shadow(0 0 8px #D4AF37)');
 }
 
 function startWaitingPhase() {
@@ -114,10 +111,7 @@ function startWaitingPhase() {
   if (autoInput) autoInput.disabled = false;
   
   const jetGlow = document.getElementById('jet-glow');
-  if (jetGlow) {
-    jetGlow.style.opacity = '0.1';
-    jetGlow.style.background = 'var(--primary)';
-  }
+  if (jetGlow) { jetGlow.style.opacity = '0.1'; jetGlow.style.background = 'var(--gold)'; }
 
   resetGraph();
   colorGraphDefault();
@@ -130,11 +124,7 @@ function startWaitingPhase() {
     timeLeft -= 0.1;
     const cdText = document.getElementById('countdown-text');
     if (cdText) cdText.innerText = Math.max(0, timeLeft).toFixed(1) + 's';
-    
-    if (timeLeft <= 0) {
-      clearInterval(waitIntervalId);
-      startFlyingPhase();
-    }
+    if (timeLeft <= 0) { clearInterval(waitIntervalId); startFlyingPhase(); }
   }, 100);
 }
 
@@ -169,30 +159,18 @@ function loop() {
   const elapsed = (performance.now() - roundStartTime) / 1000;
   currentMultiplier = Math.exp(0.08 * elapsed);
 
-  if (currentMultiplier >= crashPoint) {
-    endRoundCrash();
-    return;
-  }
+  if (currentMultiplier >= crashPoint) { endRoundCrash(); return; }
 
   const multiplierDisplay = document.getElementById('game-multiplier');
   const jetGlow = document.getElementById('jet-glow');
 
   if (multiplierDisplay) {
     multiplierDisplay.innerText = currentMultiplier.toFixed(2) + 'x';
-    if (currentMultiplier > 3) {
-      multiplierDisplay.style.color = '#FBBF24';
-      if (jetGlow) jetGlow.style.background = '#FBBF24';
-    }
-    if (currentMultiplier > 5) {
-      multiplierDisplay.style.color = '#F87171';
-      if (jetGlow) jetGlow.style.background = '#F87171';
-    }
+    if (currentMultiplier > 3) { multiplierDisplay.style.color = '#FBBF24'; if (jetGlow) jetGlow.style.background = '#FBBF24'; }
+    if (currentMultiplier > 5) { multiplierDisplay.style.color = '#F87171'; if (jetGlow) jetGlow.style.background = '#F87171'; }
   }
 
-  if (jetGlow) {
-    jetGlow.style.opacity = 0.1 + (currentMultiplier * 0.05);
-    jetGlow.style.transform = `scale(${1 + currentMultiplier * 0.1})`;
-  }
+  if (jetGlow) { jetGlow.style.opacity = 0.1 + (currentMultiplier * 0.05); jetGlow.style.transform = `scale(${1 + currentMultiplier * 0.1})`; }
   
   updateGraph(elapsed);
 
@@ -219,24 +197,15 @@ function endRoundCrash() {
   const actionBtn = document.getElementById('jet-action-btn');
   
   if (multiplierDisplay) multiplierDisplay.style.display = 'none';
-  if (crashedText) {
-    crashedText.style.display = 'block';
-    crashedText.innerText = `УЛЕТЕЛ!`;
-  }
+  if (crashedText) { crashedText.style.display = 'block'; crashedText.innerText = `УЛЕТЕЛ!`; }
   
   colorGraphRed();
-
   const jetGlow = document.getElementById('jet-glow');
   if (jetGlow) jetGlow.style.opacity = '0';
   
-  if (playerBet.active && !playerBet.cashedOut) {
-    if (typeof showToast === 'function') showToast(`💥 Вы проиграли ${playerBet.amount.toFixed(2)} TON`);
-  }
+  if (playerBet.active && !playerBet.cashedOut) { if (typeof showToast === 'function') showToast(`💥 Вы проиграли ${playerBet.amount.toFixed(2)} TON`); }
 
-  if (actionBtn) {
-    actionBtn.className = 'jet-action-btn crashed';
-    actionBtn.innerText = 'УЛЕТЕЛ!';
-  }
+  if (actionBtn) { actionBtn.className = 'jet-action-btn crashed'; actionBtn.innerText = 'УЛЕТЕЛ!'; }
   
   const inputGroup = document.getElementById('jet-input-group');
   if (inputGroup) inputGroup.classList.remove('disabled');
@@ -245,9 +214,7 @@ function endRoundCrash() {
   if (flightHistory.length > 10) flightHistory.pop();
   renderHistory();
 
-  setTimeout(() => {
-    if (gameState !== 'offline') startWaitingPhase();
-  }, 3000);
+  setTimeout(() => { if (gameState !== 'offline') startWaitingPhase(); }, 3000);
 }
 
 function setBet(amount) {
@@ -343,7 +310,7 @@ function startGameLoading() {
   document.getElementById('games-loading-view').style.display = 'flex';
   setTimeout(() => {
     document.getElementById('games-loading-view').style.display = 'none';
-    document.getElementById('games-play-view').style.display = 'block';
+    document.getElementById('games-play-view').style.display = 'flex'; 
     renderHistory();
     startWaitingPhase();
   }, 2000);
@@ -369,8 +336,24 @@ function toggleRules() {
   if (modal) modal.style.display = modal.style.display === 'flex' ? 'none' : 'flex';
 }
 
-// --- DICE ---
+
+// ==========================================
+// DICE (С кастомным кубиком)
+// ==========================================
 let isDiceRolling = false;
+
+// Функция генерации HTML для граней кубика
+function getDiceFaceHTML(num) {
+  const pips = {
+    1: '<span class="pip p-center"></span>',
+    2: '<span class="pip p-top-right"></span><span class="pip p-bottom-left"></span>',
+    3: '<span class="pip p-top-right"></span><span class="pip p-center"></span><span class="pip p-bottom-left"></span>',
+    4: '<span class="pip p-top-left"></span><span class="pip p-top-right"></span><span class="pip p-bottom-left"></span><span class="pip p-bottom-right"></span>',
+    5: '<span class="pip p-top-left"></span><span class="pip p-top-right"></span><span class="pip p-center"></span><span class="pip p-bottom-left"></span><span class="pip p-bottom-right"></span>',
+    6: '<span class="pip p-top-left"></span><span class="pip p-top-right"></span><span class="pip p-mid-left"></span><span class="pip p-mid-right"></span><span class="pip p-bottom-left"></span><span class="pip p-bottom-right"></span>'
+  };
+  return `<div class="die-face face-${num}">${pips[num]}</div>`;
+}
 
 function startDiceLoading() {
   haptic('medium');
@@ -424,14 +407,14 @@ function playDice(choice) {
   btnUnder.disabled = true;
   btnOver.disabled = true;
   resultText.classList.remove('show', 'win', 'loss');
+  
   diceCube.classList.add('rolling');
-  diceCube.innerText = '🎲';
+  diceCube.innerHTML = getDiceFaceHTML(1); // Сброс на 1 при начале броска
 
   setTimeout(() => {
     diceCube.classList.remove('rolling');
     const roll = Math.floor(Math.random() * 6) + 1;
-    const diceEmojis = ['', '⚀', '⚁', '⚂', '⚃', '⚄', '⚅'];
-    diceCube.innerText = diceEmojis[roll];
+    diceCube.innerHTML = getDiceFaceHTML(roll);
 
     let isWin = false;
     let payoutMultiplier = 0;
@@ -467,6 +450,233 @@ function playDice(choice) {
 function resetDiceUI() {
   const resultText = document.getElementById('dice-result-text');
   if (resultText) resultText.classList.remove('show', 'win', 'loss');
+}
+
+
+// ==========================================
+// MINES GAME
+// ==========================================
+let minesCount = 3;
+let isMinesPlaying = false;
+let minesBetAmount = 0;
+let currentMinesMultiplier = 1.00;
+let currentMinesSafeClicks = 0;
+let minesPositions = [];
+const TOTAL_CELLS = 25;
+
+function startMinesLoading() {
+  haptic('medium');
+  document.getElementById('games-list-view').style.display = 'none';
+  document.getElementById('games-loading-view').style.display = 'flex';
+  setTimeout(() => {
+    document.getElementById('games-loading-view').style.display = 'none';
+    document.getElementById('mines-play-view').style.display = 'flex';
+    updateBalanceUI();
+    initMinesGame();
+  }, 1500);
+}
+
+function closeMinesGame() {
+  haptic('light');
+  if (isMinesPlaying) {
+    cashOutMines(true); // Авто-кэшаут при выходе
+  }
+  document.getElementById('mines-play-view').style.display = 'none';
+  document.getElementById('games-list-view').style.display = 'block';
+}
+
+function setMinesCount(count, btn) {
+  if (isMinesPlaying) return;
+  haptic('light');
+  minesCount = count;
+  document.querySelectorAll('.mine-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  updateMinesNextMultiplier(0); // Обновляем множитель для 0 кликов
+}
+
+function setMinesBet(amount) {
+  if (isMinesPlaying) return;
+  haptic('light');
+  let betAmount = 10;
+  if (amount === 'max') betAmount = Math.floor(currentBalance);
+  else betAmount = amount;
+  if (betAmount > currentBalance) betAmount = Math.floor(currentBalance);
+  if (betAmount < 1) betAmount = 1;
+  document.getElementById('mines-bet-amount').value = betAmount;
+}
+
+function calculateMinesMultiplier(safeClicks) {
+  let prob = 1.0;
+  for (let i = 0; i < safeClicks; i++) {
+    prob *= (TOTAL_CELLS - minesCount - i) / (TOTAL_CELLS - i);
+  }
+  // Комиссия казино ~3%
+  return (1 / prob) * 0.97;
+}
+
+function updateMinesNextMultiplier(safeClicks) {
+  const multEl = document.getElementById('mines-next-mult');
+  if (multEl) {
+    const nextMult = calculateMinesMultiplier(safeClicks + 1);
+    multEl.innerText = nextMult.toFixed(2) + 'x';
+  }
+}
+
+function initMinesGame() {
+  isMinesPlaying = false;
+  currentMinesSafeClicks = 0;
+  currentMinesMultiplier = 1.00;
+  minesPositions = [];
+  
+  const grid = document.getElementById('mines-grid');
+  grid.innerHTML = '';
+  
+  for (let i = 0; i < TOTAL_CELLS; i++) {
+    const cell = document.createElement('div');
+    cell.className = 'mines-cell';
+    cell.dataset.index = i;
+    cell.onclick = () => handleMinesClick(i, cell);
+    grid.appendChild(cell);
+  }
+  
+  const actionBtn = document.getElementById('mines-action-btn');
+  actionBtn.className = 'jet-action-btn waiting';
+  actionBtn.innerText = 'СДЕЛАТЬ СТАВКУ';
+  
+  document.getElementById('mines-input-group').classList.remove('disabled');
+  document.getElementById('mines-selector').style.pointerEvents = 'auto';
+  updateMinesNextMultiplier(0);
+}
+
+function handleMinesAction() {
+  if (isMinesPlaying) {
+    cashOutMines(false);
+  } else {
+    startMinesGame();
+  }
+}
+
+function startMinesGame() {
+  const betInput = document.getElementById('mines-bet-amount');
+  minesBetAmount = parseFloat(betInput.value);
+
+  if (isNaN(minesBetAmount) || minesBetAmount < 1) { if (typeof showToast === 'function') showToast('⚠️ Мин. ставка 1 TON'); return; }
+  if (minesBetAmount > currentBalance) { if (typeof showToast === 'function') showToast('❌ Недостаточно средств'); return; }
+
+  haptic('medium');
+  currentBalance -= minesBetAmount;
+  updateBalanceUI();
+
+  isMinesPlaying = true;
+  currentMinesSafeClicks = 0;
+  
+  // Генерируем позиции мин
+  minesPositions = [];
+  while(minesPositions.length < minesCount) {
+    const r = Math.floor(Math.random() * TOTAL_CELLS);
+    if (!minesPositions.includes(r)) minesPositions.push(r);
+  }
+
+  const grid = document.getElementById('mines-grid');
+  Array.from(grid.children).forEach(cell => {
+    cell.className = 'mines-cell';
+    cell.innerText = '';
+  });
+
+  const actionBtn = document.getElementById('mines-action-btn');
+  actionBtn.className = 'jet-action-btn cashout';
+  actionBtn.innerText = 'ЗАБРАТЬ 0.00 TON';
+  
+  document.getElementById('mines-input-group').classList.add('disabled');
+  document.getElementById('mines-selector').style.pointerEvents = 'none';
+}
+
+function handleMinesClick(index, cell) {
+  if (!isMinesPlaying || cell.classList.contains('revealed')) return;
+  
+  cell.classList.add('revealed');
+
+  if (minesPositions.includes(index)) {
+    // Взрыв
+    cell.classList.add('mine', 'crashed');
+    cell.innerText = '💥';
+    isMinesPlaying = false;
+    haptic('heavy');
+    
+    // Открываем все мины
+    const grid = document.getElementById('mines-grid');
+    Array.from(grid.children).forEach((c, i) => {
+      if (minesPositions.includes(i) && i !== index) {
+        c.classList.add('revealed', 'mine');
+        c.innerText = '💣';
+      }
+    });
+
+    const actionBtn = document.getElementById('mines-action-btn');
+    actionBtn.className = 'jet-action-btn crashed';
+    actionBtn.innerText = 'ВЗОРВАЛОСЬ!';
+    
+    document.getElementById('mines-input-group').classList.remove('disabled');
+    document.getElementById('mines-selector').style.pointerEvents = 'auto';
+    if (typeof showToast === 'function') showToast(`💥 Вы наткнулись на мину и проиграли ${minesBetAmount.toFixed(2)} TON`);
+    
+    setTimeout(initMinesGame, 3000);
+
+  } else {
+    // Алмаз
+    cell.classList.add('safe');
+    cell.innerText = '💎';
+    currentMinesSafeClicks++;
+    haptic('light');
+    
+    currentMinesMultiplier = calculateMinesMultiplier(currentMinesSafeClicks);
+    
+    const actionBtn = document.getElementById('mines-action-btn');
+    const winAmount = minesBetAmount * currentMinesMultiplier;
+    actionBtn.innerText = `ЗАБРАТЬ ${winAmount.toFixed(2)} TON`;
+    
+    updateMinesNextMultiplier(currentMinesSafeClicks);
+    
+    // Если открыли все безопасные ячейки - авто-выигрыш
+    if (currentMinesSafeClicks === TOTAL_CELLS - minesCount) {
+      cashOutMines(false);
+    }
+  }
+}
+
+function cashOutMines(isSilent) {
+  if (!isMinesPlaying) return;
+  
+  const winAmount = minesBetAmount * currentMinesMultiplier;
+  currentBalance += winAmount;
+  updateBalanceUI();
+  isMinesPlaying = false;
+  
+  if (!isSilent) haptic('heavy');
+  
+  const actionBtn = document.getElementById('mines-action-btn');
+  actionBtn.className = 'jet-action-btn waiting';
+  actionBtn.innerText = 'СДЕЛАТЬ СТАВКУ';
+  
+  document.getElementById('mines-input-group').classList.remove('disabled');
+  document.getElementById('mines-selector').style.pointerEvents = 'auto';
+  
+  if (!isSilent && typeof showToast === 'function') {
+    showToast(`✅ Вы забрали ${winAmount.toFixed(2)} TON`);
+  } else if (isSilent && winAmount > 0 && typeof showToast === 'function') {
+    showToast(`Авто-вывод: ${winAmount.toFixed(2)} TON`);
+  }
+
+  // Открываем поле на пару секунд перед сбросом
+  const grid = document.getElementById('mines-grid');
+  Array.from(grid.children).forEach((c, i) => {
+    if (!c.classList.contains('revealed') && minesPositions.includes(i)) {
+      c.classList.add('revealed', 'mine');
+      c.innerText = '💣';
+    }
+  });
+
+  setTimeout(initMinesGame, 2500);
 }
 
 document.addEventListener('DOMContentLoaded', () => {
