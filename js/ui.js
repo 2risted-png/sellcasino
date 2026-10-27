@@ -2,13 +2,14 @@ let toastTimer;
 function showToast(text) {
   haptic('light');
   const toast = document.getElementById('toast');
+  if (!toast) return;
+  
   toast.innerText = text;
   toast.classList.add('show');
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => toast.classList.remove('show'), 2000);
 }
 
-// ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК
 function switchTab(tabId) {
   document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
   document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
@@ -30,15 +31,15 @@ document.querySelectorAll('.nav-item').forEach(item => {
   });
 });
 
-// АНИМАЦИЯ БАЛАНСА
+// АНИМАЦИЯ БАЛАНСА (используем balanceStartTime вместо startTime)
 const balanceEl = document.getElementById('balance-display');
 let start = 0;
 const target = 1250.50;
 const duration = 1500;
-const startTime = performance.now();
+const balanceStartTime = performance.now();
 
 function animateBalance(currentTime) {
-  const elapsed = currentTime - startTime;
+  const elapsed = currentTime - balanceStartTime;
   const progress = Math.min(elapsed / duration, 1);
   const easeOut = 1 - Math.pow(1 - progress, 3);
   const currentVal = start + (target - start) * easeOut;
@@ -54,7 +55,7 @@ function animateBalance(currentTime) {
 }
 setTimeout(() => requestAnimationFrame(animateBalance), 300);
 
-// ЛОГИКА АККОРДЕОНА (Документы)
+// АККОРДЕОН
 document.querySelectorAll('.accordion-header').forEach(header => {
   header.addEventListener('click', () => {
     haptic('light');
@@ -69,7 +70,6 @@ document.querySelectorAll('.accordion-header').forEach(header => {
     });
 
     item.classList.toggle('active');
-    
     if (item.classList.contains('active')) {
       content.style.maxHeight = content.scrollHeight + "px";
     } else {
@@ -78,7 +78,7 @@ document.querySelectorAll('.accordion-header').forEach(header => {
   });
 });
 
-// СКРЫТИЕ ЭКРАНА ЗАГРУЗКИ
+// ЗАГРУЗКА
 document.addEventListener('DOMContentLoaded', () => {
   setTimeout(() => {
     const loader = document.getElementById('loader');
@@ -89,16 +89,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }, 2000);
 });
 
-// ЛОГИКА ПЕРЕКЛЮЧЕНИЯ ВКЛАДОК В АДМИНКЕ
-function switchAdminTab(tabId, btn) {
-  document.querySelectorAll('.admin-tab').forEach(b => b.classList.remove('active'));
-  document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
-  
-  btn.classList.add('active');
-  document.getElementById(`admin-${tabId}`).classList.add('active');
-}
-
-// КАРУСЕЛЬ ОТЗЫВОВ (С возможностью перезапуска)
+// КАРУСЕЛЬ ОТЗЫВОВ
 let carouselInterval;
 function resetCarousel() {
   const track = document.getElementById('reviewsTrack');
@@ -106,19 +97,14 @@ function resetCarousel() {
   
   const cards = track.querySelectorAll('.review-card');
   let currentIndex = 0;
-
-  // Сбрасываем позицию
   track.style.transform = `translateX(0%)`;
 
-  // Очищаем старый интервал, если есть
   if (carouselInterval) clearInterval(carouselInterval);
 
   if (cards.length > 1) {
     carouselInterval = setInterval(() => {
       currentIndex++;
-      if (currentIndex >= cards.length) {
-        currentIndex = 0;
-      }
+      if (currentIndex >= cards.length) currentIndex = 0;
       track.style.transform = `translateX(-${currentIndex * 100}%)`;
     }, 4000);
   }
