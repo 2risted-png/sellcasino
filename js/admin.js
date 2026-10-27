@@ -17,7 +17,6 @@ function saveData() {
   applyDataToUI();
 }
 
-// Применение данных к интерфейсу
 function applyDataToUI() {
   document.title = appData.appName;
   document.getElementById('greeting-text').innerText = `Добро пожаловать в ${appData.appName}`;
@@ -28,7 +27,6 @@ function applyDataToUI() {
   renderReviews();
 }
 
-// Отрисовка отзывов
 function renderReviews() {
   const track = document.getElementById('reviewsTrack');
   track.innerHTML = ''; 
@@ -53,17 +51,23 @@ function renderReviews() {
 }
 
 // ==========================================
-// ЛОГИКА АВТОРИЗАЦИИ
+// ЛОГИКА АВТОРИЗАЦИИ И ОТКРЫТИЯ
 // ==========================================
 function toggleAdminPanel() {
   const panel = document.getElementById('adminPanel');
   const loginView = document.getElementById('adminLoginView');
   const mainView = document.getElementById('adminMainView');
+  const bottomNav = document.querySelector('.bottom-nav'); // Находим меню
   
-  panel.classList.toggle('active');
-  
-  if (panel.classList.contains('active')) {
-    // Если панель открывается, проверяем авторизацию
+  const isActive = panel.classList.toggle('active');
+  haptic('medium');
+
+  // Скрываем нижнее меню, если панель открыта, иначе показываем
+  if (bottomNav) {
+    bottomNav.style.display = isActive ? 'none' : 'flex';
+  }
+
+  if (isActive) {
     if (sessionStorage.getItem('adminAuth') === 'true') {
       loginView.style.display = 'none';
       mainView.style.display = 'flex';
@@ -73,7 +77,6 @@ function toggleAdminPanel() {
       mainView.style.display = 'none';
     }
   }
-  haptic('medium');
 }
 
 function loginAdmin() {
@@ -95,7 +98,7 @@ function loginAdmin() {
 
 function logoutAdmin() {
   sessionStorage.removeItem('adminAuth');
-  toggleAdminPanel();
+  toggleAdminPanel(); // Закроет панель и вернет меню
   showToast('Вы вышли из админки');
 }
 
