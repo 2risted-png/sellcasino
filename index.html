@@ -103,8 +103,20 @@
               <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
             </div>
           </div>
+
+          <div class="game-widget glass" onclick="startDiceLoading()">
+            <div class="game-widget-icon" style="background: rgba(251, 191, 36, 0.15);">🎲</div>
+            <div class="game-widget-info">
+              <div class="game-widget-title">DICE</div>
+              <div class="game-widget-desc">Больше или Меньше</div>
+            </div>
+            <div class="game-widget-arrow">
+              <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+          </div>
         </div>
 
+        <!-- ЗАГРУЗКА -->
         <div id="games-loading-view" style="display: none; height: 80%; flex-direction: column; justify-content: center; align-items: center;">
           <div class="custom-loader">
             <div class="radar-container">
@@ -119,7 +131,7 @@
           </div>
         </div>
 
-        <!-- ЭКРАН ИГРЫ -->
+        <!-- ЭКРАН ИГРЫ EIGHT JET -->
         <div id="games-play-view" style="display: none; flex: 1; flex-direction: column;">
           
           <div class="game-header">
@@ -165,7 +177,6 @@
             </div>
 
             <div class="jet-controls">
-              
               <div class="live-bets-container">
                 <div class="live-bets-header">Ваша ставка в игре</div>
                 <div class="live-bets-list" id="live-bets-list"></div>
@@ -189,11 +200,56 @@
               </div>
               
               <button class="jet-action-btn" id="jet-action-btn" onclick="handleGameAction()">СДЕЛАТЬ СТАВКУ</button>
-
             </div>
           </div>
 
         </div>
+
+        <!-- ЭКРАН ИГРЫ DICE -->
+        <div id="dice-play-view" style="display: none; flex: 1; flex-direction: column;">
+          
+          <div class="game-header">
+            <button class="game-back-btn" onclick="closeDiceGame()">
+              <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+            </button>
+            <div class="username">DICE</div>
+            <div class="game-balance"><span id="dice-balance-display">1250.50</span> TON</div>
+          </div>
+
+          <div class="dice-game-container glass">
+            
+            <div class="dice-visual-area">
+              <div class="dice-glow" id="dice-glow"></div>
+              <div class="dice-cube" id="dice-cube">🎲</div>
+              <div class="dice-result-text" id="dice-result-text"></div>
+            </div>
+
+            <div class="dice-controls">
+              <div class="jet-input-group" id="dice-input-group">
+                <span class="jet-currency">TON</span>
+                <input type="number" id="dice-bet-amount" value="10" min="1" step="1">
+                <div class="jet-quick-btns">
+                  <button onclick="setDiceBet(10)">10</button>
+                  <button onclick="setDiceBet(50)">50</button>
+                  <button onclick="setDiceBet(100)">100</button>
+                  <button onclick="setDiceBet('max')">MAX</button>
+                </div>
+              </div>
+
+              <div class="dice-action-buttons">
+                <button class="dice-btn under" id="btn-under" onclick="playDice('under')">
+                  <span class="dice-btn-title">Меньше 3</span>
+                  <span class="dice-btn-sub">x2.5</span>
+                </button>
+                <button class="dice-btn over" id="btn-over" onclick="playDice('over')">
+                  <span class="dice-btn-title">Больше 3</span>
+                  <span class="dice-btn-sub">x2.0</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
       </div>
 
       <!-- ВКЛАДКА 3: ПРОФИЛЬ -->
@@ -210,7 +266,6 @@
           </div>
         </div>
 
-        <!-- Кнопка открытия истории выводов -->
         <button class="profile-menu-btn glass" onclick="document.getElementById('historyModal').classList.add('active')">
           <span>История выводов</span>
           <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
@@ -283,9 +338,9 @@
         </div>
         <div class="rules-body">
           <p><strong>Суть игры:</strong> Это игра на умножение ставки (Crash). Самолет летит, а коэффициент (множитель) растет.</p>
-          <p><strong>Ваша задача:</strong> Успеть нажать кнопку <strong>«ЗАБРАТЬ»</strong>, пока самолет не улетел. Если вы заберете вовремя — ваш выигрыш составит: <em>Ставка × Текущий коэффициент</em>.</p>
+          <p><strong>Ваша задача:</strong> Успеть нажать кнопку <strong>«ЗАБРАТЬ»</strong>, пока самолет не улетел.</p>
           <p><strong>Смысл:</strong> Чем дольше летит самолет, тем больше ваш потенциальный выигрыш. Но если вы не успеете забрать деньги до «краша», ваша ставка сгорает.</p>
-          <p><strong>Авто-вывод:</strong> В поле «Авто» можно указать коэффициент (например, 2.0), и игра сама заберет выигрыш, когда самолет достигнет этой отметки.</p>
+          <p><strong>Авто-вывод:</strong> В поле «Авто» можно указать коэффициент (например, 2.0), и игра сама заберет выигрыш.</p>
         </div>
       </div>
     </div>
