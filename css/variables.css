@@ -1,0 +1,10 @@
+:root {
+  --bg-dark: #000000;
+  --bg-app: #09090b;
+  --text-main: #FFFFFF;
+  --text-dim: #A1A1AA;
+  --turquoise: #2DD4BF;
+  --turquoise-glow: rgba(45, 212, 191, 0.4);
+  --glass-bg: rgba(255, 255, 255, 0.03);
+  --glass-border: rgba(255, 255, 255, 0.08);
+}
