@@ -59,14 +59,16 @@ function startWaitingPhase() {
   playerBet.active = false;
   playerBet.cashedOut = false;
   
-  const overlay = document.getElementById('game-overlay');
   const actionBtn = document.getElementById('jet-action-btn');
   const inputGroup = document.getElementById('jet-input-group');
+  const timerDisplay = document.getElementById('waiting-timer');
   const multiplierDisplay = document.getElementById('game-multiplier');
   const crashedText = document.getElementById('jet-crashed-text');
   
-  overlay.innerHTML = `<div class="countdown-text" id="countdown-text">5.0s</div><div class="countdown-sub">ПРИЕМ СТАВОК</div>`;
-  overlay.classList.add('active');
+  // Показываем таймер вместо X
+  timerDisplay.style.display = 'flex';
+  multiplierDisplay.style.display = 'none';
+  crashedText.style.display = 'none';
   
   actionBtn.className = 'jet-action-btn waiting';
   actionBtn.innerText = 'СДЕЛАТЬ СТАВКУ';
@@ -75,13 +77,6 @@ function startWaitingPhase() {
   document.getElementById('jet-icon').style.opacity = '1';
   document.getElementById('jet-icon').style.left = '10%';
   document.getElementById('jet-icon').style.transform = 'translateY(0) scale(1) rotate(0deg)';
-  
-  multiplierDisplay.style.display = 'block';
-  multiplierDisplay.style.opacity = '1';
-  multiplierDisplay.style.color = '#fff';
-  multiplierDisplay.innerText = '1.00x';
-  
-  crashedText.style.display = 'none';
   
   document.getElementById('jet-glow').style.opacity = '0.1';
   document.getElementById('jet-glow').style.background = 'var(--turquoise)';
@@ -108,7 +103,9 @@ function startFlyingPhase() {
   gameState = 'flying';
   roundStartTime = performance.now();
   
-  document.getElementById('game-overlay').classList.remove('active');
+  // Скрываем таймер, показываем X
+  document.getElementById('waiting-timer').style.display = 'none';
+  document.getElementById('game-multiplier').style.display = 'block';
   
   const actionBtn = document.getElementById('jet-action-btn');
   if (playerBet.active && !playerBet.cashedOut) {
@@ -128,8 +125,6 @@ function loop() {
   if (gameState !== 'flying') return;
 
   const elapsed = (performance.now() - roundStartTime) / 1000;
-  
-  // Плавная математика (1.5x за ~5 сек, 2x за ~8.6 сек)
   currentMultiplier = Math.exp(0.08 * elapsed);
 
   if (currentMultiplier >= crashPoint) {
@@ -155,27 +150,22 @@ function loop() {
   jetGlow.style.opacity = 0.1 + (currentMultiplier * 0.05);
   jetGlow.style.transform = `scale(${1 + currentMultiplier * 0.1})`;
   
-  // Ускорение самолета
   const planeLeft = 10 + (elapsed * 2) + Math.pow(elapsed, 1.8) * 2;
   if (planeLeft < 90) {
     jetIcon.style.left = planeLeft + '%';
   }
   jetIcon.style.transform = `translateY(${Math.sin(elapsed * 5) * 10}px) scale(${1 + currentMultiplier * 0.01}) rotate(${currentMultiplier * 1.5}deg)`;
 
-  // Проверка авто-вывода
   if (playerBet.active && !playerBet.cashedOut) {
     if (playerBet.autoCashout > 0 && currentMultiplier >= playerBet.autoCashout) {
       handlePlayerCashout(true);
     } else {
       const cashoutEl = document.getElementById('cashout-val');
-      if (cashoutEl) {
-        cashoutEl.innerText = (playerBet.amount * currentMultiplier).toFixed(2) + ' TON';
-      }
+      if (cashoutEl) cashoutEl.innerText = (playerBet.amount * currentMultiplier).toFixed(2) + ' TON';
     }
   }
 
   updateLiveBetsCashout(currentMultiplier);
-
   animationFrameId = requestAnimationFrame(loop);
 }
 
@@ -190,9 +180,7 @@ function endRoundCrash() {
   const crashedText = document.getElementById('jet-crashed-text');
   const actionBtn = document.getElementById('jet-action-btn');
   
-  // СКРЫВАЕМ МНОЖИТЕЛЬ И ПОКАЗЫВАЕМ ТЕКСТ КРАША (чтобы не накладывались)
   multiplierDisplay.style.display = 'none';
-  
   crashedText.style.display = 'block';
   crashedText.innerText = `УЛЕТЕЛ!`;
   
@@ -383,7 +371,7 @@ function startGameLoading() {
     document.getElementById('games-play-view').style.display = 'block';
     renderHistory();
     startWaitingPhase();
-  }, 1500);
+  }, 2200);
 }
 
 function closeGame() {
